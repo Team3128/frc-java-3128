@@ -105,36 +105,6 @@ public class Global
 	    _rotFr.startControl(90);
 
 		_lights.lightChange(null);
-
-//	    _listenerManager.addListener(Listenable.XDOWN, _gyr::resetAngle);
-//
-//	    _listenerManager.addListener(Listenable.ADOWN, () ->_cockArm.cancel());
-//	    _listenerManager.addListener(Listenable.ADOWN, () -> _mShooter.setSpeed(-1));
-//
-//	    _listenerManager.addListener(Listenable.AUP, () -> _cockArm.start());
-//	    _listenerManager.addListener(Listenable.AUP, () -> _mShooter.setSpeed(0));
-//
-//	    _listenerManager.addListener(Listenable.BDOWN, () -> _cockArm.cancel());
-//	    _listenerManager.addListener(Listenable.BDOWN, () -> _mShooter.setSpeed(-1));
-//
-//	    _listenerManager.addListener(Listenable.BUP, () -> _cockArm.cancel());
-//	    _listenerManager.addListener(Listenable.BUP, () ->
-//	    {
-//	    	if(_ballTSensor0.get() || _ballTSensor1.get())
-//	    	{
-//	    		_mShooter.setSpeed(1);
-//	    	}
-//	    });
-//
-//	    _listenerManager.addListener(Listenable.LBDOWN, () -> _mArmMove.setSpeed(.1));
-//	    _listenerManager.addListener(Listenable.LBDOWN, () -> _mArmRoll.setSpeed(.1));
-//
-//	    _listenerManager.addListener(Listenable.RBDOWN, () -> _mArmMove.setSpeed(-.1));
-//	    _listenerManager.addListener(Listenable.RBDOWN, () -> _mArmRoll.setSpeed(-.1));
-//
-//	    _listenerManager.addListener(Listenable.BACKDOWN, () -> _cockArm.stopArmCock());
-//
-//	    _listenerManager.addListener(Listenable.STARTDOWN, () -> _cockArm.startArmCock());
 		
 		_listenerManager.addListener(Listenable.YDOWN, () -> _gyr.resetAngle());
         _listenerManager.addListener(Listenable.XDOWN, new IListenerCallback() {
@@ -185,9 +155,5 @@ public class Global
 
 	    _listenerManager.addListener(Listenable.JOY1X, _arcadeDrive::steer);
 	    _listenerManager.addListener(Listenable.JOY1Y, _arcadeDrive::steer);
-
-	    //_listenerManager.addListener(Listenable.JOY1X, Cmd.MakeShared(&SwerveDrive.steer, boost.ref(*_swerveDrive)));
-	    //_listenerManager.addListener(Listenable.JOY1Y, Cmd.MakeShared(&SwerveDrive.steer, boost.ref(*_swerveDrive)));
-	    //_listenerManager.addListener(Listenable.JOY2X, Cmd.MakeShared(&SwerveDrive.steer, boost.ref(*_swerveDrive)));
 	}
 }

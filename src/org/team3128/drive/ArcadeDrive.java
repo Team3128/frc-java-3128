@@ -34,13 +34,8 @@ public class ArcadeDrive
     	double y1 = _listenerManager.getRawDouble(Listenable.JOY1Y);
     	y1 = Math.abs(y1) > thresh ? y1 : 0.0;
 
-    	_spdR = y1;
-    	_spdL = y1;
-    	_spdR += x1;
-    	_spdL -= x1;
-    	
-    	_spdR = RobotMath.clampDouble(_spdR, -1.0, 1.0);
-    	_spdL = RobotMath.clampDouble(_spdL, -1.0, 1.0);
+    	_spdR = (y1 + x1) / 2;
+    	_spdL = (y1 - x1) / 2;
 
     	_driveLeft.setSpeed(_spdL);
     	_driveRight.setSpeed(_spdR);

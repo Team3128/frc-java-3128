@@ -117,6 +117,8 @@ public class RobotMath {
    {
 	   return Math.min(Math.max(value, minimum), maximum); 
    }
+   
+   public static final double SQUARE_ROOT_TWO = Math.sqrt(2.0);
 
    private RobotMath() {}
 }
