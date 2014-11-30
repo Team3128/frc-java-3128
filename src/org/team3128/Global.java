@@ -18,6 +18,14 @@ import robotemulator.Joystick;
 import robotemulator.Relay;
 import robotemulator.Talon;
 
+/**
+ * The Global class is where all of the hardware objects that represent the robot are stored.
+ * It also sets up the control bindings.
+ * 
+ * Its functions are called only by RobotTemplate.
+ * @author Jamie
+ *
+ */
 public class Global
 {
 	GyroLink _gyr;

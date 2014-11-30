@@ -8,7 +8,7 @@ import robotemulator.Talon;
 /**
  * MotorLink is the class used in this code to represent a motor.
  * It can operate with or without an encoder and with several
- * different varieties of speed control or none at all.
+ * different varieties of motor control or none at all.
  */
 public class MotorLink {
     private final Talon talon;

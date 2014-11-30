@@ -1,7 +1,6 @@
 package org.team3128;
 
 import robotemulator.IterativeRobot;
-import robotemulator.RobotEmulator;
 import robotemulator.Watchdog;
 
 /*

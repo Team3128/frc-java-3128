@@ -9,7 +9,7 @@ public class AutoConfig
 	{
 		Instant sequenceStartTime = Instant.now();
 	
-		Log.info("AutoConfig", "Starting Autonomous Event Sequence...");
+		Log.info("AutoConfig", "Starting Autonomous Sequence...");
 		while(true)
 		{
 			global._rotBk.setControlTarget(90);

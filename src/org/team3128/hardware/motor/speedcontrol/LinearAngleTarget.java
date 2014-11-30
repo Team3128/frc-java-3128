@@ -4,7 +4,7 @@ import org.team3128.hardware.motor.MotorControl;
 import org.team3128.util.RobotMath;
 
 /**
- *
+ * Motor control which steers the motor to an angle using an encoder.
  * @author Yousuf Soliman
  */
 
@@ -41,6 +41,9 @@ public class LinearAngleTarget extends MotorControl
 
     public void clearControlRun() {}
 
+    /**
+     * Returns true if the motor is at the correct angle
+     */
     public boolean isComplete()
     {
         double x =  Math.abs(RobotMath.angleDistance(this.getLinkedEncoderAngle(), this.targetAngle));
