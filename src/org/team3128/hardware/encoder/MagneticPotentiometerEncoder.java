@@ -1,6 +1,6 @@
 package org.team3128.hardware.encoder;
 
-import robotemulator.AnalogChannel;
+import edu.wpi.first.wpilibj.AnalogChannel;
 
 public class MagneticPotentiometerEncoder implements IEncoder {
     private AnalogChannel enc;

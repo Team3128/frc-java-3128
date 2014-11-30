@@ -3,7 +3,7 @@ package org.team3128.hardware.motor;
 import org.team3128.Log;
 import org.team3128.hardware.encoder.IEncoder;
 
-import robotemulator.Talon;
+import edu.wpi.first.wpilibj.Talon;
 
 /**
  * MotorLink is the class used in this code to represent a motor.

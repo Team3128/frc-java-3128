@@ -1,6 +1,6 @@
 package org.team3128;
 
-import robotemulator.Watchdog;
+import edu.wpi.first.wpilibj.Watchdog;
 
 public class Log
 {

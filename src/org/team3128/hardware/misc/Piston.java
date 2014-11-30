@@ -2,7 +2,7 @@ package org.team3128.hardware.misc;
 
 import org.team3128.Log;
 
-import robotemulator.Solenoid;
+import edu.wpi.first.wpilibj.Solenoid;
 
 
 /**

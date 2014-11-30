@@ -10,10 +10,10 @@ import org.team3128.Log;
 import org.team3128.Options;
 import org.team3128.util.Pair;
 
-import robotemulator.Joystick;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+
+import edu.wpi.first.wpilibj.Joystick;
 
 public class ListenerManager
 {

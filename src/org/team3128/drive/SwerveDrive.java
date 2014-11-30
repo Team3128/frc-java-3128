@@ -6,7 +6,7 @@ import org.team3128.listener.ListenerManager;
 import org.team3128.util.Pair;
 import org.team3128.util.RobotMath;
 
-import robotemulator.Gyro;
+import edu.wpi.first.wpilibj.Gyro;
 
 public class SwerveDrive
 {

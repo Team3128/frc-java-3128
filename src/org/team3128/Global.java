@@ -12,11 +12,12 @@ import org.team3128.listener.IListenerCallback;
 import org.team3128.listener.Listenable;
 import org.team3128.listener.ListenerManager;
 
-import robotemulator.DigitalInput;
-import robotemulator.Gyro;
-import robotemulator.Joystick;
-import robotemulator.Relay;
-import robotemulator.Talon;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Gyro;
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Talon;
 
 public class Global
 {
@@ -81,6 +82,13 @@ public class Global
 
 	void initializeRobot()
 	{
+		
+		I2C i2cTest = new I2C((byte) 0b11011011);
+		
+		byte[] dataReceived = new byte[1];
+		
+		i2cTest.transaction(new byte[]{(byte) 0xde, (byte) 0xad, (byte) 0xbe, (byte) 0xef}, 4, dataReceived, 1);
+		
 		_lights.lightChange(null);
 		
 	    _rotBk.startControl(90);

@@ -1,6 +1,6 @@
 package org.team3128.hardware.misc;
 
-import robotemulator.Gyro;
+import edu.wpi.first.wpilibj.Gyro;
 
 /**
 *

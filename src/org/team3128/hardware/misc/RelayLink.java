@@ -1,6 +1,6 @@
 package org.team3128.hardware.misc;
 
-import robotemulator.Relay;
+import edu.wpi.first.wpilibj.Relay;
 
 public class RelayLink
 {

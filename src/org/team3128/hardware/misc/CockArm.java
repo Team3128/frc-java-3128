@@ -3,7 +3,7 @@ package org.team3128.hardware.misc;
 import org.team3128.Options;
 import org.team3128.hardware.motor.MotorLink;
 
-import robotemulator.DigitalInput;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 public class CockArm
 {
