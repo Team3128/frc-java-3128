@@ -14,6 +14,8 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
+import edu.wpi.first.wpilibj.Joystick;
+
 /**
  *This class combines the functions of XControl and ListenerManager from the old robot code.
  *It is constructed with one Joystick object, which confusingly seems to be the wpilib metaphor for an entire controller.
