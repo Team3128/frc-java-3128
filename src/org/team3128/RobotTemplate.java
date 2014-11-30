@@ -1,15 +1,13 @@
 package org.team3128;
 
-import robotemulator.IterativeRobot;
-import robotemulator.RobotEmulator;
-import robotemulator.Watchdog;
+import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Watchdog;
 
 /*
  * THIS FILE SHOULD NOT BE MODIFIED
  * --------------------------------
  * It serves as a link to the Global class
  * Events triggered here will be forwarded to the Global class
- * This will also invoke the EventManager's sequencing.
  *
  * Do not call these functions under any circumstances. Do not modify this
  * class under any circumstances.
