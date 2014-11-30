@@ -67,7 +67,7 @@ public class RobotMath {
     * @param currentAngle the current angle of the motor
     * @param targetAngle the target angle of the motor
     * <p/>
-    * @return an integer value on {-1,0,1} in MotorDir
+    * @return a MotorDir
     */
    public static MotorDir getMotorDirToTarget(double currentAngle, double targetAngle) {
        currentAngle = RobotMath.normalizeAngle(currentAngle);
@@ -117,6 +117,8 @@ public class RobotMath {
    {
 	   return Math.min(Math.max(value, minimum), maximum); 
    }
+   
+   public static final double SQUARE_ROOT_TWO = Math.sqrt(2.0);
 
    private RobotMath() {}
 }

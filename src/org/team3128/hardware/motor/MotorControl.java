@@ -5,7 +5,9 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.team3128.Options;
 
 /**
-*
+* MotorControl is an abstract superclass for classes that define the behavior of a motor.  
+* This class does all of the boilerplate, like getters and setters, while the subclass
+* implements the actual math and logic.
 * @author Noah Sutton-Smolin
 */
 public abstract class MotorControl

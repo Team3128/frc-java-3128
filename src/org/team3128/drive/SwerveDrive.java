@@ -95,9 +95,15 @@ public class SwerveDrive
 	{
 	    double thresh = 0.2;
 
-	    double x1 = Math.abs(_listenerManager.getRawDouble(Listenable.JOY1X)) > thresh ? _listenerManager.getRawDouble(Listenable.JOY1X) : 0.0;
-	    double y1 = Math.abs(_listenerManager.getRawDouble(Listenable.JOY1Y)) > thresh ? -_listenerManager.getRawDouble(Listenable.JOY1Y) : 0.0;
-	    double x2 = Math.abs(_listenerManager.getRawDouble(Listenable.JOY2X)) > thresh ? _listenerManager.getRawDouble(Listenable.JOY2X) : 0.0;
+	    double x1 = _listenerManager.getRawDouble(Listenable.JOY1X);
+	    x1 = Math.abs(x1) > thresh ? x1 : 0.0;
+	    
+	    double y1 = _listenerManager.getRawDouble(Listenable.JOY1Y);
+	    y1 = Math.abs(y1) > thresh ? -y1 : 0.0;
+	   
+	    double x2 = _listenerManager.getRawDouble(Listenable.JOY2X);
+	    x2 = Math.abs(x2) > thresh ? x2 : 0.0;
+	    
 
 	    vel = -(Math.sqrt(Math.pow(x1, 2) + Math.pow(y1, 2)));
 	    rot = x2;

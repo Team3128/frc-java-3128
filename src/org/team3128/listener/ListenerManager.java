@@ -12,17 +12,28 @@ import org.team3128.util.Pair;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 
-import edu.wpi.first.wpilibj.Joystick;
-
+/**
+ *This class combines the functions of XControl and ListenerManager from the old robot code.
+ *It is constructed with one Joystick object, which confusingly seems to be the wpilib metaphor for an entire controller.
+ *It polls the controller at a set interval, and invokes listeners
+ *whenever a value they're set for has changed (the button listeners are set for either call on up or down).
+ *Listeners are run on the object's polling thread, and will need to be passed a reference
+ *to the listener manager somehow if they need control data.
+ *You may register the same instance of a listener for as many
+ *controls as you like, but it will only be invoked once per polling cycle no matter how many of its registered
+ *controls have changed.  However, if you register two different instances of the same listener object for two different controls, 
+ *those listeners will both be invoked if both controls change. 
+ * 
+ * @author Jamie
+ *
+ */
 public class ListenerManager
 {
 	
 	//when this is locked no one should touch _joystickValues or _buttonValues
 	ReentrantLock _controlValuesMutex;
-
-	//when this is locked no one should touch _listeners
-	ReentrantLock _listenersMutex;
 	
 	//maps the listeners to the control inputs
 	Multimap<Listenable, IListenerCallback> _listeners;
@@ -40,8 +51,7 @@ public class ListenerManager
 	public ListenerManager(Joystick joystick)
 	{
 		_controlValuesMutex = new ReentrantLock();
-		_listenersMutex =  new ReentrantLock();
-		_listeners = ArrayListMultimap.<Listenable, IListenerCallback>create();
+		_listeners = Multimaps.synchronizedListMultimap(ArrayListMultimap.<Listenable, IListenerCallback>create());
         _joystick = joystick;
         
         Pair<EnumMap<Listenable, Boolean>, EnumMap<Listenable, Double>> controlValues = pollControls();
@@ -56,26 +66,20 @@ public class ListenerManager
 	//multiple listeners can be added for the same listenable
 	public void addListener(Listenable key, IListenerCallback listener)
 	{
-		_listenersMutex.lock();
 		_listeners.put(key, listener);
-		_listenersMutex.unlock();
 	}
 
 	//remove all listeners, period
 	public void removeAllListeners()
 	{
-		_listenersMutex.lock();
 		_listeners.clear();
-		_listenersMutex.unlock();
 	}
 
 	//remove all listeners set for the given listener
-	//note that removeAllListenersForControl(AUP) is NOT the same as removeAllListenersForControl(ADOWN)
+	//note that removeAllListenersForControl(Listenable.AUP) is NOT the same as removeAllListenersForControl(Listenable.ADOWN)
 	public void removeAllListenersForControl(Listenable listener)
 	{
-		_listenersMutex.lock();
 		_listeners.removeAll(listener);
-		_listenersMutex.unlock();
 	}
 
 	//returns the boolean value of a button listenable (between A and R3).
@@ -163,8 +167,6 @@ public class ListenerManager
 			buttonValues.put(Listenable.values()[counter], _joystick.getRawButton(counter));
 		}
 		
-		//preallocate space in the 
-
 		//read joystick values
 		//NOTE: these may change when we move from the emulator to the actual robot.
 		//if you're reading this after 2015 season, well, I guess we forgot to remove this comment
@@ -273,8 +275,6 @@ public class ListenerManager
 					}
 				}
 			}
-
-			//TODO configuration setting for time
 			try
 			{
 				Thread.sleep(Options.instance()._listenerManagerUpdateFrequency);

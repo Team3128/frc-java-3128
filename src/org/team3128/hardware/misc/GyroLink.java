@@ -25,7 +25,7 @@ public class GyroLink {
 	   return gyr.getAngle();
    }
    
-   //I don't know what thisdoes, and it's not available in the emulator
+   //I don't know what this does, and it's not available in the emulator
 //   public double getRate()
 //   {
 //	   return gyr.getRate();

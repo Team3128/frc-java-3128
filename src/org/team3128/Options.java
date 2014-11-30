@@ -17,13 +17,19 @@ public class Options
 
     public boolean _armEnabled;
 
-    //port the xbox controller connected to the drivers' console is on
+    /**
+     * port the xbox controller connected to the drivers' console is on
+     */
     public short _controllerPort;
     
-    //update frequency of the listener manager
+    /**
+     * update frequency of the listener manager
+     */
     public int _listenerManagerUpdateFrequency;
     
-    //update frequency of the motor control code
+    /**
+     * update frequency of the motor control code
+     */
     public int _motorControlUpdateFrequency;
     
     private static Options _instance;
