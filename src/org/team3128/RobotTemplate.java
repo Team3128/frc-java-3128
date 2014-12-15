@@ -96,14 +96,7 @@ public class RobotTemplate extends IterativeRobot
     {
         Watchdog.getInstance().feed();
         
-        try
-		{
-			Thread.sleep(100);
-		}
-        catch (InterruptedException e)
-		{
-			return;
-		}
+        global._listenerManager.tick();
     }
 }
 

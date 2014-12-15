@@ -6,6 +6,7 @@ import org.team3128.hardware.misc.CockArm;
 import org.team3128.hardware.misc.GyroLink;
 import org.team3128.hardware.misc.Lights;
 import org.team3128.hardware.misc.RelayLink;
+import org.team3128.hardware.misc.TachLink;
 import org.team3128.hardware.motor.MotorLink;
 import org.team3128.hardware.motor.speedcontrol.LinearAngleTarget;
 import org.team3128.listener.IListenerCallback;
@@ -91,11 +92,9 @@ public class Global
 	void initializeRobot()
 	{
 		
-		I2C i2cTest = new I2C((byte) 0b11011011);
+		TachLink link = new TachLink(0, 54);
 		
-		byte[] dataReceived = new byte[1];
-		
-		i2cTest.transaction(new byte[]{(byte) 0xde, (byte) 0xad, (byte) 0xbe, (byte) 0xef}, 4, dataReceived, 1);
+		Log.debug("Global", "Tachometer: " + link.getRaw());
 		
 		_lights.lightChange(null);
 		

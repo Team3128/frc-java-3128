@@ -23,14 +23,14 @@ public class Options
     public short _controllerPort;
     
     /**
-     * update frequency of the listener manager
-     */
-    public int _listenerManagerUpdateFrequency;
-    
-    /**
      * update frequency of the motor control code
      */
     public int _motorControlUpdateFrequency;
+    
+    /**
+     * 7-bit address of the tachometer
+     */
+    public byte _tachI2CAddress;
     
     private static Options _instance;
     
@@ -53,8 +53,8 @@ public class Options
     	
     	_controllerPort = 1;
     	
-    	_listenerManagerUpdateFrequency = 75;
-    	
     	_motorControlUpdateFrequency = 75;
+    	
+    	_tachI2CAddress = (byte) 0b10101110;
     }
 }

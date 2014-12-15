@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.team3128.Log;
-import org.team3128.Options;
 import org.team3128.util.Pair;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -46,8 +45,7 @@ public class ListenerManager
 	EnumMap<Listenable, Double> _joystickValues;
 
 	EnumMap<Listenable, Boolean> _buttonValues;
-
-	Thread _thread;
+	
 	
 	//construct from existing Joystick
 	public ListenerManager(Joystick joystick)
@@ -60,8 +58,6 @@ public class ListenerManager
         
 		_joystickValues = controlValues.right;
 		_buttonValues = controlValues.left;
-		_thread = new Thread(this::run, "ListenerManager Thread");
-		_thread.start();
 	}
 	
 	//add listener for given listenable
@@ -182,130 +178,102 @@ public class ListenerManager
 		return new Pair<EnumMap<Listenable, Boolean>, EnumMap<Listenable, Double>>(buttonValues, joystickValues);
 	}
 
-	void run()
+	/**
+	 * Read controls and update listeners.  Usually called by RobotTemplate when WPILib ticks it.
+	 */
+	public void tick()
 	{
-		while(true)
+		Pair<EnumMap<Listenable, Boolean>, EnumMap<Listenable, Double>> newValues = pollControls();
+
+		//test if values have changed
+		if((newValues.left != _buttonValues) || (newValues.right != _joystickValues))
 		{
-			Pair<EnumMap<Listenable, Boolean>, EnumMap<Listenable, Double>> newValues = pollControls();
+			Set<IListenerCallback> listenersToInvoke = new HashSet<IListenerCallback>();
 
-			//test if values have changed
-			if((newValues.left != _buttonValues) || (newValues.right != _joystickValues))
+			//loop through button values
+			for(int counter = Listenable.ADOWN.ordinal(); counter <= Listenable.R3DOWN.ordinal() ; counter++)
 			{
-				Set<IListenerCallback> listenersToInvoke = new HashSet<IListenerCallback>();
-
-				//loop through button values
-				for(int counter = Listenable.ADOWN.ordinal(); counter <= Listenable.R3DOWN.ordinal() ; counter++)
+				Listenable currentListenable = Listenable.values()[counter];
+				//has this button been pressed?
+				if((!_buttonValues.get(currentListenable)) && (newValues.left.get(currentListenable)))
 				{
-					Listenable currentListenable = Listenable.values()[counter];
-					//has this button been pressed?
-					if((!_buttonValues.get(currentListenable)) && (newValues.left.get(currentListenable)))
-					{
-						//get all its registered listeners
-						Collection<IListenerCallback> foundListeners = _listeners.get(Listenable.values()[counter]);
+					//get all its registered listeners
+					Collection<IListenerCallback> foundListeners = _listeners.get(Listenable.values()[counter]);
 
-						if(!foundListeners.isEmpty())
+					if(!foundListeners.isEmpty())
+					{
+						//loop through them
+						for(IListenerCallback callback : foundListeners)
 						{
-							//loop through them
-							for(IListenerCallback callback : foundListeners)
-							{
-								listenersToInvoke.add(callback);
-							}
+							listenersToInvoke.add(callback);
 						}
-
 					}
-					//has this button just stopped being pressed?
-					if((_buttonValues.get(currentListenable)) && (!newValues.left.get(currentListenable)))
-					{
-						//get all its registered listeners
-						//increment counter by 20 to get button up listeners
-						Collection<IListenerCallback> foundListeners = _listeners.get(Listenable.values()[counter + 15]);
 
-						if(!foundListeners.isEmpty())
+				}
+				//has this button just stopped being pressed?
+				if((_buttonValues.get(currentListenable)) && (!newValues.left.get(currentListenable)))
+				{
+					//get all its registered listeners
+					//increment counter by 20 to get button up listeners
+					Collection<IListenerCallback> foundListeners = _listeners.get(Listenable.values()[counter + 15]);
+
+					if(!foundListeners.isEmpty())
+					{
+						//loop through them
+						for(IListenerCallback callback : foundListeners)
 						{
-							//loop through them
-							for(IListenerCallback callback : foundListeners)
-							{
-								listenersToInvoke.add(callback);
-							}
+							listenersToInvoke.add(callback);
 						}
-
 					}
-				}
 
-				//loop through joystick values
-				for(int counter = Listenable.JOY1X.ordinal(); counter <= Listenable.JOY2Y.ordinal() ; counter++)
-				{
-					Listenable currentListenable = Listenable.values()[counter];
-					//has this particular value changed?
-					if(_joystickValues.get(currentListenable) != newValues.right.get(currentListenable))
-					{
-						//get all its registered listeners
-						Collection<IListenerCallback> foundListeners = _listeners.get(currentListenable);
-
-						if(!foundListeners.isEmpty())
-						{
-							//loop through them
-							for(IListenerCallback callback : foundListeners)
-							{
-								listenersToInvoke.add(callback);
-							}
-						}
-
-					}
-				}
-
-
-				//update class variables to match new data
-				{
-					_controlValuesMutex.lock();
-					_buttonValues = newValues.left;
-					_joystickValues = newValues.right;
-					_controlValuesMutex.unlock();
-				}
-
-				//invoke handlers
-				for(IListenerCallback listener: listenersToInvoke)
-				{
-					try
-					{
-						listener.listenerCallback();
-					}
-					catch(RuntimeException error)
-					{
-						Log.recoverable("ListenerManager", "Caught a " + error.toString() + " from a control listener: " + error.getMessage());
-						error.printStackTrace();
-					}
 				}
 			}
-			try
+
+			//loop through joystick values
+			for(int counter = Listenable.JOY1X.ordinal(); counter <= Listenable.JOY2Y.ordinal() ; counter++)
 			{
-				Thread.sleep(Options.instance()._listenerManagerUpdateFrequency);
+				Listenable currentListenable = Listenable.values()[counter];
+				//has this particular value changed?
+				if(_joystickValues.get(currentListenable) != newValues.right.get(currentListenable))
+				{
+					//get all its registered listeners
+					Collection<IListenerCallback> foundListeners = _listeners.get(currentListenable);
+
+					if(!foundListeners.isEmpty())
+					{
+						//loop through them
+						for(IListenerCallback callback : foundListeners)
+						{
+							listenersToInvoke.add(callback);
+						}
+					}
+
+				}
 			}
-			catch(InterruptedException error)
+
+
+			//update class variables to match new data
 			{
-				return;
+				_controlValuesMutex.lock();
+				_buttonValues = newValues.left;
+				_joystickValues = newValues.right;
+				_controlValuesMutex.unlock();
+			}
+
+			//invoke handlers
+			for(IListenerCallback listener: listenersToInvoke)
+			{
+				try
+				{
+					listener.listenerCallback();
+				}
+				catch(RuntimeException error)
+				{
+					Log.recoverable("ListenerManager", "Caught a " + error.toString() + " from a control listener: " + error.getMessage());
+					error.printStackTrace();
+				}
 			}
 		}
 	}
-	
-	/**
-	 * Grumble grumble, no destructors, grumble grumble
-	 * 
-	 * Shut down the listener thread.
-	 */
-	public void shutDown()
-	{
-		_thread.interrupt();
-	}
-	
-	/**
-	 * Start the thread if it's been shut down
-	 */
-	public void reStart()
-	{
-		if(!_thread.isAlive())
-		{
-			_thread = new Thread(this::run, "ListenerManager");
-		}
-	}
+
 }
