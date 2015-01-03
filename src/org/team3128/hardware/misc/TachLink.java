@@ -30,7 +30,7 @@ public class TachLink
 		//init static variables if this is the first use of the class
 		if(_tachConnection == null)
 		{
-			_tachConnection = new I2C(Options.instance()._tachI2CAddress);
+			_tachConnection = new I2C(I2C.Port.kOnboard, Options.instance()._tachI2CAddress);
 			
 			_tachConnMutex = new ReentrantLock();
 		}

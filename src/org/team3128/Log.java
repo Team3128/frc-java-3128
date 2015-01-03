@@ -1,7 +1,5 @@
 package org.team3128;
 
-import edu.wpi.first.wpilibj.Watchdog;
-
 public class Log
 {
 	/**
@@ -23,7 +21,7 @@ public class Log
 			e.printStackTrace();
 		}
 		
-		Watchdog.getInstance().kill();
+		System.exit(1);
 		
 	}
 	

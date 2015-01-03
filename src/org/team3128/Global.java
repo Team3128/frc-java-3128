@@ -15,7 +15,6 @@ import org.team3128.listener.ListenerManager;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Gyro;
-import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Talon;
@@ -62,24 +61,24 @@ public class Global
 		_encFl = new MagneticPotentiometerEncoder(17, 1, 3);
 		_encBk = new MagneticPotentiometerEncoder(-35, 1, 4);		
 		
-		_rotFr = new MotorLink(new Talon(2, 6), _encFr, new LinearAngleTarget(.40, 4)); //OFFSET: -55 DEG
-		_rotFl = new MotorLink(new Talon(2, 7), _encFl, new LinearAngleTarget(.40, 4)); //OFFSET: -18 DEG
-		_rotBk = new MotorLink(new Talon(2, 1), _encBk, new LinearAngleTarget(.40, 4)); //OFFSET: -10 DEG
+		_rotFr = new MotorLink(new Talon(2), _encFr, new LinearAngleTarget(.40, 4)); //OFFSET: -55 DEG
+		_rotFl = new MotorLink(new Talon(2), _encFl, new LinearAngleTarget(.40, 4)); //OFFSET: -18 DEG
+		_rotBk = new MotorLink(new Talon(2), _encBk, new LinearAngleTarget(.40, 4)); //OFFSET: -10 DEG
 		
-		_drvFr = new MotorLink(new Talon(2, 8));
-		_drvFl = new MotorLink(new Talon(2, 9));
-		_drvBk = new MotorLink(new Talon(2, 10));
+		_drvFr = new MotorLink(new Talon(2));
+		_drvFl = new MotorLink(new Talon(2));
+		_drvBk = new MotorLink(new Talon(2));
 		
-		_mShooter = new MotorLink(new Talon(6, 4));
-		_mArmRoll = new MotorLink(new Talon(6, 5));
-		_mArmMove = new MotorLink(new Talon(6, 6));	
+		_mShooter = new MotorLink(new Talon(6));
+		_mArmRoll = new MotorLink(new Talon(6));
+		_mArmMove = new MotorLink(new Talon(6));	
 		
-		_lights = new Lights(new RelayLink(new Relay(4, 1)),new RelayLink(new Relay(4, 2)));
-		_camLights = new RelayLink(new Relay(4, 3));
+		_lights = new Lights(new RelayLink(new Relay(4)),new RelayLink(new Relay(4)));
+		_camLights = new RelayLink(new Relay(4));
 		
-		_shooterTSensor = new DigitalInput(1, 4);
-		_ballTSensor0 = new DigitalInput(1, 1);
-		_ballTSensor1 = new DigitalInput(1, 2);
+		_shooterTSensor = new DigitalInput(1);
+		_ballTSensor0 = new DigitalInput(1);
+		_ballTSensor1 = new DigitalInput(1);
 		
 		_gyr = new GyroLink(new Gyro(1));		
 		_listenerManager = new ListenerManager(new Joystick(Options.instance()._controllerPort));

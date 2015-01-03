@@ -1,7 +1,6 @@
 package org.team3128;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Watchdog;
 
 /*
  * THIS FILE SHOULD NOT BE MODIFIED
@@ -63,7 +62,6 @@ public class RobotTemplate extends IterativeRobot
    
     public void disabledPeriodic()
     {
-        Watchdog.getInstance().feed();
         try
 		{
 			Thread.sleep(100);
@@ -77,9 +75,7 @@ public class RobotTemplate extends IterativeRobot
     // YOU'D BETTER NOT CHANGE ANYTHING
    
     public void autonomousPeriodic()
-    {
-        Watchdog.getInstance().feed();
-        
+    {   
         try
 		{
 			Thread.sleep(100);
@@ -93,9 +89,7 @@ public class RobotTemplate extends IterativeRobot
     // DO YOU REALLY WANT TO MODIFY YOUR SOUL?
    
     public void teleopPeriodic()
-    {
-        Watchdog.getInstance().feed();
-        
+    {        
         global._listenerManager.tick();
     }
 }

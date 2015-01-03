@@ -1,20 +1,21 @@
 package org.team3128.hardware.encoder;
 
-import edu.wpi.first.wpilibj.AnalogChannel;
+import edu.wpi.first.wpilibj.AnalogInput;
+
 
 public class MagneticPotentiometerEncoder implements IEncoder {
-    private AnalogChannel enc;
+    private AnalogInput enc;
     private final double offset;
    
     public MagneticPotentiometerEncoder(int a, int b)
     {
-        enc = new AnalogChannel(a + b);
+        enc = new AnalogInput(a + b);
         this.offset = 0;
     }
    
     public MagneticPotentiometerEncoder(double offset, int a, int b)
     {
-        enc = new AnalogChannel(a + b);
+        enc = new AnalogInput(a + b);
         this.offset = offset;
     }
    
