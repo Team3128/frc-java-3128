@@ -53,7 +53,6 @@ public class Global
 	RelayLink _camLights;
 	public ListenerManager _listenerManager;
 	ArcadeDrive _arcadeDrive;
-//_swerveDrive(new SwerveDrive(_gyr, _rotFR, _rotFL, _rotBk, _drvFR, _drvFL, _drvBk, _listenerManager))
 	
 	public Global()
 	{

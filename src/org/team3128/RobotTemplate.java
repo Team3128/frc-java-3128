@@ -91,6 +91,15 @@ public class RobotTemplate extends IterativeRobot
     public void teleopPeriodic()
     {        
         global._listenerManager.tick();
+        
+        try
+		{
+			Thread.sleep(20);
+		}
+        catch (InterruptedException e)
+		{
+			return;
+		}
     }
 }
 
