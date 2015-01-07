@@ -162,15 +162,22 @@ public class ListenerManager
 		//read button values
 		for(int counter = Listenable.ADOWN.ordinal(); counter <= Listenable.R3DOWN.ordinal() ; counter++)
 		{
-			buttonValues.put(Listenable.values()[counter], _joystick.getRawButton(counter));
+			Listenable currentListenable = Listenable.values()[counter];
+			boolean buttonValue = _joystick.getRawButton(currentListenable.controlNumber);
+			Log.debug("ListenerManager", "button number " + currentListenable.controlNumber + " is " + (buttonValue ? "pressed" : "not pressed"));
+			
+			buttonValues.put(currentListenable, buttonValue);
 		}
 		
 		//read joystick values
 		//NOTE: these may change when we move from the emulator to the actual robot.
 		//if you're reading this after 2015 season, well, I guess we forgot to remove this comment
+		
+		//2015 Jamie here -- they did change, past me
 		for(int counter = Listenable.JOY1X.ordinal(); counter <= Listenable.JOY2Y.ordinal(); counter++)
 		{
-			joystickValues.put(Listenable.values()[counter], _joystick.getRawAxis(counter - 9));
+			Listenable currentListenable = Listenable.values()[counter];
+			joystickValues.put(currentListenable, _joystick.getRawAxis(currentListenable.controlNumber));
 		}
 		
 		_controlValuesMutex.unlock();
@@ -210,12 +217,15 @@ public class ListenerManager
 					}
 
 				}
+			}
+			for(int counter = Listenable.AUP.ordinal(); counter <= Listenable.R3UP.ordinal() ; counter++)
+			{
+				Listenable currentListenable = Listenable.values()[counter];
 				//has this button just stopped being pressed?
 				if((_buttonValues.get(currentListenable)) && (!newValues.left.get(currentListenable)))
 				{
 					//get all its registered listeners
-					//increment counter by 20 to get button up listeners
-					Collection<IListenerCallback> foundListeners = _listeners.get(Listenable.values()[counter + 15]);
+					Collection<IListenerCallback> foundListeners = _listeners.get(currentListenable);
 
 					if(!foundListeners.isEmpty())
 					{
@@ -228,6 +238,7 @@ public class ListenerManager
 
 				}
 			}
+
 
 			//loop through joystick values
 			for(int counter = Listenable.JOY1X.ordinal(); counter <= Listenable.JOY2Y.ordinal() ; counter++)
