@@ -217,15 +217,14 @@ public class ListenerManager
 					}
 
 				}
-			}
-			for(int counter = Listenable.AUP.ordinal(); counter <= Listenable.R3UP.ordinal() ; counter++)
-			{
-				Listenable currentListenable = Listenable.values()[counter];
+
+				//loop through button up values
+				Listenable oppositeListenable = Listenable.values()[currentListenable.oppositeButtonOrdinal];
 				//has this button just stopped being pressed?
 				if((_buttonValues.get(currentListenable)) && (!newValues.left.get(currentListenable)))
 				{
 					//get all its registered listeners
-					Collection<IListenerCallback> foundListeners = _listeners.get(currentListenable);
+					Collection<IListenerCallback> foundListeners = _listeners.get(oppositeListenable);
 
 					if(!foundListeners.isEmpty())
 					{
