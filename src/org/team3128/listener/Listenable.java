@@ -26,9 +26,10 @@ public enum Listenable
 		STARTUP(8, true, 8),
 		L3UP(9, true, 9),
 		R3UP(10, true, 10),
-		JOY1X(1, false, 0),
-		JOY1Y(2, false, 0), 
-		TRIGGERS(3, false, 0),
+		JOY1X(0, false, 0),
+		JOY1Y(1, false, 0),
+		TRIGGERL(2, false, 0),
+		TRIGGERR(3, false, 0),
 		JOY2X(4, false, 0),
 		JOY2Y(5, false, 0);
 		

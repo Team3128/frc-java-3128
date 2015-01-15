@@ -32,6 +32,16 @@ public class Options
      */
     public byte _tachI2CAddress;
     
+    /**
+     * constant for holonomic turning speed
+     */
+    public double _turningSpeedConstant;
+    
+    /**
+     * constant for holonomic gliding speed
+     */
+    public double _glidingSpeedConstant;
+    
     private static Options _instance;
     
     public static Options instance()
@@ -51,10 +61,14 @@ public class Options
     	
     	_armEnabled = false;
     	
-    	_controllerPort = 1;
+    	_controllerPort = 0;
     	
     	_motorControlUpdateFrequency = 75;
     	
     	_tachI2CAddress = (byte) 0b10101110;
+    	
+    	_turningSpeedConstant = .4;
+    	
+    	_glidingSpeedConstant = .5/Math.sqrt(2);
     }
 }

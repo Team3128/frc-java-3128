@@ -38,7 +38,7 @@ public class ListenerManager
 	
 	//maps the listeners to the control inputs
 	Multimap<Listenable, IListenerCallback> _listeners;
-
+	
 	//wpilib object which represents a controller
 	Joystick _joystick;
 
@@ -164,11 +164,10 @@ public class ListenerManager
 		{
 			Listenable currentListenable = Listenable.values()[counter];
 			boolean buttonValue = _joystick.getRawButton(currentListenable.controlNumber);
-			Log.debug("ListenerManager", "button number " + currentListenable.controlNumber + " is " + (buttonValue ? "pressed" : "not pressed"));
 			
 			buttonValues.put(currentListenable, buttonValue);
 		}
-		
+				
 		//read joystick values
 		//NOTE: these may change when we move from the emulator to the actual robot.
 		//if you're reading this after 2015 season, well, I guess we forgot to remove this comment
@@ -177,9 +176,10 @@ public class ListenerManager
 		for(int counter = Listenable.JOY1X.ordinal(); counter <= Listenable.JOY2Y.ordinal(); counter++)
 		{
 			Listenable currentListenable = Listenable.values()[counter];
-			joystickValues.put(currentListenable, _joystick.getRawAxis(currentListenable.controlNumber));
+			//round to 3 decimal places
+			joystickValues.put(currentListenable, Math.round(_joystick.getRawAxis(currentListenable.controlNumber) * 1000.0) / 1000.0);
 		}
-		
+				
 		_controlValuesMutex.unlock();
 		
 		return new Pair<EnumMap<Listenable, Boolean>, EnumMap<Listenable, Double>>(buttonValues, joystickValues);
@@ -244,7 +244,7 @@ public class ListenerManager
 			{
 				Listenable currentListenable = Listenable.values()[counter];
 				//has this particular value changed?
-				if(_joystickValues.get(currentListenable) != newValues.right.get(currentListenable))
+				if(Math.abs(_joystickValues.get(currentListenable) - newValues.right.get(currentListenable)) > .001)
 				{
 					//get all its registered listeners
 					Collection<IListenerCallback> foundListeners = _listeners.get(currentListenable);
