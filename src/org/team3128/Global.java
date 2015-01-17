@@ -38,10 +38,14 @@ public class Global
 	{	
 		_listenerManager = new ListenerManager(new Joystick(Options.instance()._controllerPort));
 		
-		_motorLeftFront = new MotorLink(new Talon(1));
-		_motorLeftBack = new MotorLink(new Talon(4));
-		_motorRightFront = new MotorLink(new Talon(2));
-		_motorRightBack = new MotorLink(new Talon(3));
+		_motorLeftFront = new MotorLink();
+		_motorLeftFront.addControlledMotor(new Talon(1));
+		_motorLeftBack = new MotorLink();
+		_motorLeftBack.addControlledMotor(new Talon(4));
+		_motorRightFront = new MotorLink();
+		_motorRightFront.addControlledMotor(new Talon(2));
+		_motorRightBack = new MotorLink();
+		_motorRightBack.addControlledMotor(new Talon(3));
 		
 		//_drive = new HolonomicDrive(_motorLeftFront, _motorLeftBack, _motorRightFront, _motorRightBack, _listenerManager);
 		

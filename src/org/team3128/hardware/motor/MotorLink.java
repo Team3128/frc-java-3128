@@ -63,6 +63,12 @@ public class MotorLink {
     	}
     	
     }
+    
+    public void addControlledMotor(SpeedController controller)
+    {
+    	motors.add(controller);
+    }
+    
     public void setSpeed(double pow)
     {
         if(this.spdControl != null && spdControl.isRunning())
