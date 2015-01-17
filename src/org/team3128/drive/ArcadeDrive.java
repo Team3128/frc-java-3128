@@ -47,11 +47,11 @@ public class ArcadeDrive
     {
     	//read joystick values
     	double x1 = _listenerManager.getRawDouble(Listenable.JOY1X);
-    	x1 = Math.abs(x1) > thresh ? x1 : 0.0;
+    	x1 = Math.abs(x1) > thresh ? Math.tanh(x1) : 0.0;
     	
     	
     	double y1 = _listenerManager.getRawDouble(Listenable.JOY1Y);
-    	y1 = Math.abs(y1) > thresh ? y1 : 0.0;
+    	y1 = Math.abs(y1) > thresh ? Math.tanh(y1) : 0.0;
 
     	_spdR = (y1 + x1) / 2;
     	_spdL = (y1 - x1) / 2;
