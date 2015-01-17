@@ -1,11 +1,11 @@
-package org.team3128.hardware.misc;
+package org.team3128.hardware.encoder.velocity;
 
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.team3128.Options;
 import edu.wpi.first.wpilibj.I2C;
 
-public class TachLink
+public class TachLink implements IVelocityEncoder
 {
 	private static I2C _tachConnection;
 	
@@ -43,7 +43,7 @@ public class TachLink
 	 * 
 	 * Time-wise, this is a relatively expensive operation, so don't call this function unnecessarily.
 	 */
-	public int getRaw()
+	public short getRaw()
 	{
 		_tachConnMutex.lock();
 		
@@ -53,8 +53,9 @@ public class TachLink
 		//read raw value
 		byte[] result = new byte[4];
 		_tachConnection.transaction(new byte[0], 0, result, 4);
-		int rawValue = 0;
+		short rawValue = 0;
 		
+		//combine 4 bytes to make a short
 		for(int counter = 0; counter < 4; ++counter)
 		{
 			rawValue |= result[3 - counter] << counter;
@@ -70,7 +71,8 @@ public class TachLink
 	 * 
 	 * Time-wise, this is a relatively expensive operation, so don't call this function unnecessarily.
 	 */
-	public int getRPM()
+	@Override
+	public double getSpeedInRPM()
 	{
 		int rawValue = getRaw();
 		

@@ -1,32 +1,68 @@
 package org.team3128.hardware.motor;
 
-import org.team3128.Log;
-import org.team3128.hardware.encoder.IEncoder;
+import java.util.ArrayList;
 
-import edu.wpi.first.wpilibj.Talon;
+import org.team3128.Log;
+
+import edu.wpi.first.wpilibj.SpeedController;
 
 /**
- * MotorLink is the class used in this code to represent a motor.
- * It can operate with or without an encoder and with several
+ * MotorLink is the class used in this code to represent a motor or several linked ones.
+ * It can operate with several
  * different varieties of motor control or none at all.
  */
 public class MotorLink {
-    private final Talon talon;
-    private IEncoder encoder;
+    private final ArrayList<SpeedController> motors = new ArrayList<SpeedController>();
     private MotorControl spdControl;
     private boolean motorReversed = false;
     private double speedScalar = 1;
 
-    public MotorLink(Talon talon) {this.talon = talon;}
-    public MotorLink(Talon talon, double powscl) {this(talon); this.speedScalar = powscl;}
-    public MotorLink(Talon talon, IEncoder enc) {this(talon); this.encoder = enc;}
-    public MotorLink(Talon talon, IEncoder enc, double powscl) {this(talon, enc); this.speedScalar = powscl;}
-    public MotorLink(Talon talon, IEncoder enc, MotorControl spd) {this(talon, enc); this.spdControl = spd;}
-    public MotorLink(Talon talon, IEncoder enc, MotorControl spd, double powscl) {this(talon, enc, spd); this.speedScalar = powscl;}
+    public MotorLink()
+    {
+    	
+    }
+    
+    public MotorLink(double powscl)
+    {
+    	this.speedScalar = powscl;
+    }
+    
+    public MotorLink(MotorControl spd)
+    {
+    	this.spdControl = spd;
+    }
+    
+    public MotorLink(MotorControl spd, double powscl)
+    {
+    	this.speedScalar = powscl;
+    	this.spdControl = spd;
+    }
 
-    public void reverseMotor() {motorReversed = !motorReversed;}
-    public void setSpeedScalar(double powScl) {this.speedScalar = powScl;}
-    protected void setInternalSpeed(double pow) {talon.set(pow * speedScalar * (motorReversed ? -1.0 : 1.0));}
+    public void reverseMotor()
+    {
+    	motorReversed = !motorReversed;
+    }
+    
+    public void setSpeedScalar(double powScl)
+    {
+    	this.speedScalar = powScl;
+    }
+    
+    public double getSpeedScalar(double powScl)
+    {
+    	return this.speedScalar;
+    }
+    
+    protected void setInternalSpeed(double pow)
+    {
+    	double powToSet = pow * speedScalar * (motorReversed ? -1.0 : 1.0);
+    	
+    	for(SpeedController motor : motors)
+    	{
+    		motor.set(powToSet);
+    	}
+    	
+    }
     public void setSpeed(double pow)
     {
         if(this.spdControl != null && spdControl.isRunning())
@@ -36,12 +72,9 @@ public class MotorLink {
         }
         setInternalSpeed(pow);
     }
-    public void setEncoder(IEncoder enc) {
-        if (this.encoder != null)
-            Log.unusual("MotorLink", "The encoder has been changed when one already existed.");
-        this.encoder = enc;
-    }
-    public void setSpeedController(MotorControl spdControl) {
+    
+    public void setSpeedController(MotorControl spdControl)
+    {
         if(this.spdControl != null && this.spdControl.isRunning()) 
         {
             this.spdControl.shutDown();
@@ -49,17 +82,6 @@ public class MotorLink {
         }
         
         this.spdControl = spdControl;
-    }
-
-    public double getSpeedScalar(double powScl) {return this.speedScalar;}
-    public double getSpeed() {return talon.get();}
-    public double getEncoderAngle() {
-        if (encoder == null) {
-            Log.recoverable("MotorLink", "Something attempted to get the encoder value, but no encoder exists.");
-            return -1;
-        }        
-        
-        return encoder.getAngle();
     }
 
     public void setControlTarget(double target) {
@@ -76,11 +98,15 @@ public class MotorLink {
         this.spdControl.setControlTarget(target);
     }
 
-    public boolean speedControlRunning()
+    public boolean isSpeedControlRunning()
     {
     	return spdControl.isRunning();
     }
-    public void setSpeedControlTarget(double target) {this.spdControl.setControlTarget(target);}
+    
+    public void setSpeedControlTarget(double target)
+    {
+    	this.spdControl.setControlTarget(target);
+    }
 
     public void startControl(double target)
     {

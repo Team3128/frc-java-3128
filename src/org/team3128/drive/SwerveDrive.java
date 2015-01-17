@@ -1,5 +1,6 @@
 package org.team3128.drive;
 
+import org.team3128.hardware.encoder.angular.IAngularEncoder;
 import org.team3128.hardware.motor.MotorLink;
 import org.team3128.listener.Listenable;
 import org.team3128.listener.ListenerManager;
@@ -30,6 +31,10 @@ public class SwerveDrive
     MotorLink _drvFL;
 
     MotorLink _drvBk;
+    
+    IAngularEncoder frontREncoder;
+    IAngularEncoder frontLEncoder;
+    IAngularEncoder backEncoder;
 
     ListenerManager _listenerManager;
 
@@ -54,13 +59,13 @@ public class SwerveDrive
 	final static int epsilon = 4;
 	private void initSwerve()
 	{
-		while(!(_rotFL.getEncoderAngle() < epsilon &&
-	               _rotFR.getEncoderAngle() < epsilon &&
-	               _rotBk.getEncoderAngle() < epsilon))
+		while(!(frontLEncoder.getAngle() < epsilon &&
+				frontREncoder.getAngle() < epsilon &&
+				backEncoder.getAngle() < epsilon))
 		{
-			_rotFL.setSpeed(_rotFL.getEncoderAngle() < epsilon ? 0 : .5);
-			_rotFR.setSpeed(_rotFR.getEncoderAngle() < epsilon ? 0 : .5);
-			_rotBk.setSpeed(_rotBk.getEncoderAngle() < epsilon ? 0 : .5);
+			_rotFL.setSpeed(frontLEncoder.getAngle() < epsilon ? 0 : .5);
+			_rotFR.setSpeed(frontREncoder.getAngle() < epsilon ? 0 : .5);
+			_rotBk.setSpeed(backEncoder.getAngle() < epsilon ? 0 : .5);
 			try
 			{
 				Thread.sleep(10);
@@ -71,16 +76,19 @@ public class SwerveDrive
 		}
 	}
 
-	public SwerveDrive(Gyro gyr, MotorLink rotFR, MotorLink rotFL, MotorLink rotBk, MotorLink drvFR, MotorLink drvFL, MotorLink drvBk, ListenerManager listenerManager)
+	public SwerveDrive(Gyro gyr, MotorLink rotFR, IAngularEncoder encFR, MotorLink rotFL, IAngularEncoder encFL, MotorLink rotBk, IAngularEncoder encBk, MotorLink drvFR, MotorLink drvFL, MotorLink drvBk, ListenerManager listenerManager)
 	{
 	    _gyr = gyr;
 
 	    _rotFR = rotFR;
-
+	    frontREncoder = encFR;
+	    
 	    _rotFL = rotFL;
-
+	    frontLEncoder = encFL;
+	    
 	    _rotBk = rotBk;
-
+	    backEncoder = encBk;
+	    
 	    _drvFR = drvFR;
 
 	    _drvFL = drvFL;
@@ -127,9 +135,9 @@ public class SwerveDrive
 	    spdR = Math.sqrt(Math.pow(xVel + (rot * yPosR), 2) + Math.pow(yVel - (rot * xPosR), 2));
 	    angR = RobotMath.rTD(Math.atan2(yVel + (rot * xPosR), xVel - (rot * yPosR)));
 
-	    Pair<Double, Double> r = optimizeSwerve(_rotFR.getEncoderAngle(), angR, spdR);
-	    Pair<Double, Double> l = optimizeSwerve(_rotFL.getEncoderAngle(), angL, spdL);
-	    Pair<Double, Double> b = optimizeSwerve(_rotBk.getEncoderAngle(), angB, spdB);
+	    Pair<Double, Double> r = optimizeSwerve(frontLEncoder.getAngle(), angR, spdR);
+	    Pair<Double, Double> l = optimizeSwerve(frontREncoder.getAngle(), angL, spdL);
+	    Pair<Double, Double> b = optimizeSwerve(backEncoder.getAngle(), angB, spdB);
 
 	    _rotFR.setControlTarget(r.left +(x1 == 0 && x2 != 0 ? 0.1 : 0));
 	    _rotFL.setControlTarget(l.left +(x1 == 0 && x2 != 0 ? 0.1 : 0));

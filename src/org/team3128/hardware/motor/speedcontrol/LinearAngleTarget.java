@@ -1,5 +1,6 @@
 package org.team3128.hardware.motor.speedcontrol;
 
+import org.team3128.hardware.encoder.angular.IAngularEncoder;
 import org.team3128.hardware.motor.MotorControl;
 import org.team3128.util.RobotMath;
 
@@ -12,30 +13,49 @@ public class LinearAngleTarget extends MotorControl
 {
     private double minSpeed;
     private double targetAngle, threshold;
+    private IAngularEncoder _encoder;
 
-    public LinearAngleTarget(double minSpeed, double threshold) {
-        if (!RobotMath.isValidPower(minSpeed)) {
+    /**
+     * 
+     * @param minSpeed
+     * @param threshold acceptable error in degrees
+     * @param encoder
+     */
+    public LinearAngleTarget(double minSpeed, double threshold, IAngularEncoder encoder)
+    {
+        if (!RobotMath.isValidPower(minSpeed))
+        {
             throw new IllegalArgumentException("The minimum power is incorrect!");
         }
+        
         this.minSpeed = Math.abs(minSpeed);
         this.threshold = threshold;
+        _encoder = encoder;
     }
 
+    /**
+     * sets degree value to move to
+     */
     public void setControlTarget(double val)
     {
         targetLock.lock();
-        this.targetAngle = (val % 180 == 0 ? this.targetAngle : val);
+        this.targetAngle = val;
         targetLock.unlock();
     }
 
     public double speedControlStep(double dt)
     {
-        double error = RobotMath.angleDistance(this.getLinkedEncoderAngle(), this.targetAngle);
+    	double angle = _encoder.getAngle();
+        double error = RobotMath.angleDistance(angle, this.targetAngle);
         double sgn = RobotMath.sgn(error);
         double pGain = sgn*(Math.abs(error))*((1-this.minSpeed)/90.0)+this.minSpeed;
-        pGain = (Math.abs(pGain) > this.minSpeed ? pGain : RobotMath.getMotorDirToTarget(this.getLinkedEncoderAngle(), this.targetAngle).getIntDir() * this.minSpeed);
+        pGain = (Math.abs(pGain) > this.minSpeed ? pGain : RobotMath.getMotorDirToTarget(angle, this.targetAngle).getIntDir() * this.minSpeed);
        
-        if(Math.abs(error) < threshold) {return 0;}
+        if(Math.abs(error) < threshold)
+        {
+        	return 0;
+        }
+        
         return pGain;
     }
 
@@ -46,7 +66,7 @@ public class LinearAngleTarget extends MotorControl
      */
     public boolean isComplete()
     {
-        double x =  Math.abs(RobotMath.angleDistance(this.getLinkedEncoderAngle(), this.targetAngle));
+        double x =  Math.abs(RobotMath.angleDistance(_encoder.getAngle(), this.targetAngle));
         return x < threshold;
     }
     

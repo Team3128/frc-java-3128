@@ -1,5 +1,6 @@
 package org.team3128.util;
 
+
 /**
 *
 * @author Noah Sutton-Smolin
@@ -119,6 +120,12 @@ public class RobotMath {
    }
    
    public static final double SQUARE_ROOT_TWO = Math.sqrt(2.0);
+   
+   public static double getMotorExpectedRPM(double power)
+   {
+	   //5310 is the max RPM at full power
+	   return 5310 * power;
+   }
 
    private RobotMath() {}
 }
