@@ -1,6 +1,7 @@
 package org.team3128;
 
 import org.team3128.drive.ArcadeDrive;
+import org.team3128.hardware.encoder.AnalogPotentiometerEncoder;
 import org.team3128.hardware.misc.TachLink;
 import org.team3128.hardware.motor.MotorLink;
 import org.team3128.listener.IListenerCallback;
@@ -21,14 +22,12 @@ import edu.wpi.first.wpilibj.Talon;
 public class Global
 {
 	public ListenerManager _listenerManager;
-	
 	public MotorLink _motorLeftFront;
-
 	public MotorLink _motorLeftBack;
-
 	public MotorLink _motorRightFront;
-
 	public MotorLink _motorRightBack;
+	public AnalogPotentiometerEncoder _testPot;
+	
 	
 	//public HolonomicDrive _drive;
 	
@@ -44,7 +43,7 @@ public class Global
 		_motorRightBack = new MotorLink(new Talon(3));
 		
 		//_drive = new HolonomicDrive(_motorLeftFront, _motorLeftBack, _motorRightFront, _motorRightBack, _listenerManager);
-		
+		_testPot = new AnalogPotentiometerEncoder(2);
 		_drive = new ArcadeDrive(_listenerManager);
 		
 		_drive.addLeftMotor(_motorLeftFront);
@@ -71,12 +70,14 @@ public class Global
 	{
 		new Thread(() -> AutoConfig.initialize(this), "AutoConfig").start();
 	}
-
+	
 	void initializeTeleop()
 	{
 		IListenerCallback updateDrive = () -> _drive.steer();
+		IListenerCallback printPot = () -> _testPot.printVal();
 		_listenerManager.addListener(Listenable.JOY1X, updateDrive);
 		_listenerManager.addListener(Listenable.JOY1Y, updateDrive);
-		_listenerManager.addListener(Listenable.JOY2Y, updateDrive);
+		_listenerManager.addListener(Listenable.JOY2Y, updateDrive); 
+		_listenerManager.addListener(Listenable.ALWAYS, printPot);
 	}
 }

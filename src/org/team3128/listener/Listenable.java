@@ -31,7 +31,8 @@ public enum Listenable
 		TRIGGERL(2, false, 0),
 		TRIGGERR(3, false, 0),
 		JOY2X(4, false, 0),
-		JOY2Y(5, false, 0);
+		JOY2Y(5, false, 0),
+		ALWAYS(0, false, 0);
 		
 		public boolean isUp;
 		

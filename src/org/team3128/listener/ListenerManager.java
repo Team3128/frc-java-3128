@@ -191,99 +191,107 @@ public class ListenerManager
 	public void tick()
 	{
 		Pair<EnumMap<Listenable, Boolean>, EnumMap<Listenable, Double>> newValues = pollControls();
+		Set<IListenerCallback> listenersToInvoke = new HashSet<IListenerCallback>();
+		
+		//add ALWAYS listenable
+		Collection<IListenerCallback> foundAlwaysListeners = _listeners.get(Listenable.ALWAYS);
 
-		//test if values have changed
-		if((newValues.left != _buttonValues) || (newValues.right != _joystickValues))
+		if(!foundAlwaysListeners.isEmpty())
 		{
-			Set<IListenerCallback> listenersToInvoke = new HashSet<IListenerCallback>();
-
-			//loop through button values
-			for(int counter = Listenable.ADOWN.ordinal(); counter <= Listenable.R3DOWN.ordinal() ; counter++)
+			//loop through them
+			for(IListenerCallback callback : foundAlwaysListeners)
 			{
-				Listenable currentListenable = Listenable.values()[counter];
-				//has this button been pressed?
-				if((!_buttonValues.get(currentListenable)) && (newValues.left.get(currentListenable)))
-				{
-					//get all its registered listeners
-					Collection<IListenerCallback> foundListeners = _listeners.get(Listenable.values()[counter]);
-
-					if(!foundListeners.isEmpty())
-					{
-						//loop through them
-						for(IListenerCallback callback : foundListeners)
-						{
-							listenersToInvoke.add(callback);
-						}
-					}
-
-				}
-
-				//loop through button up values
-				Listenable oppositeListenable = Listenable.values()[currentListenable.oppositeButtonOrdinal];
-				//has this button just stopped being pressed?
-				if((_buttonValues.get(currentListenable)) && (!newValues.left.get(currentListenable)))
-				{
-					//get all its registered listeners
-					Collection<IListenerCallback> foundListeners = _listeners.get(oppositeListenable);
-
-					if(!foundListeners.isEmpty())
-					{
-						//loop through them
-						for(IListenerCallback callback : foundListeners)
-						{
-							listenersToInvoke.add(callback);
-						}
-					}
-
-				}
-			}
-
-
-			//loop through joystick values
-			for(int counter = Listenable.JOY1X.ordinal(); counter <= Listenable.JOY2Y.ordinal() ; counter++)
-			{
-				Listenable currentListenable = Listenable.values()[counter];
-				//has this particular value changed?
-				if(Math.abs(_joystickValues.get(currentListenable) - newValues.right.get(currentListenable)) > .001)
-				{
-					//get all its registered listeners
-					Collection<IListenerCallback> foundListeners = _listeners.get(currentListenable);
-
-					if(!foundListeners.isEmpty())
-					{
-						//loop through them
-						for(IListenerCallback callback : foundListeners)
-						{
-							listenersToInvoke.add(callback);
-						}
-					}
-
-				}
-			}
-
-
-			//update class variables to match new data
-			{
-				_controlValuesMutex.lock();
-				_buttonValues = newValues.left;
-				_joystickValues = newValues.right;
-				_controlValuesMutex.unlock();
-			}
-
-			//invoke handlers
-			for(IListenerCallback listener: listenersToInvoke)
-			{
-				try
-				{
-					listener.listenerCallback();
-				}
-				catch(RuntimeException error)
-				{
-					Log.recoverable("ListenerManager", "Caught a " + error.toString() + " from a control listener: " + error.getMessage());
-					error.printStackTrace();
-				}
+				listenersToInvoke.add(callback);
 			}
 		}
+
+		//loop through button values
+		for(int counter = Listenable.ADOWN.ordinal(); counter <= Listenable.R3DOWN.ordinal() ; counter++)
+		{
+			Listenable currentListenable = Listenable.values()[counter];
+			//has this button been pressed?
+			if((!_buttonValues.get(currentListenable)) && (newValues.left.get(currentListenable)))
+			{
+				//get all its registered listeners
+				Collection<IListenerCallback> foundListeners = _listeners.get(Listenable.values()[counter]);
+
+				if(!foundListeners.isEmpty())
+				{
+					//loop through them
+					for(IListenerCallback callback : foundListeners)
+					{
+						listenersToInvoke.add(callback);
+					}
+				}
+
+			}
+
+			//loop through button up values
+			Listenable oppositeListenable = Listenable.values()[currentListenable.oppositeButtonOrdinal];
+			//has this button just stopped being pressed?
+			if((_buttonValues.get(currentListenable)) && (!newValues.left.get(currentListenable)))
+			{
+				//get all its registered listeners
+				Collection<IListenerCallback> foundListeners = _listeners.get(oppositeListenable);
+
+				if(!foundListeners.isEmpty())
+				{
+					//loop through them
+					for(IListenerCallback callback : foundListeners)
+					{
+						listenersToInvoke.add(callback);
+					}
+				}
+
+			}
+		}
+
+
+		//loop through joystick values
+		for(int counter = Listenable.JOY1X.ordinal(); counter <= Listenable.JOY2Y.ordinal() ; counter++)
+		{
+			Listenable currentListenable = Listenable.values()[counter];
+			//has this particular value changed?
+			if(Math.abs(_joystickValues.get(currentListenable) - newValues.right.get(currentListenable)) > .001)
+			{
+				//get all its registered listeners
+				Collection<IListenerCallback> foundListeners = _listeners.get(currentListenable);
+
+				if(!foundListeners.isEmpty())
+				{
+					//loop through them
+					for(IListenerCallback callback : foundListeners)
+					{
+						listenersToInvoke.add(callback);
+					}
+				}
+
+			}
+		}
+
+
+		//update class variables to match new data
+		{
+			_controlValuesMutex.lock();
+			_buttonValues = newValues.left;
+			_joystickValues = newValues.right;
+			_controlValuesMutex.unlock();
+		}
+
+		//invoke handlers
+		for(IListenerCallback listener: listenersToInvoke)
+		{
+			try
+			{
+				listener.listenerCallback();
+			}
+			catch(RuntimeException error)
+			{
+				Log.recoverable("ListenerManager", "Caught a " + error.toString() + " from a control listener: " + error.getMessage());
+				error.printStackTrace();
+			}
+		}
+		
 	}
 
 }
