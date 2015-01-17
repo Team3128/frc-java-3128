@@ -22,11 +22,11 @@ public class Global
 {
 	public ListenerManager _listenerManager;
 	
-	public MotorLink _motorLeftFront;
+	public MotorLink leftMotors;
 
 	public MotorLink _motorLeftBack;
 
-	public MotorLink _motorRightFront;
+	public MotorLink rightMotors;
 
 	public MotorLink _motorRightBack;
 	
@@ -38,23 +38,16 @@ public class Global
 	{	
 		_listenerManager = new ListenerManager(new Joystick(Options.instance()._controllerPort));
 		
-		_motorLeftFront = new MotorLink();
-		_motorLeftFront.addControlledMotor(new Talon(1));
-		_motorLeftBack = new MotorLink();
-		_motorLeftBack.addControlledMotor(new Talon(4));
-		_motorRightFront = new MotorLink();
-		_motorRightFront.addControlledMotor(new Talon(2));
-		_motorRightBack = new MotorLink();
-		_motorRightBack.addControlledMotor(new Talon(3));
+		leftMotors = new MotorLink();
+		leftMotors.addControlledMotor(new Talon(1));
+		leftMotors.addControlledMotor(new Talon(4));
+		rightMotors = new MotorLink();
+		rightMotors.addControlledMotor(new Talon(2));
+		rightMotors.addControlledMotor(new Talon(3));
 		
 		//_drive = new HolonomicDrive(_motorLeftFront, _motorLeftBack, _motorRightFront, _motorRightBack, _listenerManager);
 		
-		_drive = new ArcadeDrive(_listenerManager);
-		
-		_drive.addLeftMotor(_motorLeftFront);
-		_drive.addLeftMotor(_motorLeftBack);
-		_drive.addRightMotor(_motorRightFront);
-		_drive.addRightMotor(_motorRightBack);
+		_drive = new ArcadeDrive(leftMotors, rightMotors, _listenerManager);
 
 	}
 

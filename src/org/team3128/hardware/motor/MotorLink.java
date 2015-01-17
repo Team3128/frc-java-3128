@@ -69,16 +69,6 @@ public class MotorLink {
     	motors.add(controller);
     }
     
-    public void setSpeed(double pow)
-    {
-        if(this.spdControl != null && spdControl.isRunning())
-        {
-            this.spdControl.shutDown();
-            Log.unusual("MotorLink", "The motor power was set from outside the speed controller, so the controller was canceled.");
-        }
-        setInternalSpeed(pow);
-    }
-    
     public void setSpeedController(MotorControl spdControl)
     {
         if(this.spdControl != null && this.spdControl.isRunning()) 
@@ -90,10 +80,15 @@ public class MotorLink {
         this.spdControl = spdControl;
     }
 
-    public void setControlTarget(double target) {
-        if (this.spdControl == null) {
-            Log.recoverable("MotorLink", "The speed controller's target was set, but none exists.");
-            return;
+    /**
+     * Sets the controller target, or the speed directly if there is no controller
+     * @param target
+     */
+    public void setControlTarget(double target)
+    {
+        if (this.spdControl == null)
+        {
+        	 setInternalSpeed(target);
         }
         if(!spdControl.isRunning())
         {

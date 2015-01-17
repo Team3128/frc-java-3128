@@ -52,9 +52,9 @@ public class HolonomicDrive
     	_spdLF = (joyY + joyX) + 1.2*joyTurn;
     	_spdRB = (joyY + joyX) - joyTurn;
 
-    	_driveLeftFront.setSpeed(_spdLF);
-    	_driveLeftBack.setSpeed(_spdLB);
-    	_driveRightFront.setSpeed(_spdRF);
-    	_driveRightBack.setSpeed(_spdRB);
+    	_driveLeftFront.setControlTarget(_spdLF);
+    	_driveLeftBack.setControlTarget(_spdLB);
+    	_driveRightFront.setControlTarget(_spdRF);
+    	_driveRightBack.setControlTarget(_spdRB);
     }
 }

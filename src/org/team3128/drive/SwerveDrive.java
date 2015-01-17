@@ -63,9 +63,9 @@ public class SwerveDrive
 				frontREncoder.getAngle() < epsilon &&
 				backEncoder.getAngle() < epsilon))
 		{
-			_rotFL.setSpeed(frontLEncoder.getAngle() < epsilon ? 0 : .5);
-			_rotFR.setSpeed(frontREncoder.getAngle() < epsilon ? 0 : .5);
-			_rotBk.setSpeed(backEncoder.getAngle() < epsilon ? 0 : .5);
+			_rotFL.setControlTarget(frontLEncoder.getAngle() < epsilon ? 0 : .5);
+			_rotFR.setControlTarget(frontREncoder.getAngle() < epsilon ? 0 : .5);
+			_rotBk.setControlTarget(backEncoder.getAngle() < epsilon ? 0 : .5);
 			try
 			{
 				Thread.sleep(10);
@@ -150,9 +150,9 @@ public class SwerveDrive
 	        l.right /= scl;
 	        b.right /= scl;
 	    }
-	    _drvFR.setSpeed(r.right);
-	    _drvFL.setSpeed(-l.right);
-	    _drvBk.setSpeed(b.right);
+	    _drvFR.setControlTarget(r.right);
+	    _drvFL.setControlTarget(-l.right);
+	    _drvBk.setControlTarget(b.right);
 	}
 
 

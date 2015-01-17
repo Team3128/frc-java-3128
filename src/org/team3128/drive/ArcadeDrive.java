@@ -1,7 +1,5 @@
 package org.team3128.drive;
 
-import java.util.ArrayList;
-
 import org.team3128.hardware.motor.MotorLink;
 import org.team3128.listener.Listenable;
 import org.team3128.listener.ListenerManager;
@@ -10,35 +8,17 @@ public class ArcadeDrive
 {
     double _spdL, _spdR;
 
-    ArrayList<MotorLink> _leftMotors;
-
-    ArrayList<MotorLink> _rightMotors;
+    MotorLink _leftMotors;
+    
+    MotorLink _rightMotors;
 
     ListenerManager _listenerManager;
     
-    public ArcadeDrive(ListenerManager listenerManager)
+    public ArcadeDrive(MotorLink leftMotors, MotorLink rightMotors, ListenerManager listenerManager)
     {
-    	_leftMotors = new ArrayList<MotorLink>();
-    	_rightMotors = new ArrayList<MotorLink>();
+    	_leftMotors = leftMotors;
+    	_rightMotors = rightMotors;
     	_listenerManager = listenerManager;
-    }
-    
-    /**
-     * Add a motor on the left side to be controlled
-     * @param motor
-     */
-    public void addLeftMotor(MotorLink motor)
-    {
-    	_leftMotors.add(motor);
-    }
-    
-    /**
-     * Add a motor on the right side to be controlled
-     * @param motor
-     */
-    public void addRightMotor(MotorLink motor)
-    {
-    	_rightMotors.add(motor);
     }
     
 	//threshold below which joystick movements are ignored.
@@ -56,14 +36,7 @@ public class ArcadeDrive
     	_spdR = (y1 + x1) / 2;
     	_spdL = (y1 - x1) / 2;
 
-    	for(MotorLink motor : _leftMotors)
-    	{
-    		motor.setSpeed(_spdL);
-    	}
-    	
-    	for(MotorLink motor : _rightMotors)
-    	{
-    		motor.setSpeed(_spdR);
-    	}
+    	_leftMotors.setControlTarget(_spdL);
+    	_rightMotors.setControlTarget(_spdR);
     }
 }
