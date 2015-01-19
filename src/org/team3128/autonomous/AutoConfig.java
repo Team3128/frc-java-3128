@@ -1,6 +1,9 @@
-package org.team3128;
+package org.team3128.autonomous;
 
 import java.time.Instant;
+
+import org.team3128.Global;
+import org.team3128.Log;
 
 public class AutoConfig
 {

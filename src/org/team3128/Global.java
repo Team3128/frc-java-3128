@@ -1,5 +1,6 @@
 package org.team3128;
 
+import org.team3128.autonomous.AutoConfig;
 import org.team3128.drive.ArcadeDrive;
 import org.team3128.hardware.encoder.velocity.TachLink;
 import org.team3128.hardware.motor.MotorLink;
