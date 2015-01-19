@@ -78,7 +78,5 @@ public class Global
 		_listenerManager.addListener(Listenable.JOY1X, updateDrive);
 		_listenerManager.addListener(Listenable.JOY1Y, updateDrive);
 		_listenerManager.addListener(Listenable.JOY2Y, updateDrive); 
-		_listenerManager.addListener(Listenable.ALWAYS, _testPot.printPot);
-		_listenerManager.addListener(Listenable.ADOWN, _testPot.zeroPot);
 	}
 }
