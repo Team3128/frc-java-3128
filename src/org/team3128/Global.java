@@ -43,7 +43,7 @@ public class Global
 		_motorRightBack = new MotorLink(new Talon(3));
 		
 		//_drive = new HolonomicDrive(_motorLeftFront, _motorLeftBack, _motorRightFront, _motorRightBack, _listenerManager);
-		_testPot = new AnalogPotentiometerEncoder(2);
+		_testPot = new AnalogPotentiometerEncoder(0);
 		_drive = new ArcadeDrive(_listenerManager);
 		
 		_drive.addLeftMotor(_motorLeftFront);
@@ -74,10 +74,11 @@ public class Global
 	void initializeTeleop()
 	{
 		IListenerCallback updateDrive = () -> _drive.steer();
-		IListenerCallback printPot = () -> _testPot.printVal();
+		
 		_listenerManager.addListener(Listenable.JOY1X, updateDrive);
 		_listenerManager.addListener(Listenable.JOY1Y, updateDrive);
 		_listenerManager.addListener(Listenable.JOY2Y, updateDrive); 
-		_listenerManager.addListener(Listenable.ALWAYS, printPot);
+		_listenerManager.addListener(Listenable.ALWAYS, _testPot.printPot);
+		_listenerManager.addListener(Listenable.ADOWN, _testPot.zeroPot);
 	}
 }
