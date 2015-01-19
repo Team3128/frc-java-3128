@@ -1,9 +1,9 @@
-package org.team3128.hardware.encoder;
+package org.team3128.hardware.encoder.angular;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 
 
-public class MagneticPotentiometerEncoder implements IEncoder {
+public class MagneticPotentiometerEncoder implements IAngularEncoder {
     private AnalogInput enc;
     private final double offset;
    

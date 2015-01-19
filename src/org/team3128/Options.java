@@ -42,6 +42,27 @@ public class Options
      */
     public double _glidingSpeedConstant;
     
+    /**
+     * circumfrence of wheels in cm
+     */
+    public double _wheelCircumfrence;
+    
+    /**
+     * centimeters moved per wheel degree
+     */
+    public double _cmMovedPerDegree;
+    
+    /**
+     * degrees moved per wheel centimeter
+     */
+    public double _degreesPercm;
+    
+    /**
+     * horizontal distance between wheels in cm
+     */
+    public double _wheelBase;
+    
+    
     private static Options _instance;
     
     public static Options instance()
@@ -65,10 +86,20 @@ public class Options
     	
     	_motorControlUpdateFrequency = 75;
     	
-    	_tachI2CAddress = (byte) 0b10101110;
+    	_tachI2CAddress = (byte) 0b11111110;
     	
     	_turningSpeedConstant = .4;
     	
     	_glidingSpeedConstant = .5/Math.sqrt(2);
+    	
+    	//FIXME not yet measured
+    	_wheelCircumfrence = 5;
+    	
+    	_cmMovedPerDegree = _wheelCircumfrence / 360;
+    	
+    	_degreesPercm = 360 / _wheelCircumfrence;
+    	
+    	//FIXME not yet measured
+    	_wheelBase = 40;
     }
 }

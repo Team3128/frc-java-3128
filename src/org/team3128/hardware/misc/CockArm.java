@@ -33,11 +33,11 @@ public class CockArm
 
         	if(!_shooterTSensor.get()) //touch sensor pressed
         	{
-        		_mShooter.setSpeed(-1.0);
+        		_mShooter.setControlTarget(-1.0);
         	}
         	else
         	{
-        		_mShooter.setSpeed(0);
+        		_mShooter.setControlTarget(0);
         	}
 
     	}

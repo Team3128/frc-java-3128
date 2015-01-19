@@ -3,28 +3,33 @@ package org.team3128.hardware.motor.speedcontrol;
 import org.team3128.hardware.encoder.velocity.IVelocityEncoder;
 import org.team3128.hardware.motor.MotorControl;
 import org.team3128.util.RobotMath;
+import org.team3128.util.VelocityPID;
 
 /**
  * Used for computing a target power with a linear shift.
  *
  * @author Noah Sutton-Smolin
  */
-public class LinearSpeedTarget extends MotorControl
+public class PIDSpeedTarget extends MotorControl
 {
     private double tgtSpeed;
     
     private IVelocityEncoder _encoder;
+    
+    private VelocityPID _pidCalculator;
 
     /**
      *
      * @param tgtSpeed    target speed in rpm
      * @param refreshTime speed update rate in msec
      */
-    public LinearSpeedTarget(double tgtSpeed, int refreshTime, IVelocityEncoder encoder)
+    public PIDSpeedTarget(double tgtSpeed, int refreshTime, IVelocityEncoder encoder, double kP, double kI, double kD)
     {
         this.tgtSpeed = tgtSpeed;
         _refreshTime = refreshTime;
         _encoder = encoder;
+        _pidCalculator = new VelocityPID(kP, kI, kD);
+        _pidCalculator.setDesiredVelocity(RobotMath.getMotorExpectedRPM(tgtSpeed));
     }
    
     /**
@@ -32,10 +37,11 @@ public class LinearSpeedTarget extends MotorControl
      *
      * @param tgtSpeed target speed in rpm
      */
-    public LinearSpeedTarget(double tgtSpeed, IVelocityEncoder encoder)
+    public PIDSpeedTarget(double tgtSpeed, IVelocityEncoder encoder, VelocityPID pidCalc)
     {
         this.tgtSpeed = tgtSpeed;
         _encoder = encoder;
+        _pidCalculator = pidCalc;
     }
    
     public void setControlTarget(double d)
@@ -47,9 +53,9 @@ public class LinearSpeedTarget extends MotorControl
 
     public double speedControlStep(double dt)
     {
-        double speed = _encoder.getSpeedInRPM();
+        _pidCalculator.update(_encoder.getSpeedInRPM());
 
-        return RobotMath.makeValidPower(tgtSpeed * (speed / RobotMath.getMotorExpectedRPM(tgtSpeed)));
+        return RobotMath.makeValidPower(tgtSpeed + _pidCalculator.getOutputAddition());
     }
 
     /**

@@ -3,15 +3,13 @@ package org.team3128.listener;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.team3128.Log;
 import org.team3128.util.Pair;
-
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
+import org.team3128.util.SynchronizedMultimap;
 
 import edu.wpi.first.wpilibj.Joystick;
 
@@ -37,7 +35,7 @@ public class ListenerManager
 	ReentrantLock _controlValuesMutex;
 	
 	//maps the listeners to the control inputs
-	Multimap<Listenable, IListenerCallback> _listeners;
+	SynchronizedMultimap<Listenable, IListenerCallback> _listeners;
 	
 	//wpilib object which represents a controller
 	Joystick _joystick;
@@ -51,7 +49,7 @@ public class ListenerManager
 	public ListenerManager(Joystick joystick)
 	{
 		_controlValuesMutex = new ReentrantLock();
-		_listeners = Multimaps.synchronizedListMultimap(ArrayListMultimap.<Listenable, IListenerCallback>create());
+		_listeners = new SynchronizedMultimap<Listenable, IListenerCallback>();
         _joystick = joystick;
         
         Pair<EnumMap<Listenable, Boolean>, EnumMap<Listenable, Double>> controlValues = pollControls();

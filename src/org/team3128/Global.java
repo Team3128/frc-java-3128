@@ -1,8 +1,8 @@
 package org.team3128;
 
+import org.team3128.autonomous.AutoConfig;
 import org.team3128.drive.ArcadeDrive;
-import org.team3128.hardware.encoder.AnalogPotentiometerEncoder;
-import org.team3128.hardware.misc.TachLink;
+import org.team3128.hardware.encoder.velocity.TachLink;
 import org.team3128.hardware.motor.MotorLink;
 import org.team3128.listener.IListenerCallback;
 import org.team3128.listener.Listenable;
@@ -22,9 +22,9 @@ import edu.wpi.first.wpilibj.Talon;
 public class Global
 {
 	public ListenerManager _listenerManager;
-	public MotorLink _motorLeftFront;
+	public MotorLink leftMotors;
 	public MotorLink _motorLeftBack;
-	public MotorLink _motorRightFront;
+	public MotorLink rightMotors;
 	public MotorLink _motorRightBack;
 	public AnalogPotentiometerEncoder _testPot;
 	
@@ -37,19 +37,16 @@ public class Global
 	{	
 		_listenerManager = new ListenerManager(new Joystick(Options.instance()._controllerPort));
 		
-		_motorLeftFront = new MotorLink(new Talon(1));
-		_motorLeftBack = new MotorLink(new Talon(4));
-		_motorRightFront = new MotorLink(new Talon(2));
-		_motorRightBack = new MotorLink(new Talon(3));
+		leftMotors = new MotorLink();
+		leftMotors.addControlledMotor(new Talon(1));
+		leftMotors.addControlledMotor(new Talon(4));
+		rightMotors = new MotorLink();
+		rightMotors.addControlledMotor(new Talon(2));
+		rightMotors.addControlledMotor(new Talon(3));
 		
 		//_drive = new HolonomicDrive(_motorLeftFront, _motorLeftBack, _motorRightFront, _motorRightBack, _listenerManager);
 		_testPot = new AnalogPotentiometerEncoder(0);
-		_drive = new ArcadeDrive(_listenerManager);
-		
-		_drive.addLeftMotor(_motorLeftFront);
-		_drive.addLeftMotor(_motorLeftBack);
-		_drive.addRightMotor(_motorRightFront);
-		_drive.addRightMotor(_motorRightBack);
+		_drive = new ArcadeDrive(leftMotors, rightMotors, _listenerManager);
 
 	}
 

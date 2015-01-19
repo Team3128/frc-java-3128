@@ -18,7 +18,7 @@ public class VelocityPID
 	
 	double storedVelocityAddition;
 	
-	public VelocityPID(double Pconstant, double Iconstant, double Dconstant, int iValuesToKeep)
+	public VelocityPID(double Pconstant, double Iconstant, double Dconstant)
 	{
 		Kp = Pconstant;
 		Ki = Iconstant;

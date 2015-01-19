@@ -18,6 +18,8 @@ public abstract class MotorControl
 	private MotorLink controlledMotor = null;
 	private Thread thread;
 	
+	protected int _refreshTime = Options.instance()._motorControlUpdateFrequency;
+	
 	protected ReentrantLock targetLock;
 	
 	public MotorControl()
@@ -58,24 +60,6 @@ public abstract class MotorControl
    public final long getLastRuntimeDist()
    {
 	   return System.currentTimeMillis() - lastRuntime;
-   }
-
-   /**
-    *
-    * @return the encoder value of the controlled motor
-    */
-   public double getLinkedEncoderAngle()
-   {
-	   return this.controlledMotor.getEncoderAngle();
-   }
-
-   /**
-    *
-    * @return the linked motor's speed
-    */
-   public double getLinkedMotorSpeed()
-   {
-	   return this.controlledMotor.getSpeed();
    }
 
    public final void run() 

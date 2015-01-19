@@ -1,5 +1,6 @@
 package org.team3128.util;
 
+
 /**
 *
 * @author Noah Sutton-Smolin
@@ -36,6 +37,12 @@ public class RobotMath {
    }
 
    public static double sgn(double n)
+   {
+       return Math.abs(n) / n;
+   
+   }
+   
+   public static int sgn(int n)
    {
        return Math.abs(n) / n;
    }
@@ -119,6 +126,29 @@ public class RobotMath {
    }
    
    public static final double SQUARE_ROOT_TWO = Math.sqrt(2.0);
+   
+   public static double getMotorExpectedRPM(double power)
+   {
+	   //5310 is the max RPM at full power
+	   return 5310 * power;
+   }
+   
+   /**
+    * 
+    * @param toFloor
+    * @return An integer whose value is the same as or less than one lower than the argument.
+    * Throws if the argument is too large to be an int.
+    */
+   public static int floor_double_int(double toFloor)
+   {
+	   double floored = Math.floor(toFloor);
+	   if(toFloor > Integer.MAX_VALUE)
+	   {
+		   throw new IllegalArgumentException("The provided double is too large to be an int");
+	   }
+	   
+	   return (int)floored;
+   }
 
    private RobotMath() {}
 }

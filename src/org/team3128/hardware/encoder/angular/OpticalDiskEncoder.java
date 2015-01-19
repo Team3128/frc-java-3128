@@ -1,4 +1,4 @@
-package org.team3128.hardware.encoder;
+package org.team3128.hardware.encoder.angular;
 
 //DISABLED DUE TO LACK OF EMULATOR SUPPORT AND NO DEMAND
 //COMING SOON
