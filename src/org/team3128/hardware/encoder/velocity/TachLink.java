@@ -3,6 +3,7 @@ package org.team3128.hardware.encoder.velocity;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.team3128.Options;
+
 import edu.wpi.first.wpilibj.I2C;
 
 public class TachLink implements IVelocityEncoder
