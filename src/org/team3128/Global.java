@@ -3,11 +3,15 @@ package org.team3128;
 import org.team3128.autonomous.AutoConfig;
 import org.team3128.drive.ArcadeDrive;
 import org.team3128.hardware.encoder.angular.AnalogPotentiometerEncoder;
+import org.team3128.hardware.encoder.angular.MagneticPotentiometerEncoder;
+import org.team3128.hardware.encoder.velocity.AngleVelEncoder;
 import org.team3128.hardware.encoder.velocity.TachLink;
 import org.team3128.hardware.motor.MotorLink;
+import org.team3128.hardware.motor.speedcontrol.PIDSpeedTarget;
 import org.team3128.listener.IListenerCallback;
 import org.team3128.listener.Listenable;
 import org.team3128.listener.ListenerManager;
+import org.team3128.util.VelocityPID;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Talon;
@@ -23,11 +27,15 @@ import edu.wpi.first.wpilibj.Talon;
 public class Global
 {
 	public ListenerManager _listenerManager;
+	
+	public MotorLink _pidTestMotor;
+	
 	public MotorLink leftMotors;
 	public MotorLink _motorLeftBack;
 	public MotorLink rightMotors;
 	public MotorLink _motorRightBack;
 	public AnalogPotentiometerEncoder _testPot;
+	public AngleVelEncoder _testVelEncoder;
 	
 	
 	//public HolonomicDrive _drive;
@@ -44,6 +52,10 @@ public class Global
 		rightMotors = new MotorLink();
 		rightMotors.addControlledMotor(new Talon(2));
 		rightMotors.addControlledMotor(new Talon(3));
+		
+		_testVelEncoder = new AngleVelEncoder(new MagneticPotentiometerEncoder(3), 300);
+		_pidTestMotor = new MotorLink(new PIDSpeedTarget(0, _testVelEncoder , new VelocityPID(15, 0, 0)));
+		_pidTestMotor.addControlledMotor(new Talon(0));
 		
 		//_drive = new HolonomicDrive(_motorLeftFront, _motorLeftBack, _motorRightFront, _motorRightBack, _listenerManager);
 		_testPot = new AnalogPotentiometerEncoder(0);
@@ -75,6 +87,18 @@ public class Global
 		
 		_listenerManager.addListener(Listenable.JOY1X, updateDrive);
 		_listenerManager.addListener(Listenable.JOY1Y, updateDrive);
-		_listenerManager.addListener(Listenable.JOY2Y, updateDrive); 
+		//_listenerManager.addListener(Listenable.JOY2Y, updateDrive); 
+		
+//		_listenerManager.addListener(Listenable.ALWAYS, () ->
+//		{
+//			Log.debug("Global", "Velocity encoder RPM: " + _testVelEncoder.getSpeedInRPM());
+//		});
+//		
+		_listenerManager.addListener(Listenable.JOY2Y, () -> 
+		{
+			double speed = _listenerManager.getRawDouble(Listenable.JOY2Y);
+			speed = speed > .1 ? speed * 25.0 : 0;
+			_pidTestMotor.setControlTarget(speed);
+		});
 	}
 }

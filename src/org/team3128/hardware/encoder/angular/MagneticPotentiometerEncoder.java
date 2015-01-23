@@ -7,15 +7,15 @@ public class MagneticPotentiometerEncoder implements IAngularEncoder {
     private AnalogInput enc;
     private final double offset;
    
-    public MagneticPotentiometerEncoder(int a, int b)
+    public MagneticPotentiometerEncoder(int port)
     {
-        enc = new AnalogInput(a + b);
+        enc = new AnalogInput(port);
         this.offset = 0;
     }
    
-    public MagneticPotentiometerEncoder(double offset, int a, int b)
+    public MagneticPotentiometerEncoder(double offset, int port)
     {
-        enc = new AnalogInput(a + b);
+        enc = new AnalogInput(port);
         this.offset = offset;
     }
    

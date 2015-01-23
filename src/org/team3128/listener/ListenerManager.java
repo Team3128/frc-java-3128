@@ -193,7 +193,7 @@ public class ListenerManager
 		//add ALWAYS listenable
 		Collection<IListenerCallback> foundAlwaysListeners = _listeners.get(Listenable.ALWAYS);
 
-		if(!foundAlwaysListeners.isEmpty())
+		if(foundAlwaysListeners != null && !foundAlwaysListeners.isEmpty())
 		{
 			//loop through them
 			for(IListenerCallback callback : foundAlwaysListeners)
