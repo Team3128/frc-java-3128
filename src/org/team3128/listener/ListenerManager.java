@@ -212,7 +212,7 @@ public class ListenerManager
 				//get all its registered listeners
 				Collection<IListenerCallback> foundListeners = _listeners.get(Listenable.values()[counter]);
 
-				if(!foundListeners.isEmpty())
+				if(foundListeners != null && !foundListeners.isEmpty())
 				{
 					//loop through them
 					for(IListenerCallback callback : foundListeners)
@@ -231,7 +231,7 @@ public class ListenerManager
 				//get all its registered listeners
 				Collection<IListenerCallback> foundListeners = _listeners.get(oppositeListenable);
 
-				if(!foundListeners.isEmpty())
+				if(foundListeners != null && !foundListeners.isEmpty())
 				{
 					//loop through them
 					for(IListenerCallback callback : foundListeners)
@@ -254,7 +254,7 @@ public class ListenerManager
 				//get all its registered listeners
 				Collection<IListenerCallback> foundListeners = _listeners.get(currentListenable);
 
-				if(!foundListeners.isEmpty())
+				if(foundListeners != null && !foundListeners.isEmpty())
 				{
 					//loop through them
 					for(IListenerCallback callback : foundListeners)

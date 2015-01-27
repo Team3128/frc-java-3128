@@ -2,6 +2,7 @@ package org.team3128;
 
 import org.team3128.autonomous.AutoConfig;
 import org.team3128.drive.ArcadeDrive;
+import org.team3128.hardware.encoder.angular.AnalogPotentiometerEncoder;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
 import org.team3128.hardware.encoder.velocity.TachLink;
 import org.team3128.hardware.motor.MotorLink;
@@ -12,6 +13,7 @@ import org.team3128.listener.ListenerManager;
 import org.team3128.util.VelocityPID;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Talon;
 
 /**
@@ -29,10 +31,14 @@ public class Global
 	public MotorLink _pidTestMotor;
 	
 	public MotorLink leftMotors;
-	public MotorLink _motorLeftBack;
 	public MotorLink rightMotors;
-	public MotorLink _motorRightBack;
 	public QuadratureEncoderLink _testEncoder;
+	
+	public AnalogPotentiometerEncoder testAngleEncoder;
+	
+	public Servo testServo;
+	
+	public int testServoCount = 0;
 	
 	
 	//public HolonomicDrive _drive;
@@ -53,6 +59,9 @@ public class Global
 		_testEncoder = new QuadratureEncoderLink(4,	3, 128);
 		_pidTestMotor = new MotorLink(new PIDSpeedTarget(0, _testEncoder , new VelocityPID(15, 0, 0)));
 		_pidTestMotor.addControlledMotor(new Talon(0));
+		
+		testAngleEncoder = new AnalogPotentiometerEncoder(0);
+		testServo = new Servo(5);
 		
 		_drive = new ArcadeDrive(leftMotors, rightMotors, _listenerManager);
 
@@ -85,7 +94,18 @@ public class Global
 		
 		_listenerManager.addListener(Listenable.ALWAYS, () ->
 		{
-			Log.debug("Global", "Quadrature encoder RPM: " + _testEncoder.getSpeedInRPM());
+			try {
+				Thread.sleep(100);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			testServo.setAngle(++testServoCount);
+			Log.debug("Global", "Servo set to " + testServoCount);
+			if(testServoCount == 165)
+			{
+				testServoCount = 15;
+			}
 		});
 		
 //		_listenerManager.addListener(Listenable.JOY2Y, () -> 
