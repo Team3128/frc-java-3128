@@ -86,9 +86,10 @@ public class MotorLink {
      */
     public void setControlTarget(double target)
     {
-        if (this.spdControl == null)
+        if(spdControl == null)
         {
         	 setInternalSpeed(target);
+        	 return;
         }
         if(!spdControl.isRunning())
         {

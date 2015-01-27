@@ -133,6 +133,13 @@ public class RobotMath {
 	   return 5310 * power;
    }
    
+   public static double getEstMotorPowerForRPM(double rpm)
+   {
+	   
+	   //5310 is the max RPM at full power
+	   return rpm / 5310;
+   }
+   
    /**
     * 
     * @param toFloor

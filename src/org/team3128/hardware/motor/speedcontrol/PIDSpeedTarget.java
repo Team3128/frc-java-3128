@@ -1,5 +1,6 @@
 package org.team3128.hardware.motor.speedcontrol;
 
+import org.team3128.Log;
 import org.team3128.hardware.encoder.velocity.IVelocityEncoder;
 import org.team3128.hardware.motor.MotorControl;
 import org.team3128.util.RobotMath;
@@ -17,6 +18,8 @@ public class PIDSpeedTarget extends MotorControl
     private IVelocityEncoder _encoder;
     
     private VelocityPID _pidCalculator;
+    
+    protected double calculatedSpeed;
 
     /**
      *
@@ -26,10 +29,11 @@ public class PIDSpeedTarget extends MotorControl
     public PIDSpeedTarget(double tgtSpeed, int refreshTime, IVelocityEncoder encoder, double kP, double kI, double kD)
     {
         this.tgtSpeed = tgtSpeed;
+        calculatedSpeed = tgtSpeed;
         _refreshTime = refreshTime;
         _encoder = encoder;
         _pidCalculator = new VelocityPID(kP, kI, kD);
-        _pidCalculator.setDesiredVelocity(RobotMath.getMotorExpectedRPM(tgtSpeed));
+        _pidCalculator.setDesiredVelocity(tgtSpeed);
     }
    
     /**
@@ -48,14 +52,28 @@ public class PIDSpeedTarget extends MotorControl
     {
         targetLock.lock();
     	tgtSpeed = d;
+    	calculatedSpeed = d;
+    	_pidCalculator.setDesiredVelocity(d);
+    	
         targetLock.unlock();
     }
 
     public double speedControlStep(double dt)
     {
-        _pidCalculator.update(_encoder.getSpeedInRPM());
-
-        return RobotMath.makeValidPower(tgtSpeed + _pidCalculator.getOutputAddition());
+    	
+    	double speed = -1 * _encoder.getSpeedInRPM();
+    	if(Math.abs(speed) < 5.0)
+    	{
+    		speed = 0;
+    	}
+        _pidCalculator.update(speed);
+        
+        
+        Log.debug("PIDSpeedTarget", "Target: " + tgtSpeed + " Speed: " + speed + " Current: " + calculatedSpeed + " Output: " + RobotMath.getEstMotorPowerForRPM(calculatedSpeed + _pidCalculator.getOutputAddition()));
+        
+        calculatedSpeed += _pidCalculator.getOutputAddition();
+        
+        return RobotMath.makeValidPower(RobotMath.getEstMotorPowerForRPM(calculatedSpeed));
     }
 
     /**
@@ -72,9 +90,7 @@ public class PIDSpeedTarget extends MotorControl
    
     public void clearControlRun()
     {
-        targetLock.lock();
-    	this.tgtSpeed = 0;
-        targetLock.unlock();
+        setControlTarget(0);
     }
 
     public boolean isComplete()

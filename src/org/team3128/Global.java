@@ -2,7 +2,6 @@ package org.team3128;
 
 import org.team3128.autonomous.AutoConfig;
 import org.team3128.drive.ArcadeDrive;
-import org.team3128.hardware.encoder.angular.AnalogPotentiometerEncoder;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
 import org.team3128.hardware.encoder.velocity.TachLink;
 import org.team3128.hardware.motor.MotorLink;
@@ -13,7 +12,6 @@ import org.team3128.listener.ListenerManager;
 import org.team3128.util.VelocityPID;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Talon;
 
 /**
@@ -34,15 +32,6 @@ public class Global
 	public MotorLink rightMotors;
 	public QuadratureEncoderLink _testEncoder;
 	
-	public AnalogPotentiometerEncoder testAngleEncoder;
-	
-	public Servo testServo;
-	
-	public int testServoCount = 0;
-	
-	
-	//public HolonomicDrive _drive;
-	
 	public ArcadeDrive _drive;
 	
 	public Global()
@@ -56,12 +45,10 @@ public class Global
 		rightMotors.addControlledMotor(new Talon(2));
 		rightMotors.addControlledMotor(new Talon(3));
 		
-		_testEncoder = new QuadratureEncoderLink(4,	3, 128);
-		_pidTestMotor = new MotorLink(new PIDSpeedTarget(0, _testEncoder , new VelocityPID(15, 0, 0)));
+		_testEncoder = new QuadratureEncoderLink(1,	0, 128);
+		_pidTestMotor = new MotorLink(new PIDSpeedTarget(0, _testEncoder , new VelocityPID(.1, 0, 0)));
 		_pidTestMotor.addControlledMotor(new Talon(0));
-		
-		testAngleEncoder = new AnalogPotentiometerEncoder(0);
-		testServo = new Servo(5);
+		_pidTestMotor.startControl(0);
 		
 		_drive = new ArcadeDrive(leftMotors, rightMotors, _listenerManager);
 
@@ -92,27 +79,13 @@ public class Global
 		_listenerManager.addListener(Listenable.JOY1X, updateDrive);
 		_listenerManager.addListener(Listenable.JOY1Y, updateDrive);
 		
-		_listenerManager.addListener(Listenable.ALWAYS, () ->
-		{
-			try {
-				Thread.sleep(100);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			testServo.setAngle(++testServoCount);
-			Log.debug("Global", "Servo set to " + testServoCount);
-			if(testServoCount == 165)
-			{
-				testServoCount = 15;
-			}
-		});
 		
-//		_listenerManager.addListener(Listenable.JOY2Y, () -> 
-//		{
-//			double speed = _listenerManager.getRawDouble(Listenable.JOY2Y);
-//			speed = speed > .1 ? speed * 25.0 : 0;
-//			_pidTestMotor.setControlTarget(speed);
-//		});
+		_listenerManager.addListener(Listenable.JOY2Y, () -> 
+		{
+			double speed = _listenerManager.getRawDouble(Listenable.JOY2Y);
+			speed = Math.abs(speed) > .1 ? speed * 2000.0 : 0;
+			//Log.debug("Global", "Motor velocity in RPM: " + _testEncoder.getSpeedInRPM() );
+			_pidTestMotor.setControlTarget(speed);
+		});
 	}
 }
