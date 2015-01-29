@@ -11,6 +11,7 @@ import org.team3128.listener.control.Always;
 import org.team3128.listener.control.Axis;
 import org.team3128.listener.control.Button;
 import org.team3128.listener.control.IControl;
+import org.team3128.listener.controller.ControllerType;
 import org.team3128.util.Pair;
 import org.team3128.util.SynchronizedMultimap;
 
@@ -51,11 +52,12 @@ public class ListenerManager
 	
 	
 	//construct from existing Joystick
-	public ListenerManager(Joystick joystick)
+	public ListenerManager(Joystick joystick, ControllerType controlType)
 	{
 		_controlValuesMutex = new ReentrantLock();
 		_listeners = new SynchronizedMultimap<IControl, IListenerCallback>();
         _joystick = joystick;
+        _controlType = controlType;
         
         Pair<HashMap<Button, Boolean>, HashMap<Axis, Double>> controlValues = pollControls();
         
@@ -129,7 +131,7 @@ public class ListenerManager
 		_controlValuesMutex.lock();
 
 		//read button values
-		for(int counter = 0; counter <= _controlType.getMaxButtonValue() ; counter++)
+		for(int counter = 1; counter <= _controlType.getMaxButtonValue() ; counter++)
 		{
 			boolean buttonValue = _joystick.getRawButton(counter);
 			

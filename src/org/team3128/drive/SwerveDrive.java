@@ -2,8 +2,8 @@ package org.team3128.drive;
 
 import org.team3128.hardware.encoder.angular.IAngularEncoder;
 import org.team3128.hardware.motor.MotorLink;
-import org.team3128.listener.ListenableXbox;
 import org.team3128.listener.ListenerManager;
+import org.team3128.listener.controller.ControllerXbox;
 import org.team3128.util.Pair;
 import org.team3128.util.RobotMath;
 
@@ -103,13 +103,13 @@ public class SwerveDrive
 	{
 	    double thresh = 0.2;
 
-	    double x1 = _listenerManager.getRawDouble(ListenableXbox.JOY1X);
+	    double x1 = _listenerManager.getRawAxis(ControllerXbox.JOY1X);
 	    x1 = Math.abs(x1) > thresh ? x1 : 0.0;
 	    
-	    double y1 = _listenerManager.getRawDouble(ListenableXbox.JOY1Y);
+	    double y1 = _listenerManager.getRawAxis(ControllerXbox.JOY1Y);
 	    y1 = Math.abs(y1) > thresh ? -y1 : 0.0;
 	   
-	    double x2 = _listenerManager.getRawDouble(ListenableXbox.JOY2X);
+	    double x2 = _listenerManager.getRawAxis(ControllerXbox.JOY2X);
 	    x2 = Math.abs(x2) > thresh ? x2 : 0.0;
 	    
 

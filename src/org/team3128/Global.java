@@ -7,8 +7,8 @@ import org.team3128.hardware.encoder.velocity.TachLink;
 import org.team3128.hardware.motor.MotorLink;
 import org.team3128.hardware.motor.speedcontrol.PIDSpeedTarget;
 import org.team3128.listener.IListenerCallback;
-import org.team3128.listener.ListenableXbox;
 import org.team3128.listener.ListenerManager;
+import org.team3128.listener.controller.ControllerXbox;
 import org.team3128.util.VelocityPID;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -49,7 +49,7 @@ public class Global
 	
 	public Global()
 	{	
-		_listenerManager = new ListenerManager(new Joystick(Options.instance()._controllerPort));
+		_listenerManager = new ListenerManager(new Joystick(Options.instance()._controllerPort), ControllerXbox.instance);
 		
 		leftDriveEncoder = new QuadratureEncoderLink(0,	1, 128);
 		rightDriveEncoder = new QuadratureEncoderLink(3, 4, 128);
@@ -106,8 +106,8 @@ public class Global
 	{
 		IListenerCallback updateDrive = () -> _drive.steer();
 		
-		_listenerManager.addListener(ListenableXbox.JOY1X, updateDrive);
-		_listenerManager.addListener(ListenableXbox.JOY1Y, updateDrive);
+		_listenerManager.addListener(ControllerXbox.JOY1X, updateDrive);
+		_listenerManager.addListener(ControllerXbox.JOY1Y, updateDrive);
 		
 	}
 }
