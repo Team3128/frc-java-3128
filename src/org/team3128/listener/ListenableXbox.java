@@ -4,7 +4,7 @@ package org.team3128.listener;
  * Enum which represents everything that can be read from the controller
  * @author Jamie
  */
-public enum Listenable
+public enum ListenableXbox
 {
 		ADOWN(1, false, 11),
 		BDOWN(2, false, 12),
@@ -40,7 +40,7 @@ public enum Listenable
 		
 		int oppositeButtonOrdinal;
 		
-		Listenable(int number, boolean up, int oppositeOrdinal)
+		ListenableXbox(int number, boolean up, int oppositeOrdinal)
 		{
 			controlNumber = number;
 			isUp = up;

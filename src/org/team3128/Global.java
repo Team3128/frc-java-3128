@@ -7,11 +7,12 @@ import org.team3128.hardware.encoder.velocity.TachLink;
 import org.team3128.hardware.motor.MotorLink;
 import org.team3128.hardware.motor.speedcontrol.PIDSpeedTarget;
 import org.team3128.listener.IListenerCallback;
-import org.team3128.listener.Listenable;
+import org.team3128.listener.ListenableXbox;
 import org.team3128.listener.ListenerManager;
 import org.team3128.util.VelocityPID;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Talon;
 
 /**
@@ -30,7 +31,19 @@ public class Global
 	
 	public MotorLink leftMotors;
 	public MotorLink rightMotors;
-	public QuadratureEncoderLink _testEncoder;
+	public QuadratureEncoderLink leftDriveEncoder;
+	public QuadratureEncoderLink rightDriveEncoder;
+	
+	public MotorLink armTurnMotor;
+	
+	public MotorLink armJointMotor;
+	
+	Servo leftArmBrakeServo;
+	Servo rightArmBrakeServo;
+	
+	public MotorLink frontHookMotor;
+	
+	public MotorLink clawGrabMotor;
 	
 	public ArcadeDrive _drive;
 	
@@ -38,18 +51,35 @@ public class Global
 	{	
 		_listenerManager = new ListenerManager(new Joystick(Options.instance()._controllerPort));
 		
-		leftMotors = new MotorLink();
+		leftDriveEncoder = new QuadratureEncoderLink(0,	1, 128);
+		rightDriveEncoder = new QuadratureEncoderLink(3, 4, 128);
+		
+		leftMotors = new MotorLink(new PIDSpeedTarget(0, leftDriveEncoder, new VelocityPID(.1, 0, 0)));
 		leftMotors.addControlledMotor(new Talon(1));
-		leftMotors.addControlledMotor(new Talon(4));
-		rightMotors = new MotorLink();
-		rightMotors.addControlledMotor(new Talon(2));
+		leftMotors.addControlledMotor(new Talon(2));
+		leftMotors.startControl(0);
+		
+		
+		rightMotors = new MotorLink(new PIDSpeedTarget(0, rightDriveEncoder, new VelocityPID(.1, 0, 0)));
 		rightMotors.addControlledMotor(new Talon(3));
+		rightMotors.addControlledMotor(new Talon(4));
+		rightMotors.startControl(0);
 		
-		_testEncoder = new QuadratureEncoderLink(1,	0, 128);
-		_pidTestMotor = new MotorLink(new PIDSpeedTarget(0, _testEncoder , new VelocityPID(.1, 0, 0)));
-		_pidTestMotor.addControlledMotor(new Talon(0));
-		_pidTestMotor.startControl(0);
+		armTurnMotor = new MotorLink();
+		armTurnMotor.addControlledMotor(new Talon(6));
 		
+		armJointMotor = new MotorLink();
+		armJointMotor.addControlledMotor(new Talon(5));
+		
+		frontHookMotor = new MotorLink();
+		frontHookMotor.addControlledMotor(new Talon(7));
+		
+		clawGrabMotor = new MotorLink();
+		clawGrabMotor.addControlledMotor(new Talon(8));
+		
+		leftArmBrakeServo = new Servo(9);
+		rightArmBrakeServo = new Servo(0);
+
 		_drive = new ArcadeDrive(leftMotors, rightMotors, _listenerManager);
 
 	}
@@ -76,16 +106,8 @@ public class Global
 	{
 		IListenerCallback updateDrive = () -> _drive.steer();
 		
-		_listenerManager.addListener(Listenable.JOY1X, updateDrive);
-		_listenerManager.addListener(Listenable.JOY1Y, updateDrive);
+		_listenerManager.addListener(ListenableXbox.JOY1X, updateDrive);
+		_listenerManager.addListener(ListenableXbox.JOY1Y, updateDrive);
 		
-		
-		_listenerManager.addListener(Listenable.JOY2Y, () -> 
-		{
-			double speed = _listenerManager.getRawDouble(Listenable.JOY2Y);
-			speed = Math.abs(speed) > .1 ? speed * 2000.0 : 0;
-			//Log.debug("Global", "Motor velocity in RPM: " + _testEncoder.getSpeedInRPM() );
-			_pidTestMotor.setControlTarget(speed);
-		});
 	}
 }

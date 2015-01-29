@@ -1,12 +1,16 @@
 package org.team3128.listener;
 
 import java.util.Collection;
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.team3128.Log;
+import org.team3128.listener.control.Always;
+import org.team3128.listener.control.Axis;
+import org.team3128.listener.control.Button;
+import org.team3128.listener.control.IControl;
 import org.team3128.util.Pair;
 import org.team3128.util.SynchronizedMultimap;
 
@@ -34,24 +38,26 @@ public class ListenerManager
 	ReentrantLock _controlValuesMutex;
 	
 	//maps the listeners to the control inputs
-	SynchronizedMultimap<Listenable, IListenerCallback> _listeners;
+	SynchronizedMultimap<IControl, IListenerCallback> _listeners;
 	
 	//wpilib object which represents a controller
 	Joystick _joystick;
 
-	EnumMap<Listenable, Double> _joystickValues;
+	HashMap<Axis, Double> _joystickValues;
 
-	EnumMap<Listenable, Boolean> _buttonValues;
+	HashMap<Button, Boolean> _buttonValues;
+	
+	ControllerType _controlType;
 	
 	
 	//construct from existing Joystick
 	public ListenerManager(Joystick joystick)
 	{
 		_controlValuesMutex = new ReentrantLock();
-		_listeners = new SynchronizedMultimap<Listenable, IListenerCallback>();
+		_listeners = new SynchronizedMultimap<IControl, IListenerCallback>();
         _joystick = joystick;
         
-        Pair<EnumMap<Listenable, Boolean>, EnumMap<Listenable, Double>> controlValues = pollControls();
+        Pair<HashMap<Button, Boolean>, HashMap<Axis, Double>> controlValues = pollControls();
         
 		_joystickValues = controlValues.right;
 		_buttonValues = controlValues.left;
@@ -59,7 +65,7 @@ public class ListenerManager
 	
 	//add listener for given listenable
 	//multiple listeners can be added for the same listenable
-	public void addListener(Listenable key, IListenerCallback listener)
+	public void addListener(IControl key, IListenerCallback listener)
 	{
 		_listeners.put(key, listener);
 	}
@@ -71,8 +77,8 @@ public class ListenerManager
 	}
 
 	//remove all listeners set for the given listener
-	//note that removeAllListenersForControl(Listenable.AUP) is NOT the same as removeAllListenersForControl(Listenable.ADOWN)
-	public void removeAllListenersForControl(Listenable listener)
+	//note that removeAllListenersForControl(IControl.AUP) is NOT the same as removeAllListenersForControl(IControl.ADOWN)
+	public void removeAllListenersForControl(IControl listener)
 	{
 		_listeners.removeAll(listener);
 	}
@@ -80,106 +86,66 @@ public class ListenerManager
 	//returns the boolean value of a button listenable (between A and R3).
 	//returns true if presses whether $buttonUP or $buttonDOWN was given
 	//Does bounds checking, throws if value is out of range.
-	public boolean getRawBool(Listenable listenable)
+	public boolean getRawBool(Button button)
 	{
-		//check that this listenable is one of the boolean valued ones
-		if(listenable.ordinal() >= Listenable.ADOWN.ordinal() && listenable.ordinal() <= Listenable.R3DOWN.ordinal())
-		{
-			_controlValuesMutex.lock();
-			Boolean retval = false;
-			
-			retval = _buttonValues.get(listenable);
-			_controlValuesMutex.unlock();
+		_controlValuesMutex.lock();
+		Boolean retval = false;
+		
+		retval = _buttonValues.get(button);
+		_controlValuesMutex.unlock();
 
-			if(retval == null)
-			{
-				Log.recoverable("ListenerManager", "Attempt to read data from ListenerManager whose thread has not finished starting");
-				return false;
-			}
-			
-			return retval;
-		}
-		//if that came up empty, try the up values of those same controls
-		else if(listenable.ordinal() >= Listenable.AUP.ordinal() && listenable.ordinal() <= Listenable.R3UP.ordinal())
+		if(retval == null)
 		{
-			_controlValuesMutex.lock();
-			Boolean retval = false;
-			
-			retval = _buttonValues.get(Listenable.values()[listenable.ordinal() - 20]);
-
-			_controlValuesMutex.unlock();
-			
-			if(retval == null)
-			{
-				Log.recoverable("ListenerManager", "Attempt to read data from ListenerManager whose thread has not finished starting");
-				return false;
-			}
-			
-			return retval;
+			Log.recoverable("ListenerManager", "Attempt to read data from ListenerManager whose thread has not finished starting");
+			return false;
 		}
-		else
-		{
-			throw new RuntimeException("Attempt to get boolean value of control listenable " + listenable.ordinal() + " which is not a boolean");
-		}
+		
+		return retval;
 	}
 
 	//returns the double value of an axis listenable (between JOY1X and TRIGGERS).
 	//Does bounds checking, throws if value is out of range.
-	public double getRawDouble(Listenable listenable)
+	public double getRawAxis(Axis axis)
 	{
-		//check that this listenable is one of the double valued ones
-		if(listenable.ordinal() >= Listenable.JOY1X.ordinal() && listenable.ordinal() <= Listenable.JOY2Y.ordinal())
+		_controlValuesMutex.lock();
+		Double retval = 0.0;
+		
+		retval = _joystickValues.get(axis);
+		
+		if(retval == null)
 		{
-			_controlValuesMutex.lock();
-			Double retval = 0.0;
-			
-			retval = _joystickValues.get(listenable);
-			
-			if(retval == null)
-			{
-				Log.recoverable("ListenerManager", "Attempt to read data from ListenerManager whose thread has not finished starting");
-				return 0.0;
-			}
-			_controlValuesMutex.unlock();
-			return retval;
+			Log.recoverable("ListenerManager", "Attempt to read data from ListenerManager whose thread has not finished starting");
+			return 0.0;
 		}
-		else
-		{
-			throw new RuntimeException("Attempt to get double value of control listenable " + listenable.ordinal() + " which is not a double");
-		}
+		_controlValuesMutex.unlock();
+		return retval;
 	}
 
-	Pair<EnumMap<Listenable, Boolean>, EnumMap<Listenable, Double>> pollControls()
+	Pair<HashMap<Button, Boolean>, HashMap<Axis, Double>> pollControls()
 	{
-		EnumMap<Listenable, Boolean> buttonValues = new EnumMap<Listenable, Boolean>(Listenable.class);
-		EnumMap<Listenable, Double> joystickValues = new EnumMap<Listenable, Double>(Listenable.class);
+		HashMap<Button, Boolean> buttonValues = new HashMap<Button, Boolean>();
+		HashMap<Axis, Double> joystickValues = new HashMap<Axis, Double>();
 	
 		_controlValuesMutex.lock();
 
 		//read button values
-		for(int counter = Listenable.ADOWN.ordinal(); counter <= Listenable.R3DOWN.ordinal() ; counter++)
+		for(int counter = 0; counter <= _controlType.getMaxButtonValue() ; counter++)
 		{
-			Listenable currentListenable = Listenable.values()[counter];
-			boolean buttonValue = _joystick.getRawButton(currentListenable.controlNumber);
+			boolean buttonValue = _joystick.getRawButton(counter);
 			
-			buttonValues.put(currentListenable, buttonValue);
+			buttonValues.put(new Button(counter, false), buttonValue);
 		}
 				
 		//read joystick values
-		//NOTE: these may change when we move from the emulator to the actual robot.
-		//if you're reading this after 2015 season, well, I guess we forgot to remove this comment
-		
-		//2015 Jamie here -- they did change, past me
-		for(int counter = Listenable.JOY1X.ordinal(); counter <= Listenable.JOY2Y.ordinal(); counter++)
+		for(int counter = 0; counter <= _controlType.getMaxJoystickValue(); counter++)
 		{
-			Listenable currentListenable = Listenable.values()[counter];
 			//round to 3 decimal places
-			joystickValues.put(currentListenable, Math.round(_joystick.getRawAxis(currentListenable.controlNumber) * 1000.0) / 1000.0);
+			joystickValues.put(new Axis(counter), Math.round(_joystick.getRawAxis(counter) * 1000.0) / 1000.0);
 		}
 				
 		_controlValuesMutex.unlock();
 		
-		return new Pair<EnumMap<Listenable, Boolean>, EnumMap<Listenable, Double>>(buttonValues, joystickValues);
+		return new Pair<HashMap<Button, Boolean>, HashMap<Axis, Double>>(buttonValues, joystickValues);
 	}
 
 	/**
@@ -187,11 +153,11 @@ public class ListenerManager
 	 */
 	public void tick()
 	{
-		Pair<EnumMap<Listenable, Boolean>, EnumMap<Listenable, Double>> newValues = pollControls();
+		Pair<HashMap<Button, Boolean>, HashMap<Axis, Double>> newValues = pollControls();
 		Set<IListenerCallback> listenersToInvoke = new HashSet<IListenerCallback>();
 		
 		//add ALWAYS listenable
-		Collection<IListenerCallback> foundAlwaysListeners = _listeners.get(Listenable.ALWAYS);
+		Collection<IListenerCallback> foundAlwaysListeners = _listeners.get(Always.instance);
 
 		if(foundAlwaysListeners != null && !foundAlwaysListeners.isEmpty())
 		{
@@ -203,14 +169,13 @@ public class ListenerManager
 		}
 
 		//loop through button values
-		for(int counter = Listenable.ADOWN.ordinal(); counter <= Listenable.R3DOWN.ordinal() ; counter++)
+		for(Button button : newValues.left.keySet())
 		{
-			Listenable currentListenable = Listenable.values()[counter];
 			//has this button been pressed?
-			if((!_buttonValues.get(currentListenable)) && (newValues.left.get(currentListenable)))
+			if((!_buttonValues.get(button)) && (newValues.left.get(button)))
 			{
 				//get all its registered listeners
-				Collection<IListenerCallback> foundListeners = _listeners.get(Listenable.values()[counter]);
+				Collection<IListenerCallback> foundListeners = _listeners.get(new Button(button.getCode(), false));
 
 				if(foundListeners != null && !foundListeners.isEmpty())
 				{
@@ -224,12 +189,11 @@ public class ListenerManager
 			}
 
 			//loop through button up values
-			Listenable oppositeListenable = Listenable.values()[currentListenable.oppositeButtonOrdinal];
 			//has this button just stopped being pressed?
-			if((_buttonValues.get(currentListenable)) && (!newValues.left.get(currentListenable)))
+			if((_buttonValues.get(button)) && (!newValues.left.get(button)))
 			{
 				//get all its registered listeners
-				Collection<IListenerCallback> foundListeners = _listeners.get(oppositeListenable);
+				Collection<IListenerCallback> foundListeners = _listeners.get(new Button(button.getCode(), true));
 
 				if(foundListeners != null && !foundListeners.isEmpty())
 				{
@@ -245,14 +209,13 @@ public class ListenerManager
 
 
 		//loop through joystick values
-		for(int counter = Listenable.JOY1X.ordinal(); counter <= Listenable.JOY2Y.ordinal() ; counter++)
+		for(Axis axis : newValues.right.keySet())
 		{
-			Listenable currentListenable = Listenable.values()[counter];
 			//has this particular value changed?
-			if(Math.abs(_joystickValues.get(currentListenable) - newValues.right.get(currentListenable)) > .001)
+			if(Math.abs(_joystickValues.get(axis) - newValues.right.get(axis)) > .0001)
 			{
 				//get all its registered listeners
-				Collection<IListenerCallback> foundListeners = _listeners.get(currentListenable);
+				Collection<IListenerCallback> foundListeners = _listeners.get(axis);
 
 				if(foundListeners != null && !foundListeners.isEmpty())
 				{

@@ -1,7 +1,7 @@
 package org.team3128.drive;
 
 import org.team3128.hardware.motor.MotorLink;
-import org.team3128.listener.Listenable;
+import org.team3128.listener.ListenableXbox;
 import org.team3128.listener.ListenerManager;
 
 public class ArcadeDrive
@@ -26,11 +26,11 @@ public class ArcadeDrive
     public void steer()
     {
     	//read joystick values
-    	double x1 = _listenerManager.getRawDouble(Listenable.JOY1X);
+    	double x1 = _listenerManager.getRawDouble(ListenableXbox.JOY1X);
     	x1 = Math.abs(x1) > thresh ? Math.tanh(x1) : 0.0;
     	
     	
-    	double y1 = _listenerManager.getRawDouble(Listenable.JOY1Y);
+    	double y1 = _listenerManager.getRawDouble(ListenableXbox.JOY1Y);
     	y1 = Math.abs(y1) > thresh ? Math.tanh(y1) : 0.0;
 
     	_spdR = (y1 + x1) / 2;
