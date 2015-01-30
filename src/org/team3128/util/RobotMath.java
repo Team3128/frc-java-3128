@@ -129,14 +129,14 @@ public class RobotMath {
    
    public static double getMotorExpectedRPM(double power)
    {
-	   //5310 is the max RPM at full power
+	   //5310 is the max RPM of a CIM at full power
 	   return 5310 * power;
    }
    
    public static double getEstMotorPowerForRPM(double rpm)
    {
 	   
-	   //5310 is the max RPM at full power
+	   //5310 is the max RPM of a CIM at full power
 	   return rpm / 5310;
    }
    

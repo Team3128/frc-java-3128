@@ -91,6 +91,7 @@ public class PIDSpeedTarget extends MotorControl
     public void clearControlRun()
     {
         setControlTarget(0);
+        _pidCalculator.resetIntegral();
     }
 
     public boolean isComplete()

@@ -94,7 +94,8 @@ public class Global
 
 	void initializeDisabled()
 	{
-
+		leftMotors.clearSpeedControlRun();
+		rightMotors.clearSpeedControlRun();
 	}
 
 	void initializeAuto()

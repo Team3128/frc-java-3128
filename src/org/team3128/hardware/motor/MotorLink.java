@@ -37,6 +37,17 @@ public class MotorLink {
     	this.speedScalar = powscl;
     	this.spdControl = spd;
     }
+    
+    /**
+     * Reset the speed control.  This may or may not do anything, depending on which speed control is used.
+     */
+    public void clearSpeedControlRun()
+    {
+    	if(spdControl != null)
+    	{
+    		spdControl.clearControlRun();
+    	}
+    }
 
     public void reverseMotor()
     {

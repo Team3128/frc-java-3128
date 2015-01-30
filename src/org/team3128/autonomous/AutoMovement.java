@@ -15,6 +15,9 @@ public class AutoMovement
 	MotorLink _leftMotors;
 	MotorLink _rightMotors;
 	
+	//convert motor power to RPM
+	public static final double speedMultiplier = 5310;
+	
 	private void clearEncoders()
 	{
 		_encLeft.clear();
@@ -66,8 +69,8 @@ public class AutoMovement
 		long startTime = System.currentTimeMillis();
 
 		
-		_leftMotors.setControlTarget(.25*norm);
-		_rightMotors.setControlTarget(.25*norm);
+		_leftMotors.setControlTarget(speedMultiplier * .25 * norm);
+		_rightMotors.setControlTarget(speedMultiplier * .25 * norm);
 		while(_encLeft.getDistance() < enc && _encRight.getDistance() < enc)
 		{
 			if(msec != 0 && System.currentTimeMillis() - startTime > msec)
@@ -89,7 +92,7 @@ public class AutoMovement
 	{
 		double enc = cmToDegrees((2.0*Math.PI*Options.instance()._wheelBase)*(abs(degs)/360.0));
 		clearEncoders();
-		_leftMotors.setControlTarget(RobotMath.sgn(degs) * .4);
+		_leftMotors.setControlTarget(speedMultiplier * RobotMath.sgn(degs) * .4);
 		long startTime = System.currentTimeMillis();
 		while(_encLeft.getDistance() < enc)
 		{
@@ -111,7 +114,7 @@ public class AutoMovement
 	{
 		double enc = cmToDegrees((2.0*Math.PI*Options.instance()._wheelBase)*(abs(degs)/360.0));
 		clearEncoders();
-		_rightMotors.setControlTarget(RobotMath.sgn(degs) * .4);
+		_rightMotors.setControlTarget(speedMultiplier * RobotMath.sgn(degs) * .4);
 		long startTime = System.currentTimeMillis();
 		while(_encRight.getDistance() < enc)
 		{
@@ -134,8 +137,8 @@ public class AutoMovement
 	{
 		double enc = cmToDegrees((Math.PI*Options.instance()._wheelBase)*(abs(degs)/360.0));
 		clearEncoders();
-		_leftMotors.setControlTarget(-1*RobotMath.sgn(degs) * .3);
-		_rightMotors.setControlTarget(RobotMath.sgn(degs)* .3);
+		_leftMotors.setControlTarget(speedMultiplier * -1 * RobotMath.sgn(degs) * .3);
+		_rightMotors.setControlTarget(speedMultiplier *  RobotMath.sgn(degs)* .3);
 		long startTime = System.currentTimeMillis();
 		
 		while(_encRight.getDistance() < enc)
@@ -159,8 +162,8 @@ public class AutoMovement
 	{
 		double enc = cmToDegrees((Math.PI*Options.instance()._wheelBase)*(abs(degs)/360.0));
 		clearEncoders();
-		_leftMotors.setControlTarget(RobotMath.sgn(degs)* .3);
-		_rightMotors.setControlTarget(-1 * RobotMath.sgn(degs)* .3);
+		_leftMotors.setControlTarget(speedMultiplier * RobotMath.sgn(degs)* .3);
+		_rightMotors.setControlTarget(speedMultiplier * -1 * RobotMath.sgn(degs)* .3);
 		long startTime = System.currentTimeMillis();
 		
 		while(_encLeft.getDistance() < enc)
