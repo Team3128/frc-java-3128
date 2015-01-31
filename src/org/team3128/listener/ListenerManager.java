@@ -135,7 +135,9 @@ public class ListenerManager
 		{
 			boolean buttonValue = _joystick.getRawButton(counter);
 			
-			buttonValues.put(new Button(counter, false), buttonValue);
+			Button buttonToPut = new Button(counter, false);
+			
+			buttonValues.put(buttonToPut, buttonValue);
 		}
 				
 		//read joystick values
@@ -174,7 +176,9 @@ public class ListenerManager
 		for(Button button : newValues.left.keySet())
 		{
 			//has this button been pressed?
-			if((!_buttonValues.get(button)) && (newValues.left.get(button)))
+			Boolean oldValue = _buttonValues.get(button);
+			Boolean newValue = newValues.left.get(button);
+			if(!oldValue && newValue)
 			{
 				//get all its registered listeners
 				Collection<IListenerCallback> foundListeners = _listeners.get(new Button(button.getCode(), false));
@@ -192,7 +196,7 @@ public class ListenerManager
 
 			//loop through button up values
 			//has this button just stopped being pressed?
-			if((_buttonValues.get(button)) && (!newValues.left.get(button)))
+			if(oldValue && !newValue)
 			{
 				//get all its registered listeners
 				Collection<IListenerCallback> foundListeners = _listeners.get(new Button(button.getCode(), true));

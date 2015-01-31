@@ -26,8 +26,8 @@ public class Button implements IControl
 	@Override
 	public int hashCode()
 	{
-		int hashCode = _code;
-		_code *= 37 * (_up ? 1 : 0);
+		int hashCode = _code + 1;
+		hashCode *= 37 * (_up ? 1 : 0);
 		return hashCode;
 	}
 	

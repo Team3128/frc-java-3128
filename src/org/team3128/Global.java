@@ -3,7 +3,6 @@ package org.team3128;
 import org.team3128.autonomous.AutoConfig;
 import org.team3128.drive.ArcadeDrive;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
-import org.team3128.hardware.encoder.velocity.TachLink;
 import org.team3128.hardware.motor.MotorLink;
 import org.team3128.hardware.motor.speedcontrol.PIDSpeedTarget;
 import org.team3128.listener.IListenerCallback;
@@ -12,6 +11,7 @@ import org.team3128.listener.controller.ControllerXbox;
 import org.team3128.util.VelocityPID;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Talon;
 
@@ -44,6 +44,8 @@ public class Global
 	public MotorLink frontHookMotor;
 	
 	public MotorLink clawGrabMotor;
+	
+	public PowerDistributionPanel powerDistPanel;
 	
 	public ArcadeDrive _drive;
 	
@@ -79,6 +81,8 @@ public class Global
 		
 		leftArmBrakeServo = new Servo(9);
 		rightArmBrakeServo = new Servo(0);
+		
+		powerDistPanel = new PowerDistributionPanel();
 
 		_drive = new ArcadeDrive(leftMotors, rightMotors, _listenerManager);
 
@@ -87,9 +91,9 @@ public class Global
 	void initializeRobot()
 	{
 		
-		TachLink link = new TachLink(0, 54);
-		
-		Log.debug("Global", "Tachometer: " + link.getRaw());
+//		TachLink link = new TachLink(0, 54);
+//		
+//		Log.debug("Global", "Tachometer: " + link.getRaw());
 	}
 
 	void initializeDisabled()
@@ -109,6 +113,15 @@ public class Global
 		
 		_listenerManager.addListener(ControllerXbox.JOY1X, updateDrive);
 		_listenerManager.addListener(ControllerXbox.JOY1Y, updateDrive);
+		
+		_listenerManager.addListener(ControllerXbox.ADOWN, () -> Log.debug("Global", "Adown pressed"));
+		_listenerManager.addListener(ControllerXbox.AUP, () -> Log.debug("Global", "Aup pressed"));
+
+		
+		_listenerManager.addListener(ControllerXbox.R3DOWN, () ->
+		{
+			powerDistPanel.clearStickyFaults();
+		});
 		
 	}
 }
