@@ -71,6 +71,10 @@ public abstract class MotorControl
 	       if(this.isComplete())
 	       {
 	           this.controlledMotor.setInternalSpeed(0);
+	           clearControlRun();
+	           
+	           targetLock.unlock();
+	           return;
 	       }
 	       else
 	       {
@@ -117,6 +121,11 @@ public abstract class MotorControl
    
    public boolean isRunning()
    {
+	   if(thread == null)
+	   {
+		   return false;
+	   }
+	   
 	   return thread.isAlive();
    }
    

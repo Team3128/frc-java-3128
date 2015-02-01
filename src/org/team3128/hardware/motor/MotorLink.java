@@ -126,7 +126,10 @@ public class MotorLink {
         this.spdControl.clearControlRun();
         this.spdControl.setControlTarget(target);
         this.spdControl.setControlledMotor(this);
-        spdControl.start();
+        if(!spdControl.isRunning())
+        {
+        	spdControl.start();
+        }
     }
 
     public void stopSpeedControl()

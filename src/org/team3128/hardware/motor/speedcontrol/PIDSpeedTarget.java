@@ -1,6 +1,5 @@
 package org.team3128.hardware.motor.speedcontrol;
 
-import org.team3128.Log;
 import org.team3128.hardware.encoder.velocity.IVelocityEncoder;
 import org.team3128.hardware.motor.MotorControl;
 import org.team3128.util.RobotMath;
@@ -69,7 +68,7 @@ public class PIDSpeedTarget extends MotorControl
         _pidCalculator.update(speed);
         
         
-        Log.debug("PIDSpeedTarget", "Target: " + tgtSpeed + " Speed: " + speed + " Current: " + calculatedSpeed + " Output: " + RobotMath.getEstMotorPowerForRPM(calculatedSpeed + _pidCalculator.getOutputAddition()));
+        //Log.debug("PIDSpeedTarget", "Target: " + tgtSpeed + " Speed: " + speed + " Current: " + calculatedSpeed + " Output: " + RobotMath.getEstMotorPowerForRPM(calculatedSpeed + _pidCalculator.getOutputAddition()));
         
         calculatedSpeed += _pidCalculator.getOutputAddition();
         

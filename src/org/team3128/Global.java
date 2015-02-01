@@ -4,6 +4,7 @@ import org.team3128.autonomous.AutoConfig;
 import org.team3128.drive.ArcadeDrive;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
 import org.team3128.hardware.motor.MotorLink;
+import org.team3128.hardware.motor.speedcontrol.CurrentTarget;
 import org.team3128.hardware.motor.speedcontrol.PIDSpeedTarget;
 import org.team3128.listener.IListenerCallback;
 import org.team3128.listener.ListenerManager;
@@ -52,6 +53,7 @@ public class Global
 	public Global()
 	{	
 		_listenerManager = new ListenerManager(new Joystick(Options.instance()._controllerPort), ControllerXbox.instance);
+		powerDistPanel = new PowerDistributionPanel();
 		
 		leftDriveEncoder = new QuadratureEncoderLink(0,	1, 128);
 		rightDriveEncoder = new QuadratureEncoderLink(3, 4, 128);
@@ -59,6 +61,7 @@ public class Global
 		leftMotors = new MotorLink(new PIDSpeedTarget(0, leftDriveEncoder, new VelocityPID(.1, 0, 0)));
 		leftMotors.addControlledMotor(new Talon(1));
 		leftMotors.addControlledMotor(new Talon(2));
+		leftMotors.reverseMotor();
 		leftMotors.startControl(0);
 		
 		
@@ -75,14 +78,14 @@ public class Global
 		
 		frontHookMotor = new MotorLink();
 		frontHookMotor.addControlledMotor(new Talon(7));
+		frontHookMotor.setSpeedController(new CurrentTarget(powerDistPanel, 3, .5));
+		frontHookMotor.startControl(0);
 		
 		clawGrabMotor = new MotorLink();
 		clawGrabMotor.addControlledMotor(new Talon(8));
 		
 		leftArmBrakeServo = new Servo(9);
 		rightArmBrakeServo = new Servo(0);
-		
-		powerDistPanel = new PowerDistributionPanel();
 
 		_drive = new ArcadeDrive(leftMotors, rightMotors, _listenerManager);
 
@@ -114,9 +117,41 @@ public class Global
 		_listenerManager.addListener(ControllerXbox.JOY1X, updateDrive);
 		_listenerManager.addListener(ControllerXbox.JOY1Y, updateDrive);
 		
-		_listenerManager.addListener(ControllerXbox.ADOWN, () -> Log.debug("Global", "Adown pressed"));
-		_listenerManager.addListener(ControllerXbox.AUP, () -> Log.debug("Global", "Aup pressed"));
+		_listenerManager.addListener(ControllerXbox.JOY2X, () ->
+		{
+			double power = _listenerManager.getRawAxis(ControllerXbox.JOY2X);
+			if(Math.abs(power) >= .1)
+			{
+				armJointMotor.setControlTarget(power);
+			}
+			else
+			{
+				armJointMotor.setControlTarget(0);
+			}
+		});
+		
+		_listenerManager.addListener(ControllerXbox.JOY2Y, () ->
+		{
+			double power = _listenerManager.getRawAxis(ControllerXbox.JOY2Y);
+			if(Math.abs(power) >= .1)
+			{
+				armTurnMotor.setControlTarget(power);
+			}
+			else
+			{
+				armTurnMotor.setControlTarget(0);
+			}
+		});
+		
+		_listenerManager.addListener(ControllerXbox.ADOWN, () -> 
+		{
+			frontHookMotor.startControl(-.15);
+		});
 
+		_listenerManager.addListener(ControllerXbox.BDOWN, () -> 
+		{
+			frontHookMotor.startControl(.15);
+		});
 		
 		_listenerManager.addListener(ControllerXbox.R3DOWN, () ->
 		{
