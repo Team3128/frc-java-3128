@@ -61,6 +61,11 @@ public class Options
      * horizontal distance between wheels in cm
      */
     public double _wheelBase;
+
+    /**
+     * Gyro offset for swerve drive code
+     */
+	public double _gyrBias;
     
     
     private static Options _instance;
@@ -101,5 +106,7 @@ public class Options
     	
     	//FIXME not yet measured
     	_wheelBase = 40;
+    	
+    	_gyrBias = 0;
     }
 }
