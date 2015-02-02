@@ -1,5 +1,7 @@
 package org.team3128;
 
+import java.util.ArrayList;
+
 import org.team3128.autonomous.AutoConfig;
 import org.team3128.drive.ArcadeDrive;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
@@ -8,6 +10,7 @@ import org.team3128.hardware.motor.speedcontrol.CurrentTarget;
 import org.team3128.hardware.motor.speedcontrol.PIDSpeedTarget;
 import org.team3128.listener.IListenerCallback;
 import org.team3128.listener.ListenerManager;
+import org.team3128.listener.controller.ControllerAttackJoy;
 import org.team3128.listener.controller.ControllerXbox;
 import org.team3128.util.VelocityPID;
 
@@ -26,7 +29,10 @@ import edu.wpi.first.wpilibj.Talon;
  */
 public class Global
 {
-	public ListenerManager _listenerManager;
+	public ArrayList<ListenerManager> _listenerManagers = new ArrayList<ListenerManager>();
+	public ListenerManager _listenerManagerXbox;
+	public ListenerManager _listenerManagerJoyLeft;
+	public ListenerManager _listenerManagerJoyRight;
 	
 	public MotorLink _pidTestMotor;
 	
@@ -52,7 +58,12 @@ public class Global
 	
 	public Global()
 	{	
-		_listenerManager = new ListenerManager(new Joystick(Options.instance()._controllerPort), ControllerXbox.instance);
+		_listenerManagerXbox = new ListenerManager(new Joystick(Options.instance()._controllerPort), ControllerXbox.instance);
+		_listenerManagerJoyLeft = new ListenerManager(new Joystick(1), ControllerAttackJoy.instance);
+		_listenerManagerJoyRight = new ListenerManager(new Joystick(2), ControllerAttackJoy.instance);
+		
+		_listenerManagers.add(_listenerManagerXbox);
+		
 		powerDistPanel = new PowerDistributionPanel();
 		
 		leftDriveEncoder = new QuadratureEncoderLink(0,	1, 128);
@@ -83,11 +94,12 @@ public class Global
 		
 		clawGrabMotor = new MotorLink();
 		clawGrabMotor.addControlledMotor(new Talon(8));
+		clawGrabMotor.setSpeedController(new CurrentTarget(powerDistPanel, 15, .75));
 		
 		leftArmBrakeServo = new Servo(9);
 		rightArmBrakeServo = new Servo(0);
 
-		_drive = new ArcadeDrive(leftMotors, rightMotors, _listenerManager);
+		_drive = new ArcadeDrive(leftMotors, rightMotors, _listenerManagerXbox);
 
 	}
 
@@ -112,14 +124,26 @@ public class Global
 	
 	void initializeTeleop()
 	{
+		//-----------------------------------------------------------
+		// Drive code, on Xbox controller
+		//-----------------------------------------------------------
 		IListenerCallback updateDrive = () -> _drive.steer();
 		
-		_listenerManager.addListener(ControllerXbox.JOY1X, updateDrive);
-		_listenerManager.addListener(ControllerXbox.JOY1Y, updateDrive);
+		_listenerManagerXbox.addListener(ControllerXbox.JOY1X, updateDrive);
+		_listenerManagerXbox.addListener(ControllerXbox.JOY1Y, updateDrive);
 		
-		_listenerManager.addListener(ControllerXbox.JOY2X, () ->
+		_listenerManagerXbox.addListener(ControllerXbox.R3DOWN, () ->
 		{
-			double power = _listenerManager.getRawAxis(ControllerXbox.JOY2X);
+			powerDistPanel.clearStickyFaults();
+		});
+		
+		//-----------------------------------------------------------
+		// Arm control code, on joysticks
+		//-----------------------------------------------------------
+		
+		_listenerManagerJoyRight.addListener(ControllerAttackJoy.JOYY, () ->
+		{
+			double power = _listenerManagerJoyRight.getRawAxis(ControllerAttackJoy.JOYY);
 			if(Math.abs(power) >= .1)
 			{
 				armJointMotor.setControlTarget(power);
@@ -130,9 +154,9 @@ public class Global
 			}
 		});
 		
-		_listenerManager.addListener(ControllerXbox.JOY2Y, () ->
+		_listenerManagerJoyLeft.addListener(ControllerAttackJoy.JOYY, () ->
 		{
-			double power = _listenerManager.getRawAxis(ControllerXbox.JOY2Y);
+			double power = _listenerManagerJoyLeft.getRawAxis(ControllerAttackJoy.JOYY);
 			if(Math.abs(power) >= .1)
 			{
 				armTurnMotor.setControlTarget(power);
@@ -143,19 +167,31 @@ public class Global
 			}
 		});
 		
-		_listenerManager.addListener(ControllerXbox.ADOWN, () -> 
+		_listenerManagerJoyLeft.addListener(ControllerAttackJoy.JOYX, () ->
+		{
+			double leftPower = _listenerManagerJoyLeft.getRawAxis(ControllerAttackJoy.JOYY);
+			double rightPower = _listenerManagerJoyRight.getRawAxis(ControllerAttackJoy.JOYY);
+			
+			//if both joysticks are pushed in, close the claw
+			if((leftPower > .7) && (rightPower < .7))
+			{
+				clawGrabMotor.startControl((leftPower - .7) * (10.0/3.0));
+			}
+			else if((leftPower < .7) && (rightPower > .7))
+			{
+				clawGrabMotor.startControl((leftPower - .7) * (10.0/3.0));
+			}
+
+		});
+		
+		_listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN1, () -> 
 		{
 			frontHookMotor.startControl(-.15);
 		});
 
-		_listenerManager.addListener(ControllerXbox.BDOWN, () -> 
+		_listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN1, () -> 
 		{
 			frontHookMotor.startControl(.15);
-		});
-		
-		_listenerManager.addListener(ControllerXbox.R3DOWN, () ->
-		{
-			powerDistPanel.clearStickyFaults();
 		});
 		
 	}

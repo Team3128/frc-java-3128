@@ -84,7 +84,7 @@ public abstract class MotorControl
 	       
 	    try
 		{
-			Thread.sleep(Options.instance()._motorControlUpdateFrequency);
+			Thread.sleep(_refreshTime);
 		}
 	    catch (InterruptedException e)
 		{

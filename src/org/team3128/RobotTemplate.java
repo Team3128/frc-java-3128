@@ -1,5 +1,7 @@
 package org.team3128;
 
+import org.team3128.listener.ListenerManager;
+
 import edu.wpi.first.wpilibj.IterativeRobot;
 
 /*
@@ -40,7 +42,7 @@ public class RobotTemplate extends IterativeRobot
     public void autonomousInit()
     {
         if(!autonomousHasBeenInit) {
-            global._listenerManager.removeAllListeners();
+            global._listenerManagerXbox.removeAllListeners();
             global.initializeAuto();
             autonomousHasBeenInit = true;
             teleopHasBeenInit = false;
@@ -53,7 +55,7 @@ public class RobotTemplate extends IterativeRobot
     boolean teleopHasBeenInit = false;
     public void teleopInit() {
         if(!teleopHasBeenInit) {
-            global._listenerManager.removeAllListeners();
+            global._listenerManagerXbox.removeAllListeners();
             global.initializeTeleop();
             teleopHasBeenInit = true;
             autonomousHasBeenInit = false;
@@ -90,7 +92,10 @@ public class RobotTemplate extends IterativeRobot
    
     public void teleopPeriodic()
     {        
-        global._listenerManager.tick();
+    	for(ListenerManager manager : global._listenerManagers)
+    	{
+    		manager.tick();
+    	}
         
         try
 		{
