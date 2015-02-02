@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.team3128.autonomous.AutoConfig;
 import org.team3128.drive.ArcadeDrive;
+import org.team3128.hardware.ClawArm;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
 import org.team3128.hardware.motor.MotorLink;
 import org.team3128.hardware.motor.speedcontrol.CurrentTarget;
@@ -56,6 +57,8 @@ public class Global
 	
 	public ArcadeDrive _drive;
 	
+	public ClawArm clawArm;
+	
 	public Global()
 	{	
 		_listenerManagerXbox = new ListenerManager(new Joystick(Options.instance()._controllerPort), ControllerXbox.instance);
@@ -98,6 +101,8 @@ public class Global
 		
 		leftArmBrakeServo = new Servo(9);
 		rightArmBrakeServo = new Servo(0);
+		
+		clawArm = new ClawArm(armTurnMotor, armJointMotor, clawGrabMotor);
 
 		_drive = new ArcadeDrive(leftMotors, rightMotors, _listenerManagerXbox);
 
@@ -144,44 +149,18 @@ public class Global
 		_listenerManagerJoyRight.addListener(ControllerAttackJoy.JOYY, () ->
 		{
 			double power = _listenerManagerJoyRight.getRawAxis(ControllerAttackJoy.JOYY);
-			if(Math.abs(power) >= .1)
-			{
-				armJointMotor.setControlTarget(power);
-			}
-			else
-			{
-				armJointMotor.setControlTarget(0);
-			}
+			clawArm.onArmRotateJoyInput(power);
 		});
 		
 		_listenerManagerJoyLeft.addListener(ControllerAttackJoy.JOYY, () ->
 		{
 			double power = _listenerManagerJoyLeft.getRawAxis(ControllerAttackJoy.JOYY);
-			if(Math.abs(power) >= .1)
-			{
-				armTurnMotor.setControlTarget(power);
-			}
-			else
-			{
-				armTurnMotor.setControlTarget(0);
-			}
+			clawArm.onArmJointJoyInput(power);
 		});
 		
 		_listenerManagerJoyLeft.addListener(ControllerAttackJoy.JOYX, () ->
 		{
-			double leftPower = _listenerManagerJoyLeft.getRawAxis(ControllerAttackJoy.JOYY);
-			double rightPower = _listenerManagerJoyRight.getRawAxis(ControllerAttackJoy.JOYY);
-			
-			//if both joysticks are pushed in, close the claw
-			if((leftPower > .7) && (rightPower < .7))
-			{
-				clawGrabMotor.startControl((leftPower - .7) * (10.0/3.0));
-			}
-			else if((leftPower < .7) && (rightPower > .7))
-			{
-				clawGrabMotor.startControl((leftPower - .7) * (10.0/3.0));
-			}
-
+			clawArm.onClawJoyInput(_listenerManagerJoyLeft.getRawAxis(ControllerAttackJoy.JOYX), _listenerManagerJoyRight.getRawAxis(ControllerAttackJoy.JOYX));
 		});
 		
 		_listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN1, () -> 
@@ -193,6 +172,8 @@ public class Global
 		{
 			frontHookMotor.startControl(.15);
 		});
+		
+		_listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN2, () -> clawArm.switchArmToOtherSide());
 		
 	}
 }
