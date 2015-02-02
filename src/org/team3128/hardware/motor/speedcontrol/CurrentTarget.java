@@ -5,7 +5,7 @@ import org.team3128.hardware.motor.MotorControl;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
 /**
- * Motor control which moves the motor in a certain direction until its current soikes, which
+ * Motor control which moves the motor in a certain direction until its current spikes, which
  * (hopefully) means that it has hit the end of its travel
  */
 
@@ -21,7 +21,11 @@ public class CurrentTarget extends MotorControl
 
     /**
      * 
-    */
+     * @param panel PDP object to use
+     * @param motorChannel channel motor controller is plugged into on PDP
+     * @param currentThreshold measured amperage where motor is considered stalled.  You have to measure this
+     * for each individual motor.
+     */
     public CurrentTarget(PowerDistributionPanel panel, int motorChannel, double currentThreshold)
     {
     	_panel = panel;
@@ -32,7 +36,7 @@ public class CurrentTarget extends MotorControl
     }
 
     /**
-     * sets degree value to move to
+     * sets speed and direction of travel
      */
     public void setControlTarget(double val)
     {
@@ -48,9 +52,6 @@ public class CurrentTarget extends MotorControl
 
     public void clearControlRun() {}
 
-    /**
-     * Returns true if the motor is at the correct angle
-     */
     public boolean isComplete()
     {
         //Log.debug("CurrentTarget", "motor current: " + _panel.getCurrent(_motorChannel));
@@ -63,7 +64,7 @@ public class CurrentTarget extends MotorControl
         	consecutiveOvercurrents = 0;
         }
         
-        if(consecutiveOvercurrents >= 3)
+        if(consecutiveOvercurrents >= 2)
         {
         	return true;
         }

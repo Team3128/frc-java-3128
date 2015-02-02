@@ -93,7 +93,7 @@ public class Options
     	_glidingSpeedConstant = .5/Math.sqrt(2);
     	
     	//FIXME not yet measured
-    	_wheelCircumfrence = 5;
+    	_wheelCircumfrence = 15.24 * Math.PI;
     	
     	_cmMovedPerDegree = _wheelCircumfrence / 360;
     	

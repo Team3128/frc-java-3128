@@ -11,9 +11,7 @@ import org.team3128.util.VelocityPID;
  * @author Noah Sutton-Smolin
  */
 public class PIDSpeedTarget extends MotorControl
-{
-    private double tgtSpeed;
-    
+{   
     private IVelocityEncoder _encoder;
     
     private VelocityPID _pidCalculator;
@@ -27,7 +25,6 @@ public class PIDSpeedTarget extends MotorControl
      */
     public PIDSpeedTarget(double tgtSpeed, int refreshTime, IVelocityEncoder encoder, double kP, double kI, double kD)
     {
-        this.tgtSpeed = tgtSpeed;
         calculatedSpeed = tgtSpeed;
         _refreshTime = refreshTime;
         _encoder = encoder;
@@ -42,7 +39,6 @@ public class PIDSpeedTarget extends MotorControl
      */
     public PIDSpeedTarget(double tgtSpeed, IVelocityEncoder encoder, VelocityPID pidCalc)
     {
-        this.tgtSpeed = tgtSpeed;
         _encoder = encoder;
         _pidCalculator = pidCalc;
     }
@@ -50,7 +46,6 @@ public class PIDSpeedTarget extends MotorControl
     public void setControlTarget(double d)
     {
         targetLock.lock();
-    	tgtSpeed = d;
     	calculatedSpeed = d;
     	_pidCalculator.setDesiredVelocity(d);
     	
