@@ -3,6 +3,7 @@ package org.team3128;
 import org.team3128.listener.ListenerManager;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.command.Scheduler;
 
 /*
  * THIS FILE SHOULD NOT BE MODIFIED
@@ -78,14 +79,7 @@ public class RobotTemplate extends IterativeRobot
    
     public void autonomousPeriodic()
     {   
-        try
-		{
-			Thread.sleep(100);
-		}
-        catch (InterruptedException e)
-		{
-			return;
-		}
+		Scheduler.getInstance().run();
     }
 
     // DO YOU REALLY WANT TO MODIFY YOUR SOUL?

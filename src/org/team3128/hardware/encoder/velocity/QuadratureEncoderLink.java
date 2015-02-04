@@ -1,5 +1,7 @@
 package org.team3128.hardware.encoder.velocity;
 
+import org.team3128.hardware.encoder.distance.IDistanceEncoder;
+
 import edu.wpi.first.wpilibj.Encoder;
 
 /**
@@ -7,7 +9,7 @@ import edu.wpi.first.wpilibj.Encoder;
  * @author Narwhal
  *
  */
-public class QuadratureEncoderLink implements IVelocityEncoder 
+public class QuadratureEncoderLink implements IVelocityEncoder, IDistanceEncoder
 {
 	Encoder encoder;
 	
@@ -29,6 +31,21 @@ public class QuadratureEncoderLink implements IVelocityEncoder
 		
 		//getRate returns rotations / second
 		return encoder.getRate() * 60;
+	}
+	
+	/**
+	 * Not (yet) supported
+	 */
+	public void clear()
+	{
+		//TODO implement this
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public double getDistance()
+	{
+		return encoder.getDistance();
 	}
 
 }
