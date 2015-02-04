@@ -2,7 +2,9 @@ package org.team3128;
 
 import java.util.ArrayList;
 
-import org.team3128.autonomous.AutoConfig;
+import org.team3128.autonomous.AutoHardware;
+import org.team3128.autonomous.programs.CanGrabAuto;
+import org.team3128.autonomous.programs.TestMoveForwardAuto;
 import org.team3128.drive.ArcadeDrive;
 import org.team3128.hardware.ClawArm;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
@@ -19,6 +21,9 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The Global class is where all of the hardware objects that represent the robot are stored.
@@ -58,6 +63,8 @@ public class Global
 	public ArcadeDrive _drive;
 	
 	public ClawArm clawArm;
+	
+	SendableChooser autoPrograms;
 	
 	public Global()
 	{	
@@ -105,6 +112,14 @@ public class Global
 		clawArm = new ClawArm(armTurnMotor, armJointMotor, clawGrabMotor);
 
 		_drive = new ArcadeDrive(leftMotors, rightMotors, _listenerManagerXbox);
+		
+		//--------------------------------------------------------------------------
+		
+		autoPrograms = new SendableChooser();
+		autoPrograms.addDefault("Can Grab", new CanGrabAuto());
+		autoPrograms.addObject("Test Move Forward", new TestMoveForwardAuto());
+		
+		SmartDashboard.putData("Autonomous Programs", autoPrograms);
 
 	}
 
@@ -124,7 +139,15 @@ public class Global
 
 	void initializeAuto()
 	{
-		new Thread(() -> AutoConfig.initialize(this), "AutoConfig").start();
+		AutoHardware._encLeft = leftDriveEncoder;
+		AutoHardware._encRight = rightDriveEncoder;
+		
+		AutoHardware._leftMotors = leftMotors;
+		AutoHardware._rightMotors = rightMotors;
+		
+		Command autoCommand = (Command) autoPrograms.getSelected();
+		
+		autoCommand.start();
 	}
 	
 	void initializeTeleop()
