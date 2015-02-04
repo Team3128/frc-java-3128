@@ -36,7 +36,6 @@ public class ControllerAttackJoy implements ControllerType
 		public static final Axis JOYX = new Axis(0);
 		public static final Axis JOYY = new Axis(1);
 		public static final Axis THROTTLE = new Axis(2);
-		public static final Axis TWIST = new Axis(3);
 
 		
 		private ControllerAttackJoy()
@@ -55,6 +54,6 @@ public class ControllerAttackJoy implements ControllerType
 		@Override
 		public int getMaxJoystickValue()
 		{
-			return 3;
+			return 2;
 		}
 }

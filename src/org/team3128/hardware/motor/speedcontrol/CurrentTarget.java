@@ -1,5 +1,6 @@
 package org.team3128.hardware.motor.speedcontrol;
 
+import org.team3128.Log;
 import org.team3128.hardware.motor.MotorControl;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -54,7 +55,7 @@ public class CurrentTarget extends MotorControl
 
     public boolean isComplete()
     {
-        //Log.debug("CurrentTarget", "motor current: " + _panel.getCurrent(_motorChannel));
+        Log.debug("CurrentTarget", "motor current: " + _panel.getCurrent(_motorChannel));
         if(_panel.getCurrent(_motorChannel) > _currentThreshold)
         {
         	++consecutiveOvercurrents;
@@ -64,7 +65,7 @@ public class CurrentTarget extends MotorControl
         	consecutiveOvercurrents = 0;
         }
         
-        if(consecutiveOvercurrents >= 2)
+        if(consecutiveOvercurrents >= 3)
         {
         	return true;
         }
