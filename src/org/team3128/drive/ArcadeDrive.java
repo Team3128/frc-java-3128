@@ -5,11 +5,8 @@ import org.team3128.listener.ListenerManager;
 import org.team3128.listener.controller.ControllerXbox;
 import org.team3128.util.RobotMath;
 
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
-
 public class ArcadeDrive
 {
-	PowerDistributionPanel pdp = new PowerDistributionPanel();
     double _spdL, _spdR;
 
     MotorLink _leftMotors;
@@ -45,8 +42,4 @@ public class ArcadeDrive
     	_leftMotors.setControlTarget(RobotMath.getMotorExpectedRPM(_spdL));
     	_rightMotors.setControlTarget(RobotMath.getMotorExpectedRPM(_spdR));
     }
-    double currentMotorOne = pdp.getCurrent(1);
-    double currentMotorTwo = pdp.getCurrent(2);
-    double currentMotorThree = pdp.getCurrent(3);
-    double currentMotorFour = pdp.getCurrent(4);
 }
