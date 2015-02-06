@@ -6,8 +6,8 @@ import org.team3128.autonomous.AutoHardware;
 import org.team3128.autonomous.programs.CanGrabAuto;
 import org.team3128.autonomous.programs.TestMoveForwardAuto;
 import org.team3128.drive.ArcadeDrive;
-import org.team3128.hardware.ClawArm;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
+import org.team3128.hardware.misc.ClawArm;
 import org.team3128.hardware.motor.MotorLink;
 import org.team3128.hardware.motor.speedcontrol.CurrentTarget;
 import org.team3128.hardware.motor.speedcontrol.PIDSpeedTarget;
@@ -73,6 +73,8 @@ public class Global
 		_listenerManagerJoyRight = new ListenerManager(new Joystick(2), ControllerAttackJoy.instance);
 		
 		_listenerManagers.add(_listenerManagerXbox);
+		_listenerManagers.add(_listenerManagerJoyLeft);
+		_listenerManagers.add(_listenerManagerJoyRight);
 		
 		powerDistPanel = new PowerDistributionPanel();
 		
@@ -104,7 +106,7 @@ public class Global
 		
 		clawGrabMotor = new MotorLink();
 		clawGrabMotor.addControlledMotor(new Talon(8));
-		clawGrabMotor.setSpeedController(new CurrentTarget(powerDistPanel, 15, .75));
+		clawGrabMotor.setSpeedController(new CurrentTarget(powerDistPanel, 12, .5));
 		
 		leftArmBrakeServo = new Servo(9);
 		rightArmBrakeServo = new Servo(0);
@@ -157,7 +159,7 @@ public class Global
 		//-----------------------------------------------------------
 		IListenerCallback updateDrive = () -> _drive.steer();
 		
-		_listenerManagerXbox.addListener(ControllerXbox.JOY1X, updateDrive);
+		_listenerManagerXbox.addListener(ControllerXbox.JOY2X, updateDrive);
 		_listenerManagerXbox.addListener(ControllerXbox.JOY1Y, updateDrive);
 		
 		_listenerManagerXbox.addListener(ControllerXbox.R3DOWN, () ->
