@@ -4,6 +4,7 @@ import static java.lang.Math.abs;
 
 import org.team3128.Log;
 import org.team3128.autonomous.AutoHardware;
+import org.team3128.autonomous.AutoUtils;
 import org.team3128.util.RobotMath;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -41,14 +42,14 @@ public class CmdMoveForward extends Command {
 
     protected void initialize()
     {
-		AutoHardware.clearEncoders();
-		enc = RobotMath.floor_double_int(abs(AutoHardware.cmToDegrees(_cm)));
+		AutoUtils.clearEncoders();
+		enc = RobotMath.floor_double_int(abs(RobotMath.cmToDegrees(_cm)));
 		int norm = RobotMath.sgn(_cm);
 		startTime = System.currentTimeMillis();
 
 		
-		AutoHardware._leftMotors.setControlTarget(AutoHardware.speedMultiplier * .25 * norm);
-		AutoHardware._rightMotors.setControlTarget(AutoHardware.speedMultiplier * .25 * norm);
+		AutoHardware._leftMotors.setControlTarget(AutoUtils.speedMultiplier * .25 * norm);
+		AutoHardware._rightMotors.setControlTarget(AutoUtils.speedMultiplier * .25 * norm);
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -56,7 +57,7 @@ public class CmdMoveForward extends Command {
     {
 		if(_msec != 0 && System.currentTimeMillis() - startTime >_msec)
 		{
-			AutoHardware.killRobot("Move Overtime");
+			AutoUtils.killRobot("Move Overtime");
 		}
     }
 
@@ -72,7 +73,7 @@ public class CmdMoveForward extends Command {
     // Called once after isFinished returns true
     protected void end()
     {
-		AutoHardware.stopMovement();
+		AutoUtils.stopMovement();
     	
     	if(leftDone)
     	{
