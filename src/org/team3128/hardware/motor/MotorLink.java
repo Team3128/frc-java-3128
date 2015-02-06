@@ -132,9 +132,15 @@ public class MotorLink {
         }
     }
 
+    /**
+     * Stop the speed control, if it exists
+     */
     public void stopSpeedControl()
     {
-        spdControl.shutDown();
+    	if(spdControl != null)
+    	{
+    		spdControl.shutDown();
+    	}
     }
 }
 

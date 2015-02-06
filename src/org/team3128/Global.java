@@ -6,8 +6,9 @@ import org.team3128.autonomous.AutoHardware;
 import org.team3128.autonomous.programs.CanGrabAuto;
 import org.team3128.autonomous.programs.TestMoveForwardAuto;
 import org.team3128.drive.ArcadeDrive;
+import org.team3128.hardware.encoder.angular.AnalogPotentiometerEncoder;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
-import org.team3128.hardware.misc.ClawArm;
+import org.team3128.hardware.mechanisms.ClawArm;
 import org.team3128.hardware.motor.MotorLink;
 import org.team3128.hardware.motor.speedcontrol.CurrentTarget;
 import org.team3128.hardware.motor.speedcontrol.PIDSpeedTarget;
@@ -58,6 +59,10 @@ public class Global
 	
 	public MotorLink clawGrabMotor;
 	
+	public AnalogPotentiometerEncoder armRotateEncoder;
+	
+	public AnalogPotentiometerEncoder armJointEncoder;
+	
 	public PowerDistributionPanel powerDistPanel;
 	
 	public ArcadeDrive _drive;
@@ -96,8 +101,12 @@ public class Global
 		armTurnMotor = new MotorLink();
 		armTurnMotor.addControlledMotor(new Talon(6));
 		
+		armRotateEncoder = new AnalogPotentiometerEncoder(0);
+		
 		armJointMotor = new MotorLink();
 		armJointMotor.addControlledMotor(new Talon(5));
+		
+		armJointEncoder = new AnalogPotentiometerEncoder(1);
 		
 		frontHookMotor = new MotorLink();
 		frontHookMotor.addControlledMotor(new Talon(7));
@@ -106,12 +115,11 @@ public class Global
 		
 		clawGrabMotor = new MotorLink();
 		clawGrabMotor.addControlledMotor(new Talon(8));
-		clawGrabMotor.setSpeedController(new CurrentTarget(powerDistPanel, 12, .5));
 		
 		leftArmBrakeServo = new Servo(9);
 		rightArmBrakeServo = new Servo(0);
 		
-		clawArm = new ClawArm(armTurnMotor, armJointMotor, clawGrabMotor);
+		clawArm = new ClawArm(armTurnMotor, armJointMotor, clawGrabMotor, armRotateEncoder, armJointEncoder, powerDistPanel);
 
 		_drive = new ArcadeDrive(leftMotors, rightMotors, _listenerManagerXbox);
 		
@@ -181,11 +189,6 @@ public class Global
 		{
 			double power = _listenerManagerJoyLeft.getRawAxis(ControllerAttackJoy.JOYY);
 			clawArm.onArmJointJoyInput(power);
-		});
-		
-		_listenerManagerJoyLeft.addListener(ControllerAttackJoy.JOYX, () ->
-		{
-			clawArm.onClawJoyInput(_listenerManagerJoyLeft.getRawAxis(ControllerAttackJoy.JOYX), _listenerManagerJoyRight.getRawAxis(ControllerAttackJoy.JOYX));
 		});
 		
 		_listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN1, () -> 
