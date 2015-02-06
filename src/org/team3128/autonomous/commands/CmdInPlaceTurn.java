@@ -4,6 +4,7 @@ import static java.lang.Math.abs;
 
 import org.team3128.Options;
 import org.team3128.autonomous.AutoHardware;
+import org.team3128.autonomous.AutoUtils;
 import org.team3128.hardware.encoder.distance.IDistanceEncoder;
 import org.team3128.hardware.motor.MotorLink;
 import org.team3128.util.Direction;
@@ -61,10 +62,10 @@ public class CmdInPlaceTurn extends Command {
 
     protected void initialize()
     {
-		enc = RobotMath.floor_double_int(AutoHardware.cmToDegrees((Math.PI*Options.instance()._wheelBase)*(abs(_degs)/360.0)));
-		AutoHardware.clearEncoders();
-		forwardMotors.setControlTarget(AutoHardware.speedMultiplier * -1 * RobotMath.sgn(_degs) * .3);
-		backwardMotors.setControlTarget(AutoHardware.speedMultiplier *  RobotMath.sgn(_degs)* .3);
+		enc = RobotMath.floor_double_int(RobotMath.cmToDegrees((Math.PI*Options.instance()._wheelBase)*(abs(_degs)/360.0)));
+		AutoUtils.clearEncoders();
+		forwardMotors.setControlTarget(AutoUtils.speedMultiplier * -1 * RobotMath.sgn(_degs) * .3);
+		backwardMotors.setControlTarget(AutoUtils.speedMultiplier *  RobotMath.sgn(_degs)* .3);
 		startTime = System.currentTimeMillis();
     }
 
@@ -73,7 +74,7 @@ public class CmdInPlaceTurn extends Command {
     {
 		if(_msec != 0 && System.currentTimeMillis() - startTime >_msec)
 		{
-			AutoHardware.killRobot("Arc Turn Overtime");
+			AutoUtils.killRobot("Arc Turn Overtime");
 		}
     }
 
@@ -86,7 +87,7 @@ public class CmdInPlaceTurn extends Command {
     // Called once after isFinished returns true
     protected void end()
     {
-		AutoHardware.stopMovement();
+		AutoUtils.stopMovement();
     }
 
     // Called when another command which requires one or more of the same

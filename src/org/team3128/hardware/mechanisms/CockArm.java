@@ -1,4 +1,4 @@
-package org.team3128.hardware.misc;
+package org.team3128.hardware.mechanisms;
 
 import org.team3128.Options;
 import org.team3128.hardware.motor.MotorLink;

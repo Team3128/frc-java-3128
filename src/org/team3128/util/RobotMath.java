@@ -1,5 +1,7 @@
 package org.team3128.util;
 
+import org.team3128.Options;
+
 
 /**
 *
@@ -158,4 +160,14 @@ public class RobotMath {
    }
 
    private RobotMath() {}
+
+	/**
+	 * Convert cm of robot movement to degrees of wheel movement
+	 * @param cm
+	 * @return
+	 */
+	public static double cmToDegrees(double cm)
+	{
+		return Options.instance()._degreesPercm * cm;
+	}
 }

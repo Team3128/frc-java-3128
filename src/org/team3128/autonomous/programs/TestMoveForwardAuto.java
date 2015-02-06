@@ -10,9 +10,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
  */
 public class TestMoveForwardAuto extends CommandGroup {
     
-    public  TestMoveForwardAuto() {
-    	Log.debug("TestMoveForwardAuto", "Test Move Forward Run");
-    	
+    	Log.debug("TestMoveForwardAuto", "Auto started");
         addSequential(new CmdMoveForward(200, 0));
     }
 }
