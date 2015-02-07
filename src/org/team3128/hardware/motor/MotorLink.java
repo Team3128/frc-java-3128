@@ -113,6 +113,10 @@ public class MotorLink {
 
     public boolean isSpeedControlRunning()
     {
+    	if(spdControl == null)
+    	{
+    		return false;
+    	}
     	return spdControl.isRunning();
     }
     

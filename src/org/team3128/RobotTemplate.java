@@ -43,7 +43,10 @@ public class RobotTemplate extends IterativeRobot
     public void autonomousInit()
     {
         if(!autonomousHasBeenInit) {
-            global._listenerManagerXbox.removeAllListeners();
+        	for(ListenerManager manager : global._listenerManagers)
+        	{
+        		manager.removeAllListeners();
+        	}
             global.initializeAuto();
             autonomousHasBeenInit = true;
             teleopHasBeenInit = false;
@@ -56,7 +59,10 @@ public class RobotTemplate extends IterativeRobot
     boolean teleopHasBeenInit = false;
     public void teleopInit() {
         if(!teleopHasBeenInit) {
-            global._listenerManagerXbox.removeAllListeners();
+        	for(ListenerManager manager : global._listenerManagers)
+        	{
+        		manager.removeAllListeners();
+        	}
             global.initializeTeleop();
             teleopHasBeenInit = true;
             autonomousHasBeenInit = false;
