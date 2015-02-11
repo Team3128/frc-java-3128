@@ -38,8 +38,7 @@ public class QuadratureEncoderLink implements IVelocityEncoder, IDistanceEncoder
 	 */
 	public void clear()
 	{
-		//TODO implement this
-		throw new UnsupportedOperationException();
+		encoder.reset();
 	}
 
 	@Override

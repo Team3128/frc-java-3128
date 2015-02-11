@@ -11,12 +11,10 @@ import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
 import org.team3128.hardware.mechanisms.ClawArm;
 import org.team3128.hardware.motor.MotorLink;
 import org.team3128.hardware.motor.speedcontrol.CurrentTarget;
-import org.team3128.hardware.motor.speedcontrol.PIDSpeedTarget;
 import org.team3128.listener.IListenerCallback;
 import org.team3128.listener.ListenerManager;
 import org.team3128.listener.controller.ControllerAttackJoy;
-import org.team3128.listener.controller.ControllerXbox;
-import org.team3128.util.VelocityPID;
+import org.team3128.listener.controller.ControllerSaitekX55;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -37,7 +35,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Global
 {
 	public ArrayList<ListenerManager> _listenerManagers = new ArrayList<ListenerManager>();
-	public ListenerManager _listenerManagerXbox;
+	public ListenerManager _listenerManagerX55;
 	public ListenerManager _listenerManagerJoyLeft;
 	public ListenerManager _listenerManagerJoyRight;
 	
@@ -73,11 +71,11 @@ public class Global
 	
 	public Global()
 	{	
-		_listenerManagerXbox = new ListenerManager(new Joystick(Options.instance()._controllerPort), ControllerXbox.instance);
+		_listenerManagerX55 = new ListenerManager(new Joystick(Options.instance()._controllerPort), ControllerSaitekX55.instance);
 		_listenerManagerJoyLeft = new ListenerManager(new Joystick(1), ControllerAttackJoy.instance);
 		_listenerManagerJoyRight = new ListenerManager(new Joystick(2), ControllerAttackJoy.instance);
 		
-		_listenerManagers.add(_listenerManagerXbox);
+		_listenerManagers.add(_listenerManagerX55);
 		_listenerManagers.add(_listenerManagerJoyLeft);
 		_listenerManagers.add(_listenerManagerJoyRight);
 		
@@ -86,17 +84,17 @@ public class Global
 		leftDriveEncoder = new QuadratureEncoderLink(0,	1, 128);
 		rightDriveEncoder = new QuadratureEncoderLink(3, 4, 128);
 		
-		leftMotors = new MotorLink(new PIDSpeedTarget(0, leftDriveEncoder, new VelocityPID(.1, 0, 0)));
+		leftMotors = new MotorLink(/*new PIDSpeedTarget(0, leftDriveEncoder, new VelocityPID(.1, 0, 0))*/);
 		leftMotors.addControlledMotor(new Talon(1));
 		leftMotors.addControlledMotor(new Talon(2));
 		leftMotors.reverseMotor();
-		leftMotors.startControl(0);
+		//leftMotors.startControl(0);
 		
 		
-		rightMotors = new MotorLink(new PIDSpeedTarget(0, rightDriveEncoder, new VelocityPID(.1, 0, 0)));
+		rightMotors = new MotorLink(/*new PIDSpeedTarget(0, rightDriveEncoder, new VelocityPID(.1, 0, 0))*/);
 		rightMotors.addControlledMotor(new Talon(3));
 		rightMotors.addControlledMotor(new Talon(4));
-		rightMotors.startControl(0);
+		//rightMotors.startControl(0);
 		
 		armTurnMotor = new MotorLink();
 		armTurnMotor.addControlledMotor(new Talon(6));
@@ -121,7 +119,7 @@ public class Global
 		
 		clawArm = new ClawArm(armTurnMotor, armJointMotor, clawGrabMotor, armRotateEncoder, armJointEncoder, powerDistPanel);
 
-		_drive = new ArcadeDrive(leftMotors, rightMotors, _listenerManagerXbox);
+		_drive = new ArcadeDrive(leftMotors, rightMotors, _listenerManagerX55);
 		
 		//--------------------------------------------------------------------------
 		
@@ -167,10 +165,10 @@ public class Global
 		//-----------------------------------------------------------
 		IListenerCallback updateDrive = () -> _drive.steer();
 		
-		_listenerManagerXbox.addListener(ControllerXbox.JOY2X, updateDrive);
-		_listenerManagerXbox.addListener(ControllerXbox.JOY1Y, updateDrive);
+		_listenerManagerX55.addListener(ControllerSaitekX55.JOYY, updateDrive);
+		_listenerManagerX55.addListener(ControllerSaitekX55.TWIST, updateDrive);
 		
-		_listenerManagerXbox.addListener(ControllerXbox.R3DOWN, () ->
+		_listenerManagerX55.addListener(ControllerSaitekX55.LEVERDOWN, () ->
 		{
 			powerDistPanel.clearStickyFaults();
 		});
@@ -189,16 +187,6 @@ public class Global
 		{
 			double power = _listenerManagerJoyLeft.getRawAxis(ControllerAttackJoy.JOYY);
 			clawArm.onArmJointJoyInput(power);
-		});
-		
-		_listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN1, () -> 
-		{
-			frontHookMotor.startControl(-.15);
-		});
-
-		_listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN1, () -> 
-		{
-			frontHookMotor.startControl(.15);
 		});
 		
 		_listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN2, () -> clawArm.switchArmToOtherSide());
