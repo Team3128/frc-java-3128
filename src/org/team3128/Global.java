@@ -13,8 +13,10 @@ import org.team3128.hardware.motor.MotorLink;
 import org.team3128.hardware.motor.speedcontrol.CurrentTarget;
 import org.team3128.listener.IListenerCallback;
 import org.team3128.listener.ListenerManager;
+import org.team3128.listener.control.Always;
 import org.team3128.listener.controller.ControllerAttackJoy;
-import org.team3128.listener.controller.ControllerSaitekX55;
+import org.team3128.listener.controller.ControllerExtreme3D;
+import org.team3128.util.RoboVision;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -23,6 +25,7 @@ import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.vision.AxisCamera;
 
 /**
  * The Global class is where all of the hardware objects that represent the robot are stored.
@@ -35,7 +38,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Global
 {
 	public ArrayList<ListenerManager> _listenerManagers = new ArrayList<ListenerManager>();
-	public ListenerManager _listenerManagerX55;
+	public ListenerManager _listenerManagerExtreme;
 	public ListenerManager _listenerManagerJoyLeft;
 	public ListenerManager _listenerManagerJoyRight;
 	
@@ -67,15 +70,22 @@ public class Global
 	
 	public ClawArm clawArm;
 	
+	public AxisCamera camera;
+	
 	SendableChooser autoPrograms;
+	
+	IListenerCallback updateDriveArcade;
+	IListenerCallback updateDriveCOD;
+	
+	boolean codDriveEnabled = false;
 	
 	public Global()
 	{	
-		_listenerManagerX55 = new ListenerManager(new Joystick(Options.instance()._controllerPort), ControllerSaitekX55.instance);
+		_listenerManagerExtreme = new ListenerManager(new Joystick(Options.instance()._controllerPort), ControllerExtreme3D.instance);
 		_listenerManagerJoyLeft = new ListenerManager(new Joystick(1), ControllerAttackJoy.instance);
 		_listenerManagerJoyRight = new ListenerManager(new Joystick(2), ControllerAttackJoy.instance);
 		
-		_listenerManagers.add(_listenerManagerX55);
+		_listenerManagers.add(_listenerManagerExtreme);
 		_listenerManagers.add(_listenerManagerJoyLeft);
 		_listenerManagers.add(_listenerManagerJoyRight);
 		
@@ -117,9 +127,29 @@ public class Global
 		leftArmBrakeServo = new Servo(9);
 		rightArmBrakeServo = new Servo(0);
 		
+		camera = new AxisCamera("192.168.1.196");
+		
 		clawArm = new ClawArm(armTurnMotor, armJointMotor, clawGrabMotor, armRotateEncoder, armJointEncoder, powerDistPanel);
 
-		_drive = new ArcadeDrive(leftMotors, rightMotors, _listenerManagerX55);
+		_drive = new ArcadeDrive(leftMotors, rightMotors, _listenerManagerExtreme);
+		
+		updateDriveArcade = () ->
+		{
+			double joyX = _listenerManagerExtreme.getRawAxis(ControllerExtreme3D.JOYX);
+			double joyY = _listenerManagerExtreme.getRawAxis(ControllerExtreme3D.JOYY);
+			double throttle = -_listenerManagerExtreme.getRawAxis(ControllerExtreme3D.THROTTLE);
+			
+			_drive.steer(joyX, joyY, throttle);
+		};
+		
+		updateDriveCOD = () ->
+		{
+			double joyX = _listenerManagerExtreme.getRawAxis(ControllerExtreme3D.TWIST);
+			double joyY = _listenerManagerExtreme.getRawAxis(ControllerExtreme3D.JOYY);
+			double throttle = -_listenerManagerExtreme.getRawAxis(ControllerExtreme3D.THROTTLE);
+			
+			_drive.steer(joyX, joyY, throttle);
+		};
 		
 		//--------------------------------------------------------------------------
 		
@@ -163,14 +193,45 @@ public class Global
 		//-----------------------------------------------------------
 		// Drive code, on Xbox controller
 		//-----------------------------------------------------------
-		IListenerCallback updateDrive = () -> _drive.steer();
+		_listenerManagerExtreme.addListener(ControllerExtreme3D.JOYX, updateDriveArcade);
+		_listenerManagerExtreme.addListener(ControllerExtreme3D.JOYY, updateDriveArcade);
+		_listenerManagerExtreme.addListener(ControllerExtreme3D.THROTTLE, updateDriveArcade);
 		
-		_listenerManagerX55.addListener(ControllerSaitekX55.JOYY, updateDrive);
-		_listenerManagerX55.addListener(ControllerSaitekX55.TWIST, updateDrive);
+		_listenerManagerExtreme.addListener(ControllerExtreme3D.TRIGGERDOWN, () ->
+		{
+			if(!codDriveEnabled)
+			{
+				_listenerManagerExtreme.removeAllListenersForControl(ControllerExtreme3D.JOYX);
+				_listenerManagerExtreme.removeAllListenersForControl(ControllerExtreme3D.JOYY);
+				_listenerManagerExtreme.removeAllListenersForControl(ControllerExtreme3D.THROTTLE);
+				
+				_listenerManagerExtreme.addListener(ControllerExtreme3D.TWIST, updateDriveCOD);
+				_listenerManagerExtreme.addListener(ControllerExtreme3D.JOYY, updateDriveCOD);
+				_listenerManagerExtreme.addListener(ControllerExtreme3D.THROTTLE, updateDriveCOD);
+				codDriveEnabled = !false;
+			}
+			else
+			{
+				_listenerManagerExtreme.removeAllListenersForControl(ControllerExtreme3D.TWIST);
+				_listenerManagerExtreme.removeAllListenersForControl(ControllerExtreme3D.JOYY);
+				_listenerManagerExtreme.removeAllListenersForControl(ControllerExtreme3D.THROTTLE);
+				
+				_listenerManagerExtreme.addListener(ControllerExtreme3D.JOYX, updateDriveArcade);
+				_listenerManagerExtreme.addListener(ControllerExtreme3D.JOYY, updateDriveArcade);
+				_listenerManagerExtreme.addListener(ControllerExtreme3D.THROTTLE, updateDriveArcade);
+				codDriveEnabled = !true;
+
+			}
+		});
 		
-		_listenerManagerX55.addListener(ControllerSaitekX55.LEVERDOWN, () ->
+		_listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN12, () ->
 		{
 			powerDistPanel.clearStickyFaults();
+		});
+		
+		_listenerManagerExtreme.addListener(Always.instance, () ->
+		{
+			RoboVision.targetRecognition(camera);
 		});
 		
 		//-----------------------------------------------------------
