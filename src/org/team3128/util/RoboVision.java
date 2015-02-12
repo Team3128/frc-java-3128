@@ -48,7 +48,7 @@ public class RoboVision
             //filteredImage.write("/filteredImage.bmp");
 
             //iterate through each particle and score to see if it is a target
-            NIVision.Score scores[] = new Scores[filteredImage.getNumberParticles()];
+            NIVision. scores[] = new Scores[filteredImage.getNumberParticles()];
             horizontalTargetCount = verticalTargetCount = 0;
 
             if (filteredImage.getNumberParticles() > 0) {
@@ -85,9 +85,9 @@ public class RoboVision
                         double horizWidth, horizHeight, vertWidth, leftScore, rightScore, tapeWidthScore, verticalScore, total;
 
                         //Measure equivalent rectangle sides for use in score calculation
-                        horizWidth = NIVision.MeasureParticle(filteredImage.image, horizontalTargets[j], false, MeasurementType.IMAQ_MT_EQUIVALENT_RECT_LONG_SIDE);
-                        vertWidth = NIVision.MeasureParticle(filteredImage.image, verticalTargets[i], false, MeasurementType.IMAQ_MT_EQUIVALENT_RECT_SHORT_SIDE);
-                        horizHeight = NIVision.MeasureParticle(filteredImage.image, horizontalTargets[j], false, MeasurementType.IMAQ_MT_EQUIVALENT_RECT_SHORT_SIDE);
+                        horizWidth = NIVision.imaqMeasureParticle(filteredImage.image, horizontalTargets[j], 0, MeasurementType.MT_EQUIVALENT_RECT_LONG_SIDE);
+                        vertWidth = NIVision.imaqMeasureParticle(filteredImage.image, verticalTargets[i], 0, MeasurementType.MT_EQUIVALENT_RECT_SHORT_SIDE);
+                        horizHeight = NIVision.imaqMeasureParticle(filteredImage.image, horizontalTargets[j], 0, MeasurementType.MT_EQUIVALENT_RECT_SHORT_SIDE);
 
                         //Determine if the horizontal target is in the expected location to the left of the vertical target
                         leftScore = ratioToScore(1.2 * (verticalReport.boundingRectLeft - horizontalReport.center_mass_x) / horizWidth);
