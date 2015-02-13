@@ -49,17 +49,19 @@ public class ClawArm
 		
 		_clawGrab.setSpeedController(new CurrentTarget(panel, 12, clawCurrentThreshold));
 		
-		armRotateAngleTarget = new LinearAngleTarget(0, 2, armEncoder);
+		armRotateAngleTarget = new LinearAngleTarget(.2, 3, armEncoder);
 		
 		armJointAngleTarget = new LinearAngleTarget(0, 2, jointEncoder);
 		
-		armRotateEndstopTarget = new AngleEndstopTarget(15, 275, 5, armEncoder);
+		armRotateEndstopTarget = new AngleEndstopTarget(20, 300, 2, armEncoder);
 		
-		armJointEndstopTarget = new AngleEndstopTarget(15, 275, 5, jointEncoder);
+		armJointEndstopTarget = new AngleEndstopTarget(30, 300, 5, jointEncoder);
 		
 		_armRotateEncoder = armEncoder;
 		
 		_armJointEncoder = jointEncoder;
+		
+		switchToManualControl();
 	}
 	
 	/**
@@ -72,7 +74,7 @@ public class ClawArm
 		_armJoint.stopSpeedControl();
 		_armJoint.setSpeedController(armJointAngleTarget);
 		
-		_armJoint.stopSpeedControl();
+		_armRotate.stopSpeedControl();
 		_armRotate.setSpeedController(armRotateAngleTarget);
 	}
 	
@@ -86,7 +88,7 @@ public class ClawArm
 		_armJoint.stopSpeedControl();
 		_armJoint.setSpeedController(armJointEndstopTarget);
 		
-		_armJoint.stopSpeedControl();
+		_armRotate.stopSpeedControl();
 		_armRotate.setSpeedController(armRotateEndstopTarget);
 	}
 	
@@ -146,7 +148,7 @@ public class ClawArm
 	{
 		if(isUsingAutoControl)
 		{
-			if(!_armRotate.isSpeedControlRunning() && !_armJoint.isSpeedControlRunning())
+			if(!_armRotate.isSpeedControlRunning()/* && !_armJoint.isSpeedControlRunning()*/)
 			{
 				switchToManualControl();
 			}
@@ -180,7 +182,14 @@ public class ClawArm
 		{
 			if(Math.abs(joyPower) >= .1)
 			{
-				_armRotate.setControlTarget((inverted ? 1 : -1) * joyPower);
+				if(_armRotate.isSpeedControlRunning())
+				{
+					_armRotate.setControlTarget((inverted ? 1 : -1) * joyPower);
+				}
+				else
+				{
+					_armRotate.startControl((inverted ? 1 : -1) * joyPower);
+				}
 			}
 			else
 			{

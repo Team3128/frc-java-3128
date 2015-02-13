@@ -14,6 +14,8 @@ public class LinearAngleTarget extends MotorControl
     private double minSpeed;
     private double targetAngle, threshold;
     private IAngularEncoder _encoder;
+    
+    private int consecutiveCorrectPositions = 0;
 
     /**
      * 
@@ -53,8 +55,10 @@ public class LinearAngleTarget extends MotorControl
        
         if(Math.abs(error) < threshold)
         {
+        	++consecutiveCorrectPositions;
         	return 0;
         }
+        consecutiveCorrectPositions = 0;
         
         return pGain;
     }
@@ -66,8 +70,7 @@ public class LinearAngleTarget extends MotorControl
      */
     public boolean isComplete()
     {
-        double x =  Math.abs(RobotMath.angleDistance(_encoder.getAngle(), this.targetAngle));
-        return x < threshold;
+        return consecutiveCorrectPositions >= 5;
     }
     
 }

@@ -2,8 +2,6 @@ package org.team3128.hardware.motor;
 
 import java.util.ArrayList;
 
-import org.team3128.Log;
-
 import edu.wpi.first.wpilibj.SpeedController;
 
 /**
@@ -85,7 +83,7 @@ public class MotorLink {
         if(this.spdControl != null && this.spdControl.isRunning()) 
         {
             this.spdControl.shutDown();
-            Log.fatal("MotorLink", "The speed controller was changed when one was running.");
+            throw new RuntimeException("MotorLink: The speed controller was changed when one was running.");
         }
         
         this.spdControl = spdControl;
@@ -102,11 +100,11 @@ public class MotorLink {
         	 setInternalSpeed(target);
         	 return;
         }
-        if(!spdControl.isRunning())
-        {
-            Log.recoverable("MotorLink", "The speed controller's target was set, but it is not enabled.");
-            return;
-        }
+//        if(!spdControl.isRunning())
+//        {
+//            Log.recoverable("MotorLink", "The speed controller's target was set, but it is not enabled.");
+//            return;
+//        }
 
         this.spdControl.setControlTarget(target);
     }

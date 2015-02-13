@@ -16,7 +16,6 @@ import org.team3128.listener.ListenerManager;
 import org.team3128.listener.control.Always;
 import org.team3128.listener.controller.ControllerAttackJoy;
 import org.team3128.listener.controller.ControllerExtreme3D;
-import org.team3128.util.RoboVision;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -109,12 +108,12 @@ public class Global
 		armTurnMotor = new MotorLink();
 		armTurnMotor.addControlledMotor(new Talon(6));
 		
-		armRotateEncoder = new AnalogPotentiometerEncoder(0);
+		armRotateEncoder = new AnalogPotentiometerEncoder(0, 30, 4.829, 300);
 		
 		armJointMotor = new MotorLink();
 		armJointMotor.addControlledMotor(new Talon(5));
 		
-		armJointEncoder = new AnalogPotentiometerEncoder(1);
+		armJointEncoder = new AnalogPotentiometerEncoder(1, 0, 4.829, 300);
 		
 		frontHookMotor = new MotorLink();
 		frontHookMotor.addControlledMotor(new Talon(7));
@@ -127,7 +126,7 @@ public class Global
 		leftArmBrakeServo = new Servo(9);
 		rightArmBrakeServo = new Servo(0);
 		
-		camera = new AxisCamera("192.168.1.196");
+		//camera = new AxisCamera("192.168.1.196");
 		
 		clawArm = new ClawArm(armTurnMotor, armJointMotor, clawGrabMotor, armRotateEncoder, armJointEncoder, powerDistPanel);
 
@@ -193,46 +192,46 @@ public class Global
 		//-----------------------------------------------------------
 		// Drive code, on Xbox controller
 		//-----------------------------------------------------------
-		_listenerManagerExtreme.addListener(ControllerExtreme3D.JOYX, updateDriveArcade);
-		_listenerManagerExtreme.addListener(ControllerExtreme3D.JOYY, updateDriveArcade);
-		_listenerManagerExtreme.addListener(ControllerExtreme3D.THROTTLE, updateDriveArcade);
+		_listenerManagerExtreme.addListener(ControllerExtreme3D.TWIST, updateDriveCOD);
+		_listenerManagerExtreme.addListener(ControllerExtreme3D.JOYY, updateDriveCOD);
+		_listenerManagerExtreme.addListener(ControllerExtreme3D.THROTTLE, updateDriveCOD);
 		
-		_listenerManagerExtreme.addListener(ControllerExtreme3D.TRIGGERDOWN, () ->
-		{
-			if(!codDriveEnabled)
-			{
-				_listenerManagerExtreme.removeAllListenersForControl(ControllerExtreme3D.JOYX);
-				_listenerManagerExtreme.removeAllListenersForControl(ControllerExtreme3D.JOYY);
-				_listenerManagerExtreme.removeAllListenersForControl(ControllerExtreme3D.THROTTLE);
-				
-				_listenerManagerExtreme.addListener(ControllerExtreme3D.TWIST, updateDriveCOD);
-				_listenerManagerExtreme.addListener(ControllerExtreme3D.JOYY, updateDriveCOD);
-				_listenerManagerExtreme.addListener(ControllerExtreme3D.THROTTLE, updateDriveCOD);
-				codDriveEnabled = !false;
-			}
-			else
-			{
-				_listenerManagerExtreme.removeAllListenersForControl(ControllerExtreme3D.TWIST);
-				_listenerManagerExtreme.removeAllListenersForControl(ControllerExtreme3D.JOYY);
-				_listenerManagerExtreme.removeAllListenersForControl(ControllerExtreme3D.THROTTLE);
-				
-				_listenerManagerExtreme.addListener(ControllerExtreme3D.JOYX, updateDriveArcade);
-				_listenerManagerExtreme.addListener(ControllerExtreme3D.JOYY, updateDriveArcade);
-				_listenerManagerExtreme.addListener(ControllerExtreme3D.THROTTLE, updateDriveArcade);
-				codDriveEnabled = !true;
-
-			}
-		});
+//		_listenerManagerExtreme.addListener(ControllerExtreme3D.TRIGGERDOWN, () ->
+//		{
+//			if(!codDriveEnabled)
+//			{
+//				_listenerManagerExtreme.removeAllListenersForControl(ControllerExtreme3D.JOYX);
+//				_listenerManagerExtreme.removeAllListenersForControl(ControllerExtreme3D.JOYY);
+//				_listenerManagerExtreme.removeAllListenersForControl(ControllerExtreme3D.THROTTLE);
+//				
+//				_listenerManagerExtreme.addListener(ControllerExtreme3D.TWIST, updateDriveCOD);
+//				_listenerManagerExtreme.addListener(ControllerExtreme3D.JOYY, updateDriveCOD);
+//				_listenerManagerExtreme.addListener(ControllerExtreme3D.THROTTLE, updateDriveCOD);
+//				codDriveEnabled = !false;
+//			}
+//			else
+//			{
+//				_listenerManagerExtreme.removeAllListenersForControl(ControllerExtreme3D.TWIST);
+//				_listenerManagerExtreme.removeAllListenersForControl(ControllerExtreme3D.JOYY);
+//				_listenerManagerExtreme.removeAllListenersForControl(ControllerExtreme3D.THROTTLE);
+//				
+//				_listenerManagerExtreme.addListener(ControllerExtreme3D.JOYX, updateDriveArcade);
+//				_listenerManagerExtreme.addListener(ControllerExtreme3D.JOYY, updateDriveArcade);
+//				_listenerManagerExtreme.addListener(ControllerExtreme3D.THROTTLE, updateDriveArcade);
+//				codDriveEnabled = !true;
+//
+//			}
+//		});
 		
 		_listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN12, () ->
 		{
 			powerDistPanel.clearStickyFaults();
 		});
 		
-		_listenerManagerExtreme.addListener(Always.instance, () ->
-		{
-			RoboVision.targetRecognition(camera);
-		});
+		
+		_listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN3, () -> clawArm.setArmAngle(45));
+		
+		_listenerManagerExtreme.addListener(Always.instance, () -> System.out.println(armRotateEncoder.getAngle()));
 		
 		//-----------------------------------------------------------
 		// Arm control code, on joysticks

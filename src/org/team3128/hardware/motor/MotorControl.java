@@ -1,4 +1,4 @@
-package org.team3128.hardware.motor;
+ package org.team3128.hardware.motor;
 
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -95,16 +95,20 @@ public abstract class MotorControl
    
    public void shutDown()
    {
-	   thread.interrupt();
-	   try
+	   if(thread != null)
 	   {
-		   thread.join();
-	   } 
-	   catch (InterruptedException e)
-	   {
-			e.printStackTrace();
-			return;
+		   thread.interrupt();
+		   try
+		   {
+			   thread.join();
+		   } 
+		   catch (InterruptedException e)
+		   {
+				e.printStackTrace();
+				return;
+		   }
 	   }
+	   
    }
    
    /**

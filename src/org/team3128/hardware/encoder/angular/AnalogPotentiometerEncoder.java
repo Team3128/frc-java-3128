@@ -4,22 +4,28 @@ import edu.wpi.first.wpilibj.AnalogInput;
 
 public class AnalogPotentiometerEncoder implements IAngularEncoder {
 	private AnalogInput enc;
-	private final double constToDeg = 2168.470588235294;
+	private double degreesPerVolt;
     private final double offset;
-    public AnalogPotentiometerEncoder(int chan){
-		enc = new AnalogInput(chan);
-		offset = 0;
-	}
     
-    public AnalogPotentiometerEncoder(int chan, int off){
+    /**
+     * 
+     * @param chan
+     * @param off offset in degrees
+     * @param voltsAtEndOfTravel the voltage when the encoder is at the end of its travel
+     * @param travelLength the length in degrees of the travel
+     */
+    public AnalogPotentiometerEncoder(int chan, int off, double voltsAtEndOfTravel, double travelLength)
+    {
 		enc = new AnalogInput(chan);
 		offset = off;
+		
+		degreesPerVolt = travelLength / voltsAtEndOfTravel;
 	}
 	
 	@Override
 	public double getAngle() {
 		
-		return (getRawValue() * constToDeg) + offset;
+		return (getRawValue() * degreesPerVolt) + offset;
 	}
 
 	@Override
