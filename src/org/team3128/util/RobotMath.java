@@ -27,11 +27,12 @@ public class RobotMath {
     *
     * @param angle1 angle
     * @param angle2 angle
+    * @param shortWay if true, go the shorter way to make moves always <= 180
     * @return shortest angular distance between
     */
-   public static double angleDistance(double angle1, double angle2) {
+   public static double angleDistance(double angle1, double angle2, boolean shortWay) {
        double dist = normalizeAngle(angle2) - normalizeAngle(angle1);
-       if (Math.abs(dist) > 180) {
+       if(shortWay && Math.abs(dist) > 180) {
            double sgn = RobotMath.sgn(dist);
            return -sgn * (360 - Math.abs(dist));
        }
@@ -75,15 +76,16 @@ public class RobotMath {
     * <p/>
     * @param currentAngle the current angle of the motor
     * @param targetAngle the target angle of the motor
+    * @param shortWay if true, go the shorter way to make moves always <= 180
     * <p/>
     * @return a MotorDir
     */
-   public static MotorDir getMotorDirToTarget(double currentAngle, double targetAngle) {
+   public static MotorDir getMotorDirToTarget(double currentAngle, double targetAngle, boolean shortWay) 
+   {
        currentAngle = RobotMath.normalizeAngle(currentAngle);
        targetAngle = RobotMath.normalizeAngle(targetAngle);
-       int retDir = 1 * (Math.abs(currentAngle - targetAngle) > 180 ? 1 : -1) * (currentAngle - targetAngle < 0 ? -1 : 1);
+       int retDir = 1 * ((shortWay && Math.abs(currentAngle - targetAngle) > 180 )? 1 : -1) * (currentAngle - targetAngle < 0 ? -1 : 1);
 
-       //MotorDir is syntactic sugar; could just return retDir
        if (currentAngle - targetAngle == 0 || currentAngle - targetAngle == 180) return MotorDir.NONE;
        return (retDir == 1 ? MotorDir.CW : MotorDir.CCW);
    }

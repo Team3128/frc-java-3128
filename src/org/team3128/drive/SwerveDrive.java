@@ -25,8 +25,11 @@ public class SwerveDrive
     
     private IAngularEncoder _encFL, _encFR, _encBk;
 
-    public static double[] optimizeSwerve(double ang1, double ang2, double vel) {
-        double a = RobotMath.angleDistance(ang2, ang1);
+    public double[] optimizeSwerve(double ang1, double ang2, double vel)
+    {
+    	
+    	//hopefully all encoders are all using the same type of encoders
+        double a = RobotMath.angleDistance(ang2, ang1, _encFL.canRevolveMultipleTimes());
         double o[] = new double[2];
         if (Math.abs(a) > 90) {
             o[0] = ang2 + 180.0;
