@@ -18,7 +18,7 @@ public class RobotMath {
     */
    public static double normalizeAngle(double angle) {
        double theta = ((angle % 360) + 360) % 360;
-       if (theta > 180) return (theta - 360);
+       //if (theta > 180) return (theta - 360);
        return theta;
    }
 

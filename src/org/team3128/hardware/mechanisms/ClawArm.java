@@ -49,11 +49,11 @@ public class ClawArm
 		
 		_clawGrab.setSpeedController(new CurrentTarget(panel, 12, clawCurrentThreshold));
 		
-		armRotateAngleTarget = new LinearAngleTarget(.2, 3, armEncoder);
+		armRotateAngleTarget = new LinearAngleTarget(.4, 3, armEncoder);
 		
 		armJointAngleTarget = new LinearAngleTarget(0, 2, jointEncoder);
 		
-		armRotateEndstopTarget = new AngleEndstopTarget(20, 300, 2, armEncoder);
+		armRotateEndstopTarget = new AngleEndstopTarget(22, 295, 2, armEncoder);
 		
 		armJointEndstopTarget = new AngleEndstopTarget(30, 300, 5, jointEncoder);
 		
@@ -173,7 +173,7 @@ public class ClawArm
 	{
 		if(isUsingAutoControl)
 		{
-			if(!_armRotate.isSpeedControlRunning() && !_armJoint.isSpeedControlRunning())
+			if(!_armRotate.isSpeedControlRunning() /*&& !_armJoint.isSpeedControlRunning()*/)
 			{
 				switchToManualControl();
 			}

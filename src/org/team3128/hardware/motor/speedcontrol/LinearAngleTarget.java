@@ -65,10 +65,13 @@ public class LinearAngleTarget extends MotorControl
         }
         consecutiveCorrectPositions = 0;
         
-        return pGain;
+        return RobotMath.makeValidPower(pGain);
     }
 
-    public void clearControlRun() {}
+    public void clearControlRun()
+    {
+    	 consecutiveCorrectPositions = 0;
+    }
 
     /**
      * Returns true if the motor is at the correct angle
