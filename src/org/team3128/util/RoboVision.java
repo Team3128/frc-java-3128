@@ -1,9 +1,13 @@
 package org.team3128.util;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 import org.team3128.Log;
 
 import com.ni.vision.NIVision;
 import com.ni.vision.NIVision.MeasurementType;
+import com.ni.vision.NIVision.ROI;
 
 import edu.wpi.first.wpilibj.image.BinaryImage;
 import edu.wpi.first.wpilibj.image.ColorImage;
@@ -24,10 +28,6 @@ public class RoboVision
        
     	NIVision.ParticleFilterCriteria2 cc = new NIVision.ParticleFilterCriteria2(NIVision.MeasurementType.MT_AREA, AREA_MINIMUM, 65535, 0, 0);      // create the criteria for the particle filter
 
-        int verticalTargets[] = new int[MAX_PARTICLES];
-        int horizontalTargets[] = new int[MAX_PARTICLES];
-        int verticalTargetCount, horizontalTargetCount;
-
         try {
             /**
              * Do the image capture with the Global.camera and apply the algorithm
@@ -45,11 +45,10 @@ public class RoboVision
            
             //DebugLog.log(DebugLog.LVL_INFO, "Vision", "Just finished thresholding");
             //thresholdImage.write("/threshold.bmp");
-            filteredImage = thresholdImage.particleFilter(new NIVision.ParticleFilterCriteria2[]{cc});           // filter out small particles
+            filteredImage = particleFilterThatDoesntCrash(thresholdImage, new NIVision.ParticleFilterCriteria2[]{cc});           // filter out small particles
             //filteredImage.write("/filteredImage.bmp");
 
             //iterate through each particle and score to see if it is a target
-            horizontalTargetCount = verticalTargetCount = 0;
 
             if (filteredImage.getNumberParticles() > 0) {
                 for (int i = 0; i <= MAX_PARTICLES && i < filteredImage.getNumberParticles(); i++) {
@@ -208,6 +207,44 @@ public class RoboVision
         }
 
         return isTarget;
+    }
+    
+    static Constructor<BinaryImage> imageConstructor;
+    static Constructor<ROI> roiConstructor;
+    
+    protected static BinaryImage particleFilterThatDoesntCrash(BinaryImage sourceImage, NIVision.ParticleFilterCriteria2[] criteria)
+    {
+    	if(imageConstructor == null)
+    	{
+    		try
+			{
+				imageConstructor = BinaryImage.class.getConstructor(new Class[]{null});
+				roiConstructor = ROI.class.getConstructor(new Class[]{null});
+			} catch (NoSuchMethodException | SecurityException e)
+			{
+				e.printStackTrace();
+			}
+    		imageConstructor.setAccessible(true);
+    		roiConstructor.setAccessible(true);
+    	}
+    	
+    	//create a new image and roi using reflection
+    	BinaryImage result = null;
+    	ROI roi = null;
+		try
+		{
+			result = imageConstructor.newInstance();
+	    	roi = roiConstructor.newInstance();
+		} catch (InstantiationException | IllegalAccessException
+				| IllegalArgumentException | InvocationTargetException e)
+		{
+			e.printStackTrace();
+		}
+    	
+        NIVision.ParticleFilterOptions2 options = new NIVision.ParticleFilterOptions2(0, 0, 0, 1);
+        NIVision.imaqParticleFilter4(result.image, sourceImage.image, criteria, options, roi);
+        options.free();
+        return result;
     }
 
 

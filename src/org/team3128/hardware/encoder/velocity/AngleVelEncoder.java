@@ -51,7 +51,7 @@ public class AngleVelEncoder implements IVelocityEncoder
 
 			}
 			
-			double degreesChanged = RobotMath.angleDistance(lastAngle, newAngle);
+			double degreesChanged = RobotMath.angleDistance(lastAngle, newAngle, true);
 			
 			if(degreesChanged < .01)
 			{

@@ -27,4 +27,10 @@ public class AnalogPotentiometerEncoder implements IAngularEncoder {
 		return enc.getVoltage();
 	}
 
+	@Override
+	public boolean canRevolveMultipleTimes()
+	{
+		return false;
+	}
+
 }

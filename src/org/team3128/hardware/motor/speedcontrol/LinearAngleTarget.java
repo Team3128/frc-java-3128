@@ -46,11 +46,16 @@ public class LinearAngleTarget extends MotorControl
     public double speedControlStep(double dt)
     {
     	double angle = _encoder.getAngle();
-        double error = RobotMath.angleDistance(angle, this.targetAngle);
+    	
+    	double error = RobotMath.angleDistance(angle, this.targetAngle, _encoder.canRevolveMultipleTimes());
         double sgn = RobotMath.sgn(error);
         double pGain = sgn*(Math.abs(error))*((1-this.minSpeed)/90.0)+this.minSpeed;
-        pGain = (Math.abs(pGain) > this.minSpeed ? pGain : RobotMath.getMotorDirToTarget(angle, this.targetAngle).getIntDir() * this.minSpeed);
-       
+        
+        if(Math.abs(pGain) <= this.minSpeed)
+        {
+        	pGain = RobotMath.getMotorDirToTarget(angle, this.targetAngle, _encoder.canRevolveMultipleTimes()).getIntDir() * this.minSpeed;
+        }
+
         if(Math.abs(error) < threshold)
         {
         	return 0;
@@ -66,7 +71,7 @@ public class LinearAngleTarget extends MotorControl
      */
     public boolean isComplete()
     {
-        double x =  Math.abs(RobotMath.angleDistance(_encoder.getAngle(), this.targetAngle));
+        double x =  Math.abs(RobotMath.angleDistance(_encoder.getAngle(), this.targetAngle, _encoder.canRevolveMultipleTimes()));
         return x < threshold;
     }
     

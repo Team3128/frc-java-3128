@@ -44,5 +44,11 @@ public class MagneticPotentiometerEncoder implements IAngularEncoder {
      * @return the raw voltage of the encoder
      */
     public double getRawValue() {return enc.getVoltage();}
+
+	@Override
+	public boolean canRevolveMultipleTimes()
+	{
+		return true;
+	}
 }
 
