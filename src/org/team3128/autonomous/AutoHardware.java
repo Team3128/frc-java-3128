@@ -1,6 +1,6 @@
 package org.team3128.autonomous;
 
-import org.team3128.hardware.encoder.distance.IDistanceEncoder;
+import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
 import org.team3128.hardware.motor.MotorLink;
 
 /**
@@ -12,8 +12,8 @@ import org.team3128.hardware.motor.MotorLink;
  */
 public class AutoHardware
 {
-	public static IDistanceEncoder _encLeft;
-	public static IDistanceEncoder _encRight;
+	public static QuadratureEncoderLink _encLeft;
+	public static QuadratureEncoderLink _encRight;
 	
 	public static MotorLink _leftMotors;
 	public static MotorLink _rightMotors;

@@ -19,8 +19,9 @@ public class QuadratureEncoderLink implements IVelocityEncoder, IDistanceEncoder
 	 * @param dataBPort DIO port with the "B" data line plugged in to it
 	 * @param pulsesPerRevolution The pulses per revolution of the encoder.  It should say on the encoder
 	 * or its datasheet.
+	 * @param inverted whether or not the encoder is inverted
 	 */
-	public QuadratureEncoderLink(int dataAPort, int dataBPort, double pulsesPerRevolution) 
+	public QuadratureEncoderLink(int dataAPort, int dataBPort, double pulsesPerRevolution, boolean inverted) 
 	{
 		encoder = new Encoder(dataAPort, dataBPort);
 		encoder.setDistancePerPulse(1/pulsesPerRevolution);

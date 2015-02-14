@@ -5,7 +5,7 @@ import static java.lang.Math.abs;
 import org.team3128.Options;
 import org.team3128.autonomous.AutoHardware;
 import org.team3128.autonomous.AutoUtils;
-import org.team3128.hardware.encoder.distance.IDistanceEncoder;
+import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
 import org.team3128.hardware.motor.MotorLink;
 import org.team3128.util.Direction;
 import org.team3128.util.RobotMath;
@@ -26,17 +26,21 @@ public class CmdArcTurn extends Command {
 	long startTime;
 	
 	/**
-	 * encoder pulses that the move will take
+	 * rotations that the move will take
 	 */
-	int enc;
+	double enc;
 	
-	IDistanceEncoder sideEncoder;
+	QuadratureEncoderLink sideEncoder;
+	
+	QuadratureEncoderLink otherSideEncoder;
 	
 	MotorLink sideMotors;
 	
+	MotorLink otherSideMotors;
+	
 	/**
 	 * @param degs how far to turn in degrees.  Accepts negative values.
-	 * @param msec How long the move should take. If set to 0, do not time the move
+	 * @param msec How long the move should take. If set to 0, do not time the move.
 	 */
     public CmdArcTurn(float degs, int msec, Direction dir)
     {
@@ -47,18 +51,24 @@ public class CmdArcTurn extends Command {
     	if(dir == Direction.RIGHT)
     	{
     		sideEncoder = AutoHardware._encLeft;
+    		otherSideEncoder = AutoHardware._encRight;
+    		
     		sideMotors = AutoHardware._leftMotors;
+    		otherSideMotors = AutoHardware._rightMotors;
     	}
     	else
     	{
     		sideEncoder = AutoHardware._encRight;
+    		otherSideEncoder = AutoHardware._encLeft;
+    		
     		sideMotors = AutoHardware._rightMotors;
+    		otherSideMotors = AutoHardware._leftMotors;
     	}
     }
 
     protected void initialize()
     {
-		enc = RobotMath.floor_double_int(RobotMath.cmToDegrees((2.0*Math.PI*Options.instance()._wheelBase)*(abs(_degs)/360.0)));
+		enc = RobotMath.cmToRotations((2.0*Math.PI*Options.instance()._wheelBase)*(abs(_degs)/360.0));
 		AutoUtils.clearEncoders();
 		
 		sideMotors.setControlTarget(AutoUtils.speedMultiplier * RobotMath.sgn(_degs) * .25);
@@ -72,12 +82,16 @@ public class CmdArcTurn extends Command {
 		{
 			AutoUtils.killRobot("Arc Turn Overtime");
 		}
+		
+		otherSideMotors.setControlTarget(-1 * RobotMath.getEstMotorPowerForRPM(otherSideEncoder.getSpeedInRPM()));
+		
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished()
-    {    	
-        return sideEncoder.getDistance() < enc;
+    {
+    	//System.out.println(sideEncoder.getDistance());
+        return Math.abs(sideEncoder.getDistance()) >= enc;
     }
 
     // Called once after isFinished returns true

@@ -90,19 +90,19 @@ public class Global
 		
 		powerDistPanel = new PowerDistributionPanel();
 		
-		leftDriveEncoder = new QuadratureEncoderLink(0,	1, 128);
-		rightDriveEncoder = new QuadratureEncoderLink(3, 4, 128);
+		leftDriveEncoder = new QuadratureEncoderLink(0,	1, 128, false);
+		rightDriveEncoder = new QuadratureEncoderLink(3, 4, 128, true);
 		
 		leftMotors = new MotorLink(/*new PIDSpeedTarget(0, leftDriveEncoder, new VelocityPID(.1, 0, 0))*/);
 		leftMotors.addControlledMotor(new Talon(1));
 		leftMotors.addControlledMotor(new Talon(2));
-		leftMotors.reverseMotor();
 		//leftMotors.startControl(0);
 		
 		
 		rightMotors = new MotorLink(/*new PIDSpeedTarget(0, rightDriveEncoder, new VelocityPID(.1, 0, 0))*/);
 		rightMotors.addControlledMotor(new Talon(3));
 		rightMotors.addControlledMotor(new Talon(4));
+		rightMotors.reverseMotor();
 		//rightMotors.startControl(0);
 		
 		armTurnMotor = new MotorLink();
@@ -151,6 +151,15 @@ public class Global
 		};
 		
 		//--------------------------------------------------------------------------
+		// Auto Init
+		//--------------------------------------------------------------------------
+
+		AutoHardware._encLeft = leftDriveEncoder;
+		AutoHardware._encRight = rightDriveEncoder;
+		
+		AutoHardware._leftMotors = leftMotors;
+		AutoHardware._rightMotors = rightMotors;
+		
 		
 		autoPrograms = new SendableChooser();
 		autoPrograms.addDefault("Can Grab", new CanGrabAuto());
@@ -170,18 +179,13 @@ public class Global
 
 	void initializeDisabled()
 	{
+		//do this here so that you can restart an auto without re-running the code
 		leftMotors.clearSpeedControlRun();
 		rightMotors.clearSpeedControlRun();
 	}
 
 	void initializeAuto()
 	{
-		AutoHardware._encLeft = leftDriveEncoder;
-		AutoHardware._encRight = rightDriveEncoder;
-		
-		AutoHardware._leftMotors = leftMotors;
-		AutoHardware._rightMotors = rightMotors;
-		
 		Command autoCommand = (Command) autoPrograms.getSelected();
 		
 		autoCommand.start();
@@ -228,10 +232,8 @@ public class Global
 			powerDistPanel.clearStickyFaults();
 		});
 		
-		
-		_listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN3, () -> clawArm.setArmAngle(45));
-		
-		_listenerManagerExtreme.addListener(Always.instance, () -> System.out.println(armRotateEncoder.getAngle()));
+				
+		_listenerManagerExtreme.addListener(Always.instance, () -> System.out.println(leftDriveEncoder.getSpeedInRPM() + " " + rightDriveEncoder.getSpeedInRPM()));
 		
 		//-----------------------------------------------------------
 		// Arm control code, on joysticks

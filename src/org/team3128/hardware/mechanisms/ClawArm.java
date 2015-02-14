@@ -24,7 +24,7 @@ public class ClawArm
 	
 	IAngularEncoder _armJointEncoder;
 	
-	boolean inverted;
+	boolean inverted = true;
 	
 	/**
 	 * indicates whether the claw is currently using manual or automatic control.
@@ -72,7 +72,7 @@ public class ClawArm
 		isUsingAutoControl = true;
 		
 		_armJoint.stopSpeedControl();
-		_armJoint.setSpeedController(armJointAngleTarget);
+		_armJoint.setSpeedController(null);
 		
 		_armRotate.stopSpeedControl();
 		_armRotate.setSpeedController(armRotateAngleTarget);
@@ -86,7 +86,7 @@ public class ClawArm
 		isUsingAutoControl = false;
 		
 		_armJoint.stopSpeedControl();
-		_armJoint.setSpeedController(armJointEndstopTarget);
+		_armJoint.setSpeedController(null);
 		
 		_armRotate.stopSpeedControl();
 		_armRotate.setSpeedController(armRotateEndstopTarget);
@@ -98,19 +98,6 @@ public class ClawArm
 	public void switchArmToOtherSide()
 	{
 		inverted = !inverted;
-		switchToAutoControl();
-		
-		
-		if(_armRotateEncoder.getAngle() > 180)
-		{
-			_armRotate.startControl(90);
-			_armJoint.startControl(270);
-		}
-		else
-		{
-			_armRotate.startControl(270);
-			_armJoint.startControl(90);	
-		}
 	}
 	
 	/**

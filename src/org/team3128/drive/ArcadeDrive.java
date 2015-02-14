@@ -34,11 +34,11 @@ public class ArcadeDrive
     {
     	//read joystick values
     	//x1 = Math.abs(x1) > thresh ? Math.tanh(x1) : 0.0;
-    	joyX = Math.abs(joyX) > thresh ? joyX : 0.0;
+    	joyX = Math.abs(joyX) > thresh ? -1 * joyX : 0.0;
     	
     	
     	//y1 = Math.abs(y1) > thresh ? Math.tanh(y1) : 0.0;
-    	joyY = Math.abs(joyY) > thresh ? Math.tanh(joyY) : 0.0;
+    	joyY = Math.abs(joyY) > thresh ? -1 * Math.tanh(joyY) : 0.0;
     	
     	//scale from 1 to -1 to 1 to 0
     	throttle =  ( throttle + 1) / 2;

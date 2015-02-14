@@ -172,4 +172,14 @@ public class RobotMath {
 	{
 		return Options.instance()._degreesPercm * cm;
 	}
+	
+	/**
+	 * Convert cm of robot movement to wheel rotations
+	 * @param cm
+	 * @return
+	 */
+	public static double cmToRotations(double cm)
+	{
+		return cm / Options.instance()._wheelCircumfrence;
+	}
 }

@@ -26,9 +26,9 @@ public class CmdInPlaceTurn extends Command {
 	long startTime;
 	
 	/**
-	 * encoder pulses that the move will take
+	 * rotations that the move will take
 	 */
-	int enc;
+	double enc;
 	
 	IDistanceEncoder sideEncoder;
 	
@@ -62,7 +62,7 @@ public class CmdInPlaceTurn extends Command {
 
     protected void initialize()
     {
-		enc = RobotMath.floor_double_int(RobotMath.cmToDegrees((Math.PI*Options.instance()._wheelBase)*(abs(_degs)/360.0)));
+		enc = RobotMath.floor_double_int(RobotMath.cmToRotations((Math.PI*Options.instance()._wheelBase)*(abs(_degs)/360.0)));
 		AutoUtils.clearEncoders();
 		forwardMotors.setControlTarget(AutoUtils.speedMultiplier * -1 * RobotMath.sgn(_degs) * .3);
 		backwardMotors.setControlTarget(AutoUtils.speedMultiplier *  RobotMath.sgn(_degs)* .3);
@@ -81,7 +81,7 @@ public class CmdInPlaceTurn extends Command {
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished()
     {    	
-        return sideEncoder.getDistance() < enc;
+        return Math.abs(sideEncoder.getDistance()) >= enc;
     }
 
     // Called once after isFinished returns true

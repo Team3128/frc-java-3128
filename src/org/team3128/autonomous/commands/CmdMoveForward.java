@@ -14,28 +14,28 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class CmdMoveForward extends Command {
 
-	int _cm;
+	double _cm;
 	
 	int _msec;
 	
 	long startTime;
 	
 	/**
-	 * encoder pulses that the move will take
+	 * rotations that the move will take
 	 */
-	int enc;
+	double enc;
 	
 	boolean rightDone = false;
 	
 	boolean leftDone = false;
 	
 	/**
-	 * @param cm how far to move.  Accepts negative values.
+	 * @param d how far to move.  Accepts negative values.
 	 * @param msec How long the move should take. If set to 0, do not time the move
 	 */
-    public CmdMoveForward(int cm, int msec)
+    public CmdMoveForward(double d, int msec)
     {
-    	_cm = cm;
+    	_cm = d;
     	
     	_msec = msec;
     }
@@ -43,8 +43,8 @@ public class CmdMoveForward extends Command {
     protected void initialize()
     {
 		AutoUtils.clearEncoders();
-		enc = RobotMath.floor_double_int(abs(RobotMath.cmToDegrees(_cm)));
-		int norm = RobotMath.sgn(_cm);
+		enc = abs(RobotMath.cmToRotations(_cm));
+		int norm = (int) RobotMath.sgn(_cm);
 		startTime = System.currentTimeMillis();
 
 		
@@ -64,8 +64,8 @@ public class CmdMoveForward extends Command {
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished()
     {
-    	leftDone = AutoHardware._encLeft.getDistance() > enc;
-    	rightDone = AutoHardware._encRight.getDistance() > enc;
+    	leftDone = Math.abs(AutoHardware._encLeft.getDistance()) > enc;
+    	rightDone = Math.abs(AutoHardware._encRight.getDistance()) > enc;
     	
         return leftDone || rightDone;
     }

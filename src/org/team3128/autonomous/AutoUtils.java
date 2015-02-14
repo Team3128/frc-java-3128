@@ -26,6 +26,6 @@ public class AutoUtils
 	}
 
 	//convert motor power to RPM
-	public static final double speedMultiplier = 5310;
+	public static final double speedMultiplier = 1;
 
 }

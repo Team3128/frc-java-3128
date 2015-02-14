@@ -1,5 +1,7 @@
 package org.team3128;
 
+import org.team3128.util.Units;
+
 /**
  * Singleton class that stores runtime options
  * @author Jamie
@@ -53,7 +55,7 @@ public class Options
     public double _cmMovedPerDegree;
     
     /**
-     * degrees moved per wheel centimeter
+     * degrees moved per linear centimeter
      */
     public double _degreesPercm;
     
@@ -97,15 +99,13 @@ public class Options
     	
     	_glidingSpeedConstant = .5/Math.sqrt(2);
     	
-    	//FIXME not yet measured
-    	_wheelCircumfrence = 15.24 * Math.PI;
+    	_wheelCircumfrence = 6 * Units.INCH * Math.PI;
     	
     	_cmMovedPerDegree = _wheelCircumfrence / 360;
     	
     	_degreesPercm = 360 / _wheelCircumfrence;
     	
-    	//FIXME not yet measured
-    	_wheelBase = 40;
+    	_wheelBase = 24.5 * Units.INCH;
     	
     	_gyrBias = 0;
     }
