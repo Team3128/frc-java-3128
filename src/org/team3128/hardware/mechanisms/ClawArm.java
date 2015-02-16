@@ -24,14 +24,12 @@ public class ClawArm
 	
 	IAngularEncoder _armJointEncoder;
 	
-	boolean inverted = true;
-	
 	/**
 	 * indicates whether the claw is currently using manual or automatic control.
 	 */
 	boolean isUsingAutoControl;
 	
-	final double clawCurrentThreshold = .5;
+	final double clawCurrentThreshold = 3;
 	
 	/**
 	 * Construct claw arm with given motors.
@@ -47,7 +45,7 @@ public class ClawArm
 		_armJoint = armJoint;
 		_clawGrab = clawGrab;
 		
-		_clawGrab.setSpeedController(new CurrentTarget(panel, 12, clawCurrentThreshold));
+		_clawGrab.setSpeedController(new CurrentTarget(panel, 10, clawCurrentThreshold, 60));
 		
 		armRotateAngleTarget = new LinearAngleTarget(.4, 3, armEncoder);
 		
@@ -93,12 +91,8 @@ public class ClawArm
 	}
 	
 	/**
-	 * change arm from one side to the other
+	 * set shoulder rotation in perspective of front
 	 */
-	public void switchArmToOtherSide()
-	{
-		inverted = !inverted;
-	}
 	
 	/**
 	 * Set the arm to a certain rotation angle
@@ -171,11 +165,11 @@ public class ClawArm
 			{
 				if(_armRotate.isSpeedControlRunning())
 				{
-					_armRotate.setControlTarget((inverted ? 1 : -1) * joyPower);
+					_armRotate.setControlTarget(joyPower);
 				}
 				else
 				{
-					_armRotate.startControl((inverted ? 1 : -1) * joyPower);
+					_armRotate.startControl(joyPower);
 				}
 			}
 			else

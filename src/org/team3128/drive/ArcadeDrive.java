@@ -43,9 +43,9 @@ public class ArcadeDrive
     	//scale from 1 to -1 to 1 to 0
     	throttle =  ( throttle + 1) / 2;
 
-    	if(throttle < .35)
+    	if(throttle < .4)
     	{
-    		throttle = .35;
+    		throttle = .4;
     	}
     	else if(throttle > .8)
     	{

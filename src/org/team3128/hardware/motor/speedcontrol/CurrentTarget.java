@@ -1,5 +1,6 @@
 package org.team3128.hardware.motor.speedcontrol;
 
+import org.team3128.Log;
 import org.team3128.hardware.motor.MotorControl;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -25,14 +26,15 @@ public class CurrentTarget extends MotorControl
      * @param motorChannel channel motor controller is plugged into on PDP
      * @param currentThreshold measured amperage where motor is considered stalled.  You have to measure this
      * for each individual motor.
+     * @param refreshMillis
      */
-    public CurrentTarget(PowerDistributionPanel panel, int motorChannel, double currentThreshold)
+    public CurrentTarget(PowerDistributionPanel panel, int motorChannel, double currentThreshold, int refreshMillis)
     {
     	_panel = panel;
     	_motorChannel = motorChannel;
     	_currentThreshold = currentThreshold;
     	
-    	_refreshTime = 100;
+    	_refreshTime = refreshMillis;
     }
 
     /**
@@ -54,7 +56,7 @@ public class CurrentTarget extends MotorControl
 
     public boolean isComplete()
     {
-        //Log.debug("CurrentTarget", "motor current: " + _panel.getCurrent(_motorChannel));
+        Log.debug("CurrentTarget", "motor current: " + _panel.getCurrent(_motorChannel));
         if(_panel.getCurrent(_motorChannel) > _currentThreshold)
         {
         	++consecutiveOvercurrents;
