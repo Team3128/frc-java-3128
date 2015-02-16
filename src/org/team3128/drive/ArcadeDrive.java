@@ -1,6 +1,5 @@
 package org.team3128.drive;
 
-import org.team3128.Log;
 import org.team3128.hardware.motor.MotorLink;
 import org.team3128.listener.ListenerManager;
 import org.team3128.util.RobotMath;
@@ -55,7 +54,7 @@ public class ArcadeDrive
     	_spdR = RobotMath.makeValidPower((joyY + joyX) * throttle);
     	_spdL = RobotMath.makeValidPower((joyY - joyX) * throttle);
     	
-    	Log.debug("ArcadeDrive", "x1: " + joyX + " throttle: " + throttle + " spdR: " + _spdR + " spdL: " + _spdL);
+    	//Log.debug("ArcadeDrive", "x1: " + joyX + " throttle: " + throttle + " spdR: " + _spdR + " spdL: " + _spdL);
 
     	_leftMotors.setControlTarget(_spdL);
     	_rightMotors.setControlTarget(_spdR);

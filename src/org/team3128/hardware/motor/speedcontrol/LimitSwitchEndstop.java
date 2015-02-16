@@ -1,7 +1,8 @@
 package org.team3128.hardware.motor.speedcontrol;
 
-import org.team3128.hardware.encoder.angular.IAngularEncoder;
 import org.team3128.hardware.motor.MotorControl;
+
+import edu.wpi.first.wpilibj.DigitalInput;
 
 /**
  * Motor control which uses an encoder to limit the range of something.  
@@ -11,36 +12,32 @@ import org.team3128.hardware.motor.MotorControl;
  * @author Jamie
  *
  */
-public class AngleEndstopTarget extends MotorControl
+public class LimitSwitchEndstop extends MotorControl
 {
-    private double _minAngle, _maxAngle;
+    private DigitalInput _minSwitch, _maxSwitch;
     
-    private double _jitter;
-    
-    private boolean hitMinStop, hitMaxStop;
+    private boolean _activeLow;
     
     private double targetSpeed;
     
-    private IAngularEncoder _encoder;
+    private boolean hitMinStop, hitMaxStop;
 
     /**
      * 
-     * @param minAngle The angle that the encoder should not go lower than
-     * @param maxAngle The angle that the encoder should not go higher than
-     * @param jitter How many degrees forward to "proactively" stop the mechanism, used to give
-     * the thing time to stop.
-     * @param encoder The encoder to use.
+     * @param minSwitch limit switch which can be reached by setting the motor to reverse
+     * @param maxSwitch limit switch which can be reached by setting the motor to go forward
+     * @param activeLow whether the switches are active low
      */
-    public AngleEndstopTarget(double minAngle, double maxAngle, double jitter, IAngularEncoder encoder)
+    public LimitSwitchEndstop(DigitalInput minSwitch, DigitalInput maxSwitch, boolean activeLow)
     {
-    	_minAngle = minAngle;
-    	_maxAngle = maxAngle;
-    	_jitter = jitter;
-        _encoder = encoder;
+    	_minSwitch = minSwitch;
+    	_maxSwitch = maxSwitch;
+    	
+    	_activeLow = activeLow;
     }
 
     /**
-     * sets speed
+     * sets motor speed
      */
     public void setControlTarget(double val)
     {
@@ -51,9 +48,12 @@ public class AngleEndstopTarget extends MotorControl
 
     public double speedControlStep(double dt)
     {
-    	hitMinStop = _encoder.getAngle() < (_minAngle + _jitter);
     	
-    	hitMaxStop = _encoder.getAngle() > (_maxAngle - _jitter);
+    	hitMinStop = _minSwitch.get() != _activeLow;
+    	
+    	hitMaxStop = _maxSwitch.get() != _activeLow;
+    	
+    	//Log.debug("LimitSwitchEndstop", "hitMinStop: " + hitMinStop + " hitMaxStop: " + hitMaxStop);
     	
     	if(hitMinStop && targetSpeed < 0)
     	{

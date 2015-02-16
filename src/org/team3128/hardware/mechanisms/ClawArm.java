@@ -3,7 +3,6 @@ package org.team3128.hardware.mechanisms;
 import org.team3128.hardware.encoder.angular.IAngularEncoder;
 import org.team3128.hardware.motor.MotorLink;
 import org.team3128.hardware.motor.speedcontrol.AngleEndstopTarget;
-import org.team3128.hardware.motor.speedcontrol.CurrentTarget;
 import org.team3128.hardware.motor.speedcontrol.LinearAngleTarget;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -27,10 +26,16 @@ public class ClawArm
 	/**
 	 * indicates whether the claw is currently using manual or automatic control.
 	 */
-	boolean isUsingAutoControl;
+	boolean jointUsingAutoControl, armUsingAutoControl;
 	
 	final double clawCurrentThreshold = 3;
 	
+	final static double armMaxAngle = 300;
+	
+	final static double armMinAngle = 15;
+
+	final static double armStepSize = 10;
+
 	/**
 	 * Construct claw arm with given motors.
 	 * 
@@ -45,49 +50,71 @@ public class ClawArm
 		_armJoint = armJoint;
 		_clawGrab = clawGrab;
 		
-		_clawGrab.setSpeedController(new CurrentTarget(panel, 10, clawCurrentThreshold, 60));
+		//_clawGrab.setSpeedController(new CurrentTarget(panel, 10, clawCurrentThreshold, 60));
 		
-		armRotateAngleTarget = new LinearAngleTarget(.4, 3, armEncoder);
+		armRotateAngleTarget = new LinearAngleTarget(.02, 4, false, armEncoder);
 		
-		armJointAngleTarget = new LinearAngleTarget(0, 2, jointEncoder);
+		armJointAngleTarget = new LinearAngleTarget(.01, 5, false, jointEncoder);
 		
 		armRotateEndstopTarget = new AngleEndstopTarget(22, 295, 2, armEncoder);
 		
-		armJointEndstopTarget = new AngleEndstopTarget(30, 300, 5, jointEncoder);
+		armJointEndstopTarget = new AngleEndstopTarget(0, 300, 5, jointEncoder);
 		
 		_armRotateEncoder = armEncoder;
 		
 		_armJointEncoder = jointEncoder;
 		
-		switchToManualControl();
+		switchArmToAutoControl();
+		switchJointToAutoControl();
+		
 	}
 	
 	/**
 	 * switch the arm to automatic, encoder-based control
 	 */
-	private void switchToAutoControl()
+	private void switchJointToAutoControl()
 	{
-		isUsingAutoControl = true;
+		jointUsingAutoControl = true;
 		
 		_armJoint.stopSpeedControl();
-		_armJoint.setSpeedController(null);
+		_armJoint.setSpeedController(armJointAngleTarget);
+		_armJoint.startControl(_armJointEncoder.getAngle());
+	}
+	
+	/**
+	 * switch the arm to automatic, encoder-based control
+	 */
+	private void switchArmToAutoControl()
+	{
+		armUsingAutoControl = true;
 		
 		_armRotate.stopSpeedControl();
 		_armRotate.setSpeedController(armRotateAngleTarget);
+		_armRotate.startControl(_armRotateEncoder.getAngle());
+	}
+	
+	/**
+	 * switch the joint to manual motor power-based control
+	 */
+	private void switchJointToManualControl()
+	{
+		jointUsingAutoControl = false;
+		
+		_armJoint.stopSpeedControl();
+		_armJoint.setSpeedController(armJointEndstopTarget);
+		_armJoint.startControl(0);
 	}
 	
 	/**
 	 * switch the arm to manual motor power-based control
 	 */
-	private void switchToManualControl()
+	private void switchArmToManualControl()
 	{
-		isUsingAutoControl = false;
-		
-		_armJoint.stopSpeedControl();
-		_armJoint.setSpeedController(null);
-		
+		armUsingAutoControl = false;
+
 		_armRotate.stopSpeedControl();
 		_armRotate.setSpeedController(armRotateEndstopTarget);
+		_armRotate.startControl(0);
 	}
 	
 	/**
@@ -100,9 +127,9 @@ public class ClawArm
 	 */
 	public void setArmAngle(double degreesToSet)
 	{
-		if(!isUsingAutoControl)
+		if(!armUsingAutoControl)
 		{
-			switchToAutoControl();
+			switchArmToAutoControl();
 		}
 		
 		_armRotate.startControl(degreesToSet);
@@ -114,9 +141,9 @@ public class ClawArm
 	 */
 	public void setJointAngle(double degreesToSet)
 	{
-		if(!isUsingAutoControl)
+		if(!jointUsingAutoControl)
 		{
-			switchToAutoControl();
+			switchJointToAutoControl();
 		}
 		
 		_armJoint.startControl(degreesToSet);
@@ -125,16 +152,16 @@ public class ClawArm
 	/**
 	 * Use joystick input to rotate arm
 	 */
-	public void onArmJointJoyInput(double joyPower)
+	public void onJointJoyInput(double joyPower)
 	{
-		if(isUsingAutoControl)
+		if(jointUsingAutoControl)
 		{
-			if(!_armRotate.isSpeedControlRunning()/* && !_armJoint.isSpeedControlRunning()*/)
+			if(Math.abs(joyPower) >= .1)
 			{
-				switchToManualControl();
+				switchJointToManualControl();
 			}
 		}
-		if(!isUsingAutoControl)
+		if(!jointUsingAutoControl)
 		{
 			if(Math.abs(joyPower) >= .1)
 			{
@@ -142,7 +169,7 @@ public class ClawArm
 			}
 			else
 			{
-				_armJoint.setControlTarget(0);
+				switchJointToAutoControl();
 			}
 		}
 	}
@@ -150,33 +177,34 @@ public class ClawArm
 	/**
 	 * Use joystick input to rotate arm
 	 */
-	public void onArmRotateJoyInput(double joyPower)
+	public void onArmJoyInput(double joyPower)
 	{
-		if(isUsingAutoControl)
-		{
-			if(!_armRotate.isSpeedControlRunning() /*&& !_armJoint.isSpeedControlRunning()*/)
-			{
-				switchToManualControl();
-			}
-		}
-		if(!isUsingAutoControl)
+		if(armUsingAutoControl)
 		{
 			if(Math.abs(joyPower) >= .1)
 			{
-				if(_armRotate.isSpeedControlRunning())
-				{
-					_armRotate.setControlTarget(joyPower);
-				}
-				else
-				{
-					_armRotate.startControl(joyPower);
-				}
+				switchArmToManualControl();
+			}
+		}
+		if(!armUsingAutoControl)
+		{
+			if(Math.abs(joyPower) >= .1)
+			{
+				_armRotate.setControlTarget(joyPower);
 			}
 			else
 			{
-				_armRotate.setControlTarget(0);
+				switchArmToAutoControl();
 			}
 		}
+//		double angle = _armRotateEncoder.getAngle();
+//		if(joyPower > 0 && angle < armMaxAngle)
+//		{
+//			_armRotate.setControlTarget(angle + (joyPower * armStepSize));
+//		}
+//		else if(joyPower < 0 && angle > armMinAngle)
+//		{
+//			_armRotate.setControlTarget(angle + (joyPower * armStepSize));
+//		}
 	}
-	
 }
