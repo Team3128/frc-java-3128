@@ -183,7 +183,7 @@ public class ClawArm
 				if(isOverHeightLimit(_armRotateEncoder.getAngle(), ((2 * RobotMath.sgn(joyPower)) + _armJointEncoder.getAngle())))
 				{
 					Log.info("ClawArm", "Arm joint move would put claw over height limit!");
-					_armJoint.setControlTarget(0);
+					switchJointToAutoControl();
 				}
 				else
 				{
@@ -213,21 +213,14 @@ public class ClawArm
 		{
 			if(Math.abs(joyPower) >= .1)
 			{
-				if(_armRotate.isSpeedControlRunning())
+				if(isOverHeightLimit(((2 * RobotMath.sgn(joyPower)) + _armRotateEncoder.getAngle()), _armJointEncoder.getAngle()))
 				{
-					_armRotate.setControlTarget(joyPower);
+					Log.info("ClawArm", "Arm rotate move would put claw over height limit!");
+					switchArmToAutoControl();
 				}
 				else
 				{
-					if(isOverHeightLimit(((2 * RobotMath.sgn(joyPower)) + _armRotateEncoder.getAngle()), _armJointEncoder.getAngle()))
-					{
-						Log.info("ClawArm", "Arm rotate move would put claw over height limit!");
-						_armJoint.setControlTarget(0);
-					}
-					else
-					{
-						_armRotate.startControl(joyPower);
-					}
+					_armRotate.startControl(joyPower);
 				}
 			}
 			else
