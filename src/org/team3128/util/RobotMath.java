@@ -41,6 +41,10 @@ public class RobotMath {
 
    public static double sgn(double n)
    {
+	   if(n == 0)
+	   {
+		   return 0;
+	   }
        return Math.abs(n) / n;
    
    }

@@ -11,6 +11,7 @@ import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
 import org.team3128.hardware.mechanisms.ClawArm;
 import org.team3128.hardware.motor.MotorLink;
 import org.team3128.hardware.motor.speedcontrol.CurrentTarget;
+import org.team3128.hardware.motor.speedcontrol.LimitSwitchEndstop;
 import org.team3128.listener.IListenerCallback;
 import org.team3128.listener.ListenerManager;
 import org.team3128.listener.control.Always;
@@ -18,6 +19,7 @@ import org.team3128.listener.controller.ControllerAttackJoy;
 import org.team3128.listener.controller.ControllerExtreme3D;
 import org.team3128.util.RoboVision;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Servo;
@@ -59,6 +61,9 @@ public class Global
 	public MotorLink frontHookMotor;
 	
 	public MotorLink clawGrabMotor;
+	
+	public DigitalInput clawMinLimitSwitch;
+	public DigitalInput clawMaxLimitSwitch;
 	
 	public AnalogPotentiometerEncoder armRotateEncoder;
 	
@@ -122,9 +127,12 @@ public class Global
 		frontHookMotor.addControlledMotor(new Talon(7));
 		frontHookMotor.setSpeedController(new CurrentTarget(powerDistPanel, 3, .5, 100));
 		
-		clawGrabMotor = new MotorLink();
+		clawMinLimitSwitch = new DigitalInput(9);
+		clawMaxLimitSwitch = new DigitalInput(8);
+		clawGrabMotor = new MotorLink(new LimitSwitchEndstop(clawMinLimitSwitch, clawMaxLimitSwitch, false));
 		clawGrabMotor.addControlledMotor(new Talon(8));
 		clawGrabMotor.reverseMotor();
+		clawGrabMotor.startControl(0);
 		
 		leftArmBrakeServo = new Servo(9);
 		rightArmBrakeServo = new Servo(0);
@@ -245,7 +253,7 @@ public class Global
 		});
 		
 				
-		_listenerManagerExtreme.addListener(Always.instance, () -> RoboVision.targetRecognition(camera));
+		//_listenerManagerExtreme.addListener(Always.instance, () -> System.out.println(armJointEncoder.getAngle()));
 		
 		//-----------------------------------------------------------
 		// Arm control code, on joysticks
@@ -254,13 +262,13 @@ public class Global
 		_listenerManagerJoyRight.addListener(ControllerAttackJoy.JOYY, () ->
 		{
 			double power = _listenerManagerJoyRight.getRawAxis(ControllerAttackJoy.JOYY);
-			clawArm.onArmRotateJoyInput((shoulderInverted ? 1 : -1) * power);
+			clawArm.onArmJoyInput((shoulderInverted ? 1 : -1) * power);
 		});
 		
 		_listenerManagerJoyLeft.addListener(ControllerAttackJoy.JOYY, () ->
 		{
 			double power = _listenerManagerJoyLeft.getRawAxis(ControllerAttackJoy.JOYY);
-			clawArm.onArmJointJoyInput((elbowInverted ? 1 : -1) * power);
+			clawArm.onJointJoyInput((elbowInverted ? 1 : -1) * power);
 		});
 		
 		_listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN2, () -> shoulderInverted = false);
@@ -295,5 +303,7 @@ public class Global
 		_listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN8, () -> frontHookMotor.startControl(-0.3));
 		_listenerManagerExtreme.addListener(ControllerExtreme3D.UP8, () -> frontHookMotor.startControl(0));
 		
+		_listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN10, () -> clawArm.setArmAngle(150));
+		_listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN11, () -> clawArm.setArmAngle(200));
 	}
 }

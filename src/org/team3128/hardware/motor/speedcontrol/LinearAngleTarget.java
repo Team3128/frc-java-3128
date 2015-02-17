@@ -1,5 +1,6 @@
 package org.team3128.hardware.motor.speedcontrol;
 
+import org.team3128.Log;
 import org.team3128.hardware.encoder.angular.IAngularEncoder;
 import org.team3128.hardware.motor.MotorControl;
 import org.team3128.util.RobotMath;
@@ -11,28 +12,30 @@ import org.team3128.util.RobotMath;
 
 public class LinearAngleTarget extends MotorControl
 {
-    private double minSpeed;
     private double targetAngle, threshold;
     private IAngularEncoder _encoder;
     
     private int consecutiveCorrectPositions = 0;
+    
+    boolean _stopWhenDone;
+    double kP;
 
     /**
      * 
-     * @param minSpeed
+     * @param kP constant of pid
      * @param threshold acceptable error in degrees
+     * @param stopWhenDone whether to stop controlling the motor when it's reached its target
      * @param encoder
      */
-    public LinearAngleTarget(double minSpeed, double threshold, IAngularEncoder encoder)
+    public LinearAngleTarget(double kP, double threshold, boolean stopWhenDone, IAngularEncoder encoder)
     {
-        if (!RobotMath.isValidPower(minSpeed))
-        {
-            throw new IllegalArgumentException("The minimum power is incorrect!");
-        }
+    	_refreshTime = 10;
         
-        this.minSpeed = Math.abs(minSpeed);
+        this.kP = kP;
         this.threshold = threshold;
         _encoder = encoder;
+        
+        _stopWhenDone = stopWhenDone;
     }
 
     /**
@@ -50,13 +53,14 @@ public class LinearAngleTarget extends MotorControl
     	double angle = _encoder.getAngle();
     	
     	double error = RobotMath.angleDistance(angle, this.targetAngle, _encoder.canRevolveMultipleTimes());
-        double sgn = RobotMath.sgn(error);
-        double pGain = sgn*(Math.abs(error))*((1-this.minSpeed)/90.0)+this.minSpeed;
+        double pGain = error * kP;
         
-        if(Math.abs(pGain) <= this.minSpeed)
-        {
-        	pGain = RobotMath.getMotorDirToTarget(angle, this.targetAngle, _encoder.canRevolveMultipleTimes()).getIntDir() * this.minSpeed;
-        }
+        Log.debug("LinearAngleTarget", "target: " + targetAngle + " current: " + angle + " error: " + error + " output: " + (pGain));
+        
+        //if(Math.abs(pGain) <= this.minSpeed)
+        //{
+        //	pGain = RobotMath.getMotorDirToTarget(angle, this.targetAngle, _encoder.canRevolveMultipleTimes()).getIntDir() * this.minSpeed;
+        //}
 
         if(Math.abs(error) < threshold)
         {
@@ -78,7 +82,8 @@ public class LinearAngleTarget extends MotorControl
      */
     public boolean isComplete()
     {
-        return consecutiveCorrectPositions >= 5;
+    	
+        return _stopWhenDone & consecutiveCorrectPositions >= 5;
     }
     
 }
