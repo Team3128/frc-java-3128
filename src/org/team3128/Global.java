@@ -14,10 +14,8 @@ import org.team3128.hardware.motor.speedcontrol.CurrentTarget;
 import org.team3128.hardware.motor.speedcontrol.LimitSwitchEndstop;
 import org.team3128.listener.IListenerCallback;
 import org.team3128.listener.ListenerManager;
-import org.team3128.listener.control.Always;
 import org.team3128.listener.controller.ControllerAttackJoy;
 import org.team3128.listener.controller.ControllerExtreme3D;
-import org.team3128.util.RoboVision;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
@@ -116,7 +114,7 @@ public class Global
 		armTurnMotor = new MotorLink();
 		armTurnMotor.addControlledMotor(new Talon(6));
 		
-		armRotateEncoder = new AnalogPotentiometerEncoder(0, 30, 4.829, 300);
+		armRotateEncoder = new AnalogPotentiometerEncoder(0, 0, 4.829, 300);
 		
 		armJointMotor = new MotorLink();
 		armJointMotor.addControlledMotor(new Talon(5));
@@ -137,7 +135,7 @@ public class Global
 		leftArmBrakeServo = new Servo(9);
 		rightArmBrakeServo = new Servo(0);
 		
-		camera = new AxisCamera("192.168.1.196");
+		//camera = new AxisCamera("192.168.1.196");
 		
 		clawArm = new ClawArm(armTurnMotor, armJointMotor, clawGrabMotor, armRotateEncoder, armJointEncoder, powerDistPanel);
 
@@ -235,7 +233,7 @@ public class Global
 //			}
 //			else
 //			{
-//				_listenerManagerExtreme.removeAllListenersForControl(ControllerExtreme3D.TWIST);
+//				_ stenerManagerExtreme.removeAllListenersForControl(ControllerExtreme3D.TWIST);
 //				_listenerManagerExtreme.removeAllListenersForControl(ControllerExtreme3D.JOYY);
 //				_listenerManagerExtreme.removeAllListenersForControl(ControllerExtreme3D.THROTTLE);
 //				

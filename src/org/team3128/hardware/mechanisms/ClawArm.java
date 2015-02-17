@@ -155,8 +155,8 @@ public class ClawArm
 	private boolean isOverHeightLimit(double armAngle, double jointAngle)
 	{
 		//convert from 0 to 300 to -150 to 150
-		armAngle -= 150;
-		jointAngle -= 150;
+		armAngle -= 175;
+		jointAngle -= 140;
 		
 		double result = (34 * Units.INCH) +
 				(Math.cos(Math.toRadians(armAngle)) * 36 * Units.INCH) +
@@ -180,7 +180,7 @@ public class ClawArm
 		{
 			if(Math.abs(joyPower) >= .1)
 			{
-				if(isOverHeightLimit(_armRotateEncoder.getAngle(), ((2 * RobotMath.sgn(joyPower)) + _armJointEncoder.getAngle())))
+				if(isOverHeightLimit(_armRotateEncoder.getAngle(), ((5 * RobotMath.sgn(joyPower)) + _armJointEncoder.getAngle())))
 				{
 					Log.info("ClawArm", "Arm joint move would put claw over height limit!");
 					switchJointToAutoControl();
@@ -202,6 +202,16 @@ public class ClawArm
 	 */
 	public void onArmJoyInput(double joyPower)
 	{
+		if(isOverHeightLimit(((5 * RobotMath.sgn(joyPower)) + _armRotateEncoder.getAngle()), _armJointEncoder.getAngle()))
+		{
+			Log.info("ClawArm", "Arm rotate move would put claw over height limit!");
+			if(!armUsingAutoControl)
+			{
+				switchArmToAutoControl();
+			}
+			return;
+		}
+		
 		if(armUsingAutoControl)
 		{
 			if(Math.abs(joyPower) >= .1)
@@ -213,19 +223,11 @@ public class ClawArm
 		{
 			if(Math.abs(joyPower) >= .1)
 			{
-				if(isOverHeightLimit(((2 * RobotMath.sgn(joyPower)) + _armRotateEncoder.getAngle()), _armJointEncoder.getAngle()))
-				{
-					Log.info("ClawArm", "Arm rotate move would put claw over height limit!");
-					switchArmToAutoControl();
-				}
-				else
-				{
-					_armRotate.startControl(joyPower);
-				}
+				_armRotate.startControl(joyPower);
 			}
 			else
 			{
-				switchArmToAutoControl();
+		    	switchArmToAutoControl();
 			}
 		}
 //		double angle = _armRotateEncoder.getAngle();
