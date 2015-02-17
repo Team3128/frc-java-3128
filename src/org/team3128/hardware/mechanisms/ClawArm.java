@@ -1,11 +1,9 @@
 package org.team3128.hardware.mechanisms;
 
-import org.team3128.Log;
 import org.team3128.hardware.encoder.angular.IAngularEncoder;
 import org.team3128.hardware.motor.MotorLink;
 import org.team3128.hardware.motor.speedcontrol.AngleEndstopTarget;
 import org.team3128.hardware.motor.speedcontrol.LinearAngleTarget;
-import org.team3128.util.RobotMath;
 import org.team3128.util.Units;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -32,6 +30,8 @@ public class ClawArm
 	boolean jointUsingAutoControl, armUsingAutoControl;
 	
 	final double clawCurrentThreshold = 3;
+	
+	Thread clawLimitThread;
 	
 	final static double armMaxAngle = 300;
 	
@@ -70,6 +70,62 @@ public class ClawArm
 		switchArmToAutoControl();
 		switchJointToAutoControl();
 		
+	}
+	
+	public void stopClawLimitThread()
+	{
+		if(clawLimitThread.isAlive())
+		{
+			clawLimitThread.interrupt();
+			try
+			{
+				clawLimitThread.join();
+			} 
+			catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void startClawLimitThread()
+	{
+		if(clawLimitThread != null)
+		{
+			stopClawLimitThread();
+		}
+		clawLimitThread = new Thread(this::runClawLimitThread, "Claw Limit Thread");
+		clawLimitThread.start();
+	}
+	
+	private void runClawLimitThread()
+	{
+		while(true)
+		{
+			if(isOverHeightLimit(_armRotateEncoder.getAngle(), _armJointEncoder.getAngle()))
+			{
+				if(armUsingAutoControl && !jointUsingAutoControl)
+				{
+					double newAngle = Math.toDegrees(Math.acos((-1.444 * Math.cos(Math.toRadians(_armJointEncoder.getAngle())) + 1.1667)));
+					_armRotate.setControlTarget(newAngle);
+				}
+				else if(!armUsingAutoControl && jointUsingAutoControl)
+				{
+					//created from the formula in isOverHeightLimit()
+					double newAngle = Math.toDegrees(Math.acos((-.6923 * Math.cos(Math.toRadians(_armRotateEncoder.getAngle())) + .8077)));
+					_armJoint.setControlTarget(newAngle);
+				}
+			}
+			
+			try
+			{
+				Thread.sleep(100);
+			}
+			catch (InterruptedException e)
+			{
+				return;
+			}
+		}
 	}
 	
 	/**
@@ -180,15 +236,7 @@ public class ClawArm
 		{
 			if(Math.abs(joyPower) >= .1)
 			{
-				if(isOverHeightLimit(_armRotateEncoder.getAngle(), ((2 * RobotMath.sgn(joyPower)) + _armJointEncoder.getAngle())))
-				{
-					Log.info("ClawArm", "Arm joint move would put claw over height limit!");
-					switchJointToAutoControl();
-				}
-				else
-				{
-					_armJoint.setControlTarget(joyPower);
-				}
+				_armJoint.setControlTarget(joyPower);
 			}
 			else
 			{
@@ -213,29 +261,12 @@ public class ClawArm
 		{
 			if(Math.abs(joyPower) >= .1)
 			{
-				if(isOverHeightLimit(((2 * RobotMath.sgn(joyPower)) + _armRotateEncoder.getAngle()), _armJointEncoder.getAngle()))
-				{
-					Log.info("ClawArm", "Arm rotate move would put claw over height limit!");
-					switchArmToAutoControl();
-				}
-				else
-				{
-					_armRotate.startControl(joyPower);
-				}
+				_armRotate.startControl(joyPower);
 			}
 			else
 			{
 				switchArmToAutoControl();
 			}
 		}
-//		double angle = _armRotateEncoder.getAngle();
-//		if(joyPower > 0 && angle < armMaxAngle)
-//		{
-//			_armRotate.setControlTarget(angle + (joyPower * armStepSize));
-//		}
-//		else if(joyPower < 0 && angle > armMinAngle)
-//		{
-//			_armRotate.setControlTarget(angle + (joyPower * armStepSize));
-//		}
 	}
 }

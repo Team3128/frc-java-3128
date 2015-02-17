@@ -14,10 +14,8 @@ import org.team3128.hardware.motor.speedcontrol.CurrentTarget;
 import org.team3128.hardware.motor.speedcontrol.LimitSwitchEndstop;
 import org.team3128.listener.IListenerCallback;
 import org.team3128.listener.ListenerManager;
-import org.team3128.listener.control.Always;
 import org.team3128.listener.controller.ControllerAttackJoy;
 import org.team3128.listener.controller.ControllerExtreme3D;
-import org.team3128.util.RoboVision;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
@@ -194,7 +192,8 @@ public class Global
 
 	void initializeDisabled()
 	{
-		//do this here so that you can restart an auto without re-running the code
+		clawArm.stopClawLimitThread();
+		
 		leftMotors.clearSpeedControlRun();
 		rightMotors.clearSpeedControlRun();
 	}
@@ -209,43 +208,12 @@ public class Global
 	void initializeTeleop()
 	{
 		//-----------------------------------------------------------
-		// Drive code, on Xbox controller
+		// Drive code, on Logitech Extreme3D joystick
 		//-----------------------------------------------------------
-		/*double twist = _listenerManagerExtreme.getRawAxis(ControllerExtreme3D.TWIST);
-		if (Math.Abs(_listenerManagerExtreme.getRawAxis(ControllerExtreme3D.TWIST)) < 0.1)
-		{
-			twist = 0;
-		}*/
 		_listenerManagerExtreme.addListener(ControllerExtreme3D.TWIST, updateDriveCOD);
 		_listenerManagerExtreme.addListener(ControllerExtreme3D.JOYY, updateDriveCOD);
 		_listenerManagerExtreme.addListener(ControllerExtreme3D.THROTTLE, updateDriveCOD);
 		
-//		_listenerManagerExtreme.addListener(ControllerExtreme3D.TRIGGERDOWN, () ->
-//		{
-//			if(!codDriveEnabled)
-//			{
-//				_listenerManagerExtreme.removeAllListenersForControl(ControllerExtreme3D.JOYX);
-//				_listenerManagerExtreme.removeAllListenersForControl(ControllerExtreme3D.JOYY);
-//				_listenerManagerExtreme.removeAllListenersForControl(ControllerExtreme3D.THROTTLE);
-//				
-//				_listenerManagerExtreme.addListener(ControllerExtreme3D.TWIST, updateDriveCOD);
-//				_listenerManagerExtreme.addListener(ControllerExtreme3D.JOYY, updateDriveCOD);
-//				_listenerManagerExtreme.addListener(ControllerExtreme3D.THROTTLE, updateDriveCOD);
-//				codDriveEnabled = !false;
-//			}
-//			else
-//			{
-//				_listenerManagerExtreme.removeAllListenersForControl(ControllerExtreme3D.TWIST);
-//				_listenerManagerExtreme.removeAllListenersForControl(ControllerExtreme3D.JOYY);
-//				_listenerManagerExtreme.removeAllListenersForControl(ControllerExtreme3D.THROTTLE);
-//				
-//				_listenerManagerExtreme.addListener(ControllerExtreme3D.JOYX, updateDriveArcade);
-//				_listenerManagerExtreme.addListener(ControllerExtreme3D.JOYY, updateDriveArcade);
-//				_listenerManagerExtreme.addListener(ControllerExtreme3D.THROTTLE, updateDriveArcade);
-//				codDriveEnabled = !true;
-//
-//			}
-//		});
 		
 		_listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN12, () ->
 		{
@@ -305,5 +273,7 @@ public class Global
 		
 		_listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN10, () -> clawArm.setArmAngle(150));
 		_listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN11, () -> clawArm.setArmAngle(200));
+		
+		clawArm.startClawLimitThread();
 	}
 }
