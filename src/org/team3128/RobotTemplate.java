@@ -26,10 +26,13 @@ public class RobotTemplate extends IterativeRobot
     public void robotInit()
     {
         Log.info("Global", "Welcome to the FRC Team 3128 No-Longer-Event System version 3!");
-        
+        Log.info("Global", "Initializing Robot...");
         global = new Global();
         
         global.initializeRobot();
+        
+        Log.info("Global", "Initialization Done!");
+        Log.info("Global", "\"The Clawwwwwww.....\"   Activated");
     }
 
     public void disabledInit()
@@ -43,6 +46,7 @@ public class RobotTemplate extends IterativeRobot
     public void autonomousInit()
     {
         if(!autonomousHasBeenInit) {
+            Log.info("Global", "Initializing Autonomous...");
         	for(ListenerManager manager : global._listenerManagers)
         	{
         		manager.removeAllListeners();
@@ -50,6 +54,7 @@ public class RobotTemplate extends IterativeRobot
             global.initializeAuto();
             autonomousHasBeenInit = true;
             teleopHasBeenInit = false;
+            Log.info("Global", "Auto Initialization Done!");
         }
     }
    
@@ -59,6 +64,7 @@ public class RobotTemplate extends IterativeRobot
     boolean teleopHasBeenInit = false;
     public void teleopInit() {
         if(!teleopHasBeenInit) {
+            Log.info("Global", "Initializing Teleop...");
         	for(ListenerManager manager : global._listenerManagers)
         	{
         		manager.removeAllListeners();
@@ -66,6 +72,7 @@ public class RobotTemplate extends IterativeRobot
             global.initializeTeleop();
             teleopHasBeenInit = true;
             autonomousHasBeenInit = false;
+            Log.info("Global", "Teleop Initialization Done!");
         }
     }
    
