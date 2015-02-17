@@ -37,7 +37,7 @@ public class ArcadeDrive
     	
     	
     	//y1 = Math.abs(y1) > thresh ? Math.tanh(y1) : 0.0;
-    	joyY = Math.abs(joyY) > thresh ? -1 * Math.tanh(joyY) : 0.0;
+    	joyY = Math.abs(joyY) > thresh ? -1 * joyY : 0.0;
     	
     	//scale from 1 to -1 to 1 to 0
     	throttle =  ( throttle + 1) / 2;

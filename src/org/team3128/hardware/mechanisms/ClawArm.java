@@ -54,7 +54,7 @@ public class ClawArm
 		
 		armRotateAngleTarget = new LinearAngleTarget(.02, 4, false, armEncoder);
 		
-		armJointAngleTarget = new LinearAngleTarget(.01, 5, false, jointEncoder);
+		armJointAngleTarget = new LinearAngleTarget(.02, 5, false, jointEncoder);
 		
 		armRotateEndstopTarget = new AngleEndstopTarget(22, 295, 2, armEncoder);
 		
