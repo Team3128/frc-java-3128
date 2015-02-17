@@ -26,8 +26,6 @@ public class RoboVision
     public static void targetRecognition(AxisCamera camera) 
     {
        
-    	NIVision.ParticleFilterCriteria2 cc = new NIVision.ParticleFilterCriteria2(NIVision.MeasurementType.MT_AREA, AREA_MINIMUM, 65535, 0, 0);      // create the criteria for the particle filter
-
         try {
             /**
              * Do the image capture with the Global.camera and apply the algorithm
@@ -45,7 +43,7 @@ public class RoboVision
            
             //DebugLog.log(DebugLog.LVL_INFO, "Vision", "Just finished thresholding");
             //thresholdImage.write("/threshold.bmp");
-            filteredImage = particleFilterThatDoesntCrash(thresholdImage, new NIVision.ParticleFilterCriteria2[]{cc});           // filter out small particles
+            filteredImage = thresholdImage;
             //filteredImage.write("/filteredImage.bmp");
 
             //iterate through each particle and score to see if it is a target
@@ -218,8 +216,8 @@ public class RoboVision
     	{
     		try
 			{
-				imageConstructor = BinaryImage.class.getConstructor(new Class[]{null});
-				roiConstructor = ROI.class.getConstructor(new Class[]{null});
+				imageConstructor = BinaryImage.class.getDeclaredConstructor(new Class[0]);
+				roiConstructor = ROI.class.getDeclaredConstructor(new Class[0]);
 			} catch (NoSuchMethodException | SecurityException e)
 			{
 				e.printStackTrace();

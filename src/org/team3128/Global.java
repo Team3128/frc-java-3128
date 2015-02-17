@@ -13,8 +13,10 @@ import org.team3128.hardware.motor.MotorLink;
 import org.team3128.hardware.motor.speedcontrol.CurrentTarget;
 import org.team3128.listener.IListenerCallback;
 import org.team3128.listener.ListenerManager;
+import org.team3128.listener.control.Always;
 import org.team3128.listener.controller.ControllerAttackJoy;
 import org.team3128.listener.controller.ControllerExtreme3D;
+import org.team3128.util.RoboVision;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -127,7 +129,7 @@ public class Global
 		leftArmBrakeServo = new Servo(9);
 		rightArmBrakeServo = new Servo(0);
 		
-		//camera = new AxisCamera("192.168.1.196");
+		camera = new AxisCamera("192.168.1.196");
 		
 		clawArm = new ClawArm(armTurnMotor, armJointMotor, clawGrabMotor, armRotateEncoder, armJointEncoder, powerDistPanel);
 
@@ -243,7 +245,7 @@ public class Global
 		});
 		
 				
-		//_listenerManagerExtreme.addListener(Always.instance, () -> System.out.println(leftDriveEncoder.getSpeedInRPM() + " " + rightDriveEncoder.getSpeedInRPM()));
+		_listenerManagerExtreme.addListener(Always.instance, () -> RoboVision.targetRecognition(camera));
 		
 		//-----------------------------------------------------------
 		// Arm control code, on joysticks

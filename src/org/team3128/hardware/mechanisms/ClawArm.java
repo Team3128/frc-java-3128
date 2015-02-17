@@ -1,10 +1,13 @@
 package org.team3128.hardware.mechanisms;
 
+import org.team3128.Log;
 import org.team3128.hardware.encoder.angular.IAngularEncoder;
 import org.team3128.hardware.motor.MotorLink;
 import org.team3128.hardware.motor.speedcontrol.AngleEndstopTarget;
 import org.team3128.hardware.motor.speedcontrol.CurrentTarget;
 import org.team3128.hardware.motor.speedcontrol.LinearAngleTarget;
+import org.team3128.util.RobotMath;
+import org.team3128.util.Units;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
@@ -122,6 +125,18 @@ public class ClawArm
 		_armJoint.startControl(degreesToSet);
 	}
 	
+	private boolean isOverHeightLimit(double armAngle, double jointAngle)
+	{
+		//convert from 0 to 300 to -150 to 150
+		armAngle -= 150;
+		jointAngle -= 150;
+		
+		double result = (34 * Units.INCH) +
+				(Math.cos(Math.toRadians(armAngle)) * 36 * Units.INCH) +
+				(Math.cos(Math.toRadians(jointAngle)) * 52 * Units.INCH);
+		return result > 76 * Units.INCH;
+	}
+	
 	/**
 	 * Use joystick input to rotate arm
 	 */
@@ -138,7 +153,15 @@ public class ClawArm
 		{
 			if(Math.abs(joyPower) >= .1)
 			{
-				_armJoint.setControlTarget(joyPower);
+				if(isOverHeightLimit(_armRotateEncoder.getAngle(), ((2 * RobotMath.sgn(joyPower)) + _armJointEncoder.getAngle())))
+				{
+					Log.info("ClawArm", "Arm joint move would put claw over height limit!");
+					_armJoint.setControlTarget(0);
+				}
+				else
+				{
+					_armJoint.setControlTarget(joyPower);
+				}
 			}
 			else
 			{
@@ -169,7 +192,15 @@ public class ClawArm
 				}
 				else
 				{
-					_armRotate.startControl(joyPower);
+					if(isOverHeightLimit(((2 * RobotMath.sgn(joyPower)) + _armRotateEncoder.getAngle()), _armJointEncoder.getAngle()))
+					{
+						Log.info("ClawArm", "Arm rotate move would put claw over height limit!");
+						_armJoint.setControlTarget(0);
+					}
+					else
+					{
+						_armRotate.startControl(joyPower);
+					}
 				}
 			}
 			else
