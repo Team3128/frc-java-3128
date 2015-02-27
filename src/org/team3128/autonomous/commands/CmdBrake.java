@@ -22,7 +22,13 @@ public class CmdBrake extends Command
 	
 	boolean leftSideFinished = false;
 	
+	//sgn of the left side speed
+	double leftSideDirection;
+	
 	boolean rightSideFinished = false;
+	
+	//sgn of the right side speed
+	double rightSideDirection;
 	
 	/**
 	 * 
@@ -46,15 +52,17 @@ public class CmdBrake extends Command
 		startTime = System.currentTimeMillis();
 		
 		double speedLeft = AutoHardware._encLeft.getSpeedInRPM();
+		leftSideDirection = RobotMath.sgn(speedLeft);
 		if(Math.abs(speedLeft) > threshold)
 		{
-			AutoHardware._leftMotors.setControlTarget(AutoUtils.speedMultiplier * -1 * _power * RobotMath.sgn(speedLeft));
+			AutoHardware._leftMotors.setControlTarget(AutoUtils.speedMultiplier * -1 * _power * leftSideDirection);
 		}
 		
 		double speedRight = AutoHardware._encRight.getSpeedInRPM();
+		rightSideDirection = RobotMath.sgn(speedRight);
 		if(Math.abs(speedRight) > threshold)
 		{
-			AutoHardware._rightMotors.setControlTarget(AutoUtils.speedMultiplier * -1 * _power * RobotMath.sgn(speedRight));
+			AutoHardware._rightMotors.setControlTarget(AutoUtils.speedMultiplier * -1 * _power * rightSideDirection);
 		}
     }
 
@@ -69,13 +77,15 @@ public class CmdBrake extends Command
 			timedOut = true;
 		}
 		
-		if(AutoHardware._encLeft.getSpeedInRPM() < threshold)
+		double leftSpeedRPM = AutoHardware._encLeft.getSpeedInRPM();
+		if(RobotMath.sgn(leftSpeedRPM) != leftSideDirection || leftSpeedRPM < threshold)
 		{
 			leftSideFinished = true;
 			AutoHardware._leftMotors.setControlTarget(0);
 		}
 		
-		if(AutoHardware._encRight.getSpeedInRPM() < threshold)
+		double rightSpeedRPM = AutoHardware._encRight.getSpeedInRPM();
+		if(RobotMath.sgn(rightSpeedRPM) != rightSideDirection || rightSpeedRPM < threshold)
 		{
 			rightSideFinished = true;
 			AutoHardware._rightMotors.setControlTarget(0);
