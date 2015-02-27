@@ -38,6 +38,9 @@ public class ClawArm
 	final static double armMinAngle = 15;
 
 	final static double armStepSize = 10;
+	
+	final static double shoulderTravelMiddle = 175;
+	final static double elbowTravelMiddle = 140;
 
 	/**
 	 * Construct claw arm with given motors.
@@ -74,26 +77,26 @@ public class ClawArm
 	
 	public void stopClawLimitThread()
 	{
-		if(clawLimitThread.isAlive())
+		if(clawLimitThread != null)
 		{
-			clawLimitThread.interrupt();
-			try
+			if(clawLimitThread.isAlive())
 			{
-				clawLimitThread.join();
-			} 
-			catch (InterruptedException e)
-			{
-				e.printStackTrace();
+				clawLimitThread.interrupt();
+				try
+				{
+					clawLimitThread.join();
+				} 
+				catch (InterruptedException e)
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 	}
 	
 	public void startClawLimitThread()
 	{
-		if(clawLimitThread != null)
-		{
-			stopClawLimitThread();
-		}
+		stopClawLimitThread();
 		clawLimitThread = new Thread(this::runClawLimitThread, "Claw Limit Thread");
 		clawLimitThread.start();
 	}
@@ -106,13 +109,13 @@ public class ClawArm
 			{
 				if(armUsingAutoControl && !jointUsingAutoControl)
 				{
-					double newAngle = Math.toDegrees(Math.acos((-1.444 * Math.cos(Math.toRadians(_armJointEncoder.getAngle())) + 1.1667)));
+					double newAngle = Math.toDegrees(Math.acos((-1.444 * Math.cos(Math.toRadians(_armJointEncoder.getAngle() - elbowTravelMiddle)) + 1.1667)));
 					_armRotate.setControlTarget(newAngle);
 				}
 				else if(!armUsingAutoControl && jointUsingAutoControl)
 				{
 					//created from the formula in isOverHeightLimit()
-					double newAngle = Math.toDegrees(Math.acos((-.6923 * Math.cos(Math.toRadians(_armRotateEncoder.getAngle())) + .8077)));
+					double newAngle = Math.toDegrees(Math.acos((-.6923 * Math.cos(Math.toRadians(_armRotateEncoder.getAngle() - shoulderTravelMiddle)) + .8077)));
 					_armJoint.setControlTarget(newAngle);
 				}
 			}
@@ -211,8 +214,8 @@ public class ClawArm
 	private boolean isOverHeightLimit(double armAngle, double jointAngle)
 	{
 		//convert from 0 to 300 to -150 to 150
-		armAngle -= 150;
-		jointAngle -= 150;
+		armAngle -= shoulderTravelMiddle;
+		jointAngle -= elbowTravelMiddle;
 		
 		double result = (34 * Units.INCH) +
 				(Math.cos(Math.toRadians(armAngle)) * 36 * Units.INCH) +
@@ -249,7 +252,7 @@ public class ClawArm
 	 * Use joystick input to rotate arm
 	 */
 	public void onArmJoyInput(double joyPower)
-	{
+	{	
 		if(armUsingAutoControl)
 		{
 			if(Math.abs(joyPower) >= .1)
@@ -265,7 +268,7 @@ public class ClawArm
 			}
 			else
 			{
-				switchArmToAutoControl();
+		    	switchArmToAutoControl();
 			}
 		}
 	}

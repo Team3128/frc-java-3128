@@ -1,6 +1,5 @@
 package org.team3128.hardware.motor.speedcontrol;
 
-import org.team3128.Log;
 import org.team3128.hardware.encoder.angular.IAngularEncoder;
 import org.team3128.hardware.motor.MotorControl;
 import org.team3128.util.RobotMath;
@@ -55,7 +54,7 @@ public class LinearAngleTarget extends MotorControl
     	double error = RobotMath.angleDistance(angle, this.targetAngle, _encoder.canRevolveMultipleTimes());
         double pGain = error * kP;
         
-        Log.debug("LinearAngleTarget", "target: " + targetAngle + " current: " + angle + " error: " + error + " output: " + (pGain));
+        //Log.debug("LinearAngleTarget", "target: " + targetAngle + " current: " + angle + " error: " + error + " output: " + (pGain));
         
         //if(Math.abs(pGain) <= this.minSpeed)
         //{
