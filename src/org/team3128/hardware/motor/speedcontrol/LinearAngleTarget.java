@@ -18,7 +18,12 @@ public class LinearAngleTarget extends MotorControl
     
     boolean _stopWhenDone;
     double kP;
-
+    double kI;
+    double kD;
+    
+    double errorSum = 0;
+    double prevError = 0;
+    
     /**
      * 
      * @param kP constant of pid
@@ -26,11 +31,14 @@ public class LinearAngleTarget extends MotorControl
      * @param stopWhenDone whether to stop controlling the motor when it's reached its target
      * @param encoder
      */
-    public LinearAngleTarget(double kP, double threshold, boolean stopWhenDone, IAngularEncoder encoder)
+    public LinearAngleTarget(double kP, double kI, double kD, double threshold, boolean stopWhenDone, IAngularEncoder encoder)
     {
     	_refreshTime = 10;
         
         this.kP = kP;
+        this.kI = kI;
+        this.kD = kD;
+        
         this.threshold = threshold;
         _encoder = encoder;
         
@@ -52,7 +60,12 @@ public class LinearAngleTarget extends MotorControl
     	double angle = _encoder.getAngle();
     	
     	double error = RobotMath.angleDistance(angle, this.targetAngle, _encoder.canRevolveMultipleTimes());
-        double pGain = error * kP;
+    	
+    	errorSum += error;
+    	
+        double output = error * kP + errorSum * kI + kD * (error - prevError);
+        
+        prevError = error;
         
         //Log.debug("LinearAngleTarget", "target: " + targetAngle + " current: " + angle + " error: " + error + " output: " + (pGain));
         
@@ -68,7 +81,7 @@ public class LinearAngleTarget extends MotorControl
         }
         consecutiveCorrectPositions = 0;
         
-        return RobotMath.makeValidPower(pGain);
+        return RobotMath.makeValidPower(output);
     }
 
     public void clearControlRun()
