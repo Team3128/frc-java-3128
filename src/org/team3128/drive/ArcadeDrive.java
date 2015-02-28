@@ -22,7 +22,7 @@ public class ArcadeDrive
     }
     
 	//threshold below which joystick movements are ignored.
-	final static double thresh = 0.2;
+	final static double thresh = 0.15;
 	/**
 	 * 
 	 * @param joyX horizontal control input
@@ -51,8 +51,10 @@ public class ArcadeDrive
     		throttle = 1;
     	}
     	
-    	_spdR = RobotMath.makeValidPower((joyY + joyX) * throttle);
-    	_spdL = RobotMath.makeValidPower((joyY - joyX) * throttle);
+    	joyX *= throttle;
+    	
+    	_spdR = RobotMath.makeValidPower(joyY + joyX);
+    	_spdL = RobotMath.makeValidPower(joyY - joyX);
     	
     	//Log.debug("ArcadeDrive", "x1: " + joyX + " throttle: " + throttle + " spdR: " + _spdR + " spdL: " + _spdL);
 
