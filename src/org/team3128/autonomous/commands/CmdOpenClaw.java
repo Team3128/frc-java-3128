@@ -6,13 +6,21 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class CmdOpenClaw extends Command
 {
-    public CmdOpenClaw()
+	
+	long endTime;
+	
+	long _timeout;
+	
+    public CmdOpenClaw(int timeout)
     {
+    	_timeout = timeout;
     }
 
     @Override
     protected void initialize()
     {
+    	endTime = System.currentTimeMillis() + _timeout;
+
     	AutoHardware.clawArm.openClaw();
     }
 
@@ -27,13 +35,13 @@ public class CmdOpenClaw extends Command
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished()
     {    	
-    	return AutoHardware.clawArm.clawMaxLimitSwitch.get();
+    	return AutoHardware.clawArm.clawMaxLimitSwitch.get() || endTime <= System.currentTimeMillis();
     }
 
     // Called once after isFinished returns true
     protected void end()
     {
-		
+    	AutoHardware.clawArm._clawGrab.setControlTarget(0);
     }
 
     // Called when another command which requires one or more of the same

@@ -13,7 +13,7 @@ public class CloseCanGrabAuto extends CommandGroup
     {
     	//addSequential(new CmdArmAngles(25, 160, 10, 7500));
     	addSequential(new CmdLog("Opening Claw"));
-    	addSequential(new CmdOpenClaw());
+    	addSequential(new CmdOpenClaw(500));
     	
     	addSequential(new CmdLog("Driving To Can"));
     	addSequential(new CmdMoveForward(5, 2000));

@@ -63,13 +63,13 @@ public class ClawArm
 		
 		clawMinLimitSwitch = new DigitalInput(9);
 		clawMaxLimitSwitch = new DigitalInput(8);
-		_clawGrab.setSpeedController(new LimitSwitchEndstop(clawMinLimitSwitch, clawMaxLimitSwitch, false));
+		_clawGrab.setSpeedController(new LimitSwitchEndstop(clawMinLimitSwitch, clawMaxLimitSwitch, false, panel, 10, 24));
 		_clawGrab.startControl(0);
 		
 		
-		armRotateAngleTarget = new LinearAngleTarget(.02, 4, false, armEncoder);
+		armRotateAngleTarget = new LinearAngleTarget(.007, 4, false, armEncoder);
 		
-		armJointAngleTarget = new LinearAngleTarget(.02, 5, false, jointEncoder);
+		armJointAngleTarget = new LinearAngleTarget(.005, 5, false, jointEncoder);
 		
 		armRotateEndstopTarget = new AngleEndstopTarget(22, 295, 2, armEncoder);
 		
@@ -87,13 +87,13 @@ public class ClawArm
 	public void closeClaw()
 	{
 		//the limit switch will stop it
-		_clawGrab.setControlTarget(-.6);
+		_clawGrab.setControlTarget(-.7);
 	}
 	
 	public void openClaw()
 	{
 		//the limit switch will stop it
-		_clawGrab.setControlTarget(.6);
+		_clawGrab.setControlTarget(.7);
 	}
 	
 	public void stopClawLimitThread()

@@ -8,18 +8,22 @@ public class CmdCloseClaw extends Command
 {
 	long endTime;
 	
+	long _timeout;
+	
 	/**
 	 * 
 	 * @param timeout time to allow the claw to close
 	 */
     public CmdCloseClaw(int timeout)
     {
-    	endTime = System.currentTimeMillis() + timeout;
+    	_timeout = timeout;
     }
 
     @Override
     protected void initialize()
     {
+    	endTime = System.currentTimeMillis() + _timeout;
+
     	AutoHardware.clawArm.closeClaw();
     }
 

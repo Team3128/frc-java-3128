@@ -13,7 +13,6 @@ import org.team3128.hardware.mechanisms.ClawArm;
 import org.team3128.hardware.motor.MotorLink;
 import org.team3128.listener.IListenerCallback;
 import org.team3128.listener.ListenerManager;
-import org.team3128.listener.control.Always;
 import org.team3128.listener.controller.ControllerAttackJoy;
 import org.team3128.listener.controller.ControllerExtreme3D;
 
@@ -122,7 +121,6 @@ public class Global
 		
 		clawGrabMotor = new MotorLink();
 		clawGrabMotor.addControlledMotor(new Talon(8));
-		clawGrabMotor.reverseMotor();
 		
 		leftArmBrakeServo = new Servo(9);
 		rightArmBrakeServo = new Servo(0);
@@ -211,7 +209,7 @@ public class Global
 		});
 		
 				
-		_listenerManagerExtreme.addListener(Always.instance, () -> System.out.println(armJointEncoder.getAngle()));
+		//_listenerManagerExtreme.addListener(Always.instance, () -> System.out.println(powerDistPanel.getCurrent(10)));
 		
 		//-----------------------------------------------------------
 		// Arm control code, on joysticks

@@ -22,7 +22,7 @@ public class ArcadeDrive
     }
     
 	//threshold below which joystick movements are ignored.
-	final static double thresh = 0.15;
+	final static double thresh = 0.2;
 	/**
 	 * 
 	 * @param joyX horizontal control input
