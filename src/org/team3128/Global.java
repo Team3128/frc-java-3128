@@ -146,10 +146,6 @@ public class Global
 			double joyX = _listenerManagerExtreme.getRawAxis(ControllerExtreme3D.TWIST);
 			double joyY = _listenerManagerExtreme.getRawAxis(ControllerExtreme3D.JOYY);
 			double throttle = -_listenerManagerExtreme.getRawAxis(ControllerExtreme3D.THROTTLE);
-			/*if (Math.abs(_listenerManagerExtreme.getRawAxis(ControllerExtreme3D.TWIST)) < 0.1)
-			{
-				joyX = 0;
-			}*/
 			
 			_drive.steer(joyX, joyY, throttle);
 		};
