@@ -3,14 +3,16 @@ package org.team3128.hardware.mechanisms;
 import org.team3128.hardware.encoder.angular.IAngularEncoder;
 import org.team3128.hardware.motor.MotorLink;
 import org.team3128.hardware.motor.speedcontrol.AngleEndstopTarget;
+import org.team3128.hardware.motor.speedcontrol.LimitSwitchEndstop;
 import org.team3128.hardware.motor.speedcontrol.LinearAngleTarget;
 import org.team3128.util.Units;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
 public class ClawArm
 {
-	MotorLink _armRotate, _armJoint, _clawGrab;
+	public MotorLink _armRotate, _armJoint, _clawGrab;
 	
 	LinearAngleTarget armRotateAngleTarget;
 	
@@ -20,9 +22,12 @@ public class ClawArm
 	
 	AngleEndstopTarget armJointEndstopTarget;
 	
-	IAngularEncoder _armRotateEncoder;
+	public IAngularEncoder _armRotateEncoder;
 	
-	IAngularEncoder _armJointEncoder;
+	public IAngularEncoder _armJointEncoder;
+	
+	public DigitalInput clawMinLimitSwitch;
+	public DigitalInput clawMaxLimitSwitch;
 	
 	/**
 	 * indicates whether the claw is currently using manual or automatic control.
@@ -56,7 +61,11 @@ public class ClawArm
 		_armJoint = armJoint;
 		_clawGrab = clawGrab;
 		
-		//_clawGrab.setSpeedController(new CurrentTarget(panel, 10, clawCurrentThreshold, 60));
+		clawMinLimitSwitch = new DigitalInput(9);
+		clawMaxLimitSwitch = new DigitalInput(8);
+		_clawGrab.setSpeedController(new LimitSwitchEndstop(clawMinLimitSwitch, clawMaxLimitSwitch, false));
+		_clawGrab.startControl(0);
+		
 		
 		armRotateAngleTarget = new LinearAngleTarget(.02, 4, false, armEncoder);
 		
@@ -73,6 +82,18 @@ public class ClawArm
 		switchArmToAutoControl();
 		switchJointToAutoControl();
 		
+	}
+	
+	public void closeClaw()
+	{
+		//the limit switch will stop it
+		_clawGrab.setControlTarget(-.6);
+	}
+	
+	public void openClaw()
+	{
+		//the limit switch will stop it
+		_clawGrab.setControlTarget(.6);
 	}
 	
 	public void stopClawLimitThread()
@@ -175,8 +196,8 @@ public class ClawArm
 		armUsingAutoControl = false;
 
 		_armRotate.stopSpeedControl();
-		_armRotate.setSpeedController(armRotateEndstopTarget);
-		_armRotate.startControl(0);
+		_armRotate.setSpeedController(null);
+		//_armRotate.startControl(0);
 	}
 	
 	/**
@@ -264,7 +285,7 @@ public class ClawArm
 		{
 			if(Math.abs(joyPower) >= .1)
 			{
-				_armRotate.startControl(joyPower);
+				_armRotate.setControlTarget(joyPower);
 			}
 			else
 			{

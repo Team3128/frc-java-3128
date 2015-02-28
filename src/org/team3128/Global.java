@@ -3,21 +3,20 @@ package org.team3128;
 import java.util.ArrayList;
 
 import org.team3128.autonomous.AutoHardware;
-import org.team3128.autonomous.programs.CanGrabAuto;
-import org.team3128.autonomous.programs.TestMoveForwardAuto;
+import org.team3128.autonomous.programs.CloseCanGrabAuto;
+import org.team3128.autonomous.programs.DoNothingAuto;
+import org.team3128.autonomous.programs.FarCanGrabAuto;
 import org.team3128.drive.ArcadeDrive;
 import org.team3128.hardware.encoder.angular.AnalogPotentiometerEncoder;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
 import org.team3128.hardware.mechanisms.ClawArm;
 import org.team3128.hardware.motor.MotorLink;
-import org.team3128.hardware.motor.speedcontrol.LimitSwitchEndstop;
 import org.team3128.listener.IListenerCallback;
 import org.team3128.listener.ListenerManager;
 import org.team3128.listener.control.Always;
 import org.team3128.listener.controller.ControllerAttackJoy;
 import org.team3128.listener.controller.ControllerExtreme3D;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Servo;
@@ -59,10 +58,7 @@ public class Global
 	public MotorLink frontHookMotor;
 	
 	public MotorLink clawGrabMotor;
-	
-	public DigitalInput clawMinLimitSwitch;
-	public DigitalInput clawMaxLimitSwitch;
-	
+
 	public AnalogPotentiometerEncoder armRotateEncoder;
 	
 	public AnalogPotentiometerEncoder armJointEncoder;
@@ -124,12 +120,9 @@ public class Global
 		frontHookMotor = new MotorLink();
 		frontHookMotor.addControlledMotor(new Talon(7));
 		
-		clawMinLimitSwitch = new DigitalInput(9);
-		clawMaxLimitSwitch = new DigitalInput(8);
-		clawGrabMotor = new MotorLink(new LimitSwitchEndstop(clawMinLimitSwitch, clawMaxLimitSwitch, false));
+		clawGrabMotor = new MotorLink();
 		clawGrabMotor.addControlledMotor(new Talon(8));
 		clawGrabMotor.reverseMotor();
-		clawGrabMotor.startControl(0);
 		
 		leftArmBrakeServo = new Servo(9);
 		rightArmBrakeServo = new Servo(0);
@@ -171,10 +164,13 @@ public class Global
 		AutoHardware._leftMotors = leftMotors;
 		AutoHardware._rightMotors = rightMotors;
 		
+		AutoHardware.clawArm = clawArm;
+		
 		
 		autoPrograms = new SendableChooser();
-		autoPrograms.addDefault("Can Grab", new CanGrabAuto());
-		autoPrograms.addObject("Test Move Forward", new TestMoveForwardAuto());
+		autoPrograms.addDefault("Far Can Grab", new FarCanGrabAuto());
+		autoPrograms.addObject("Close Can Grab", new CloseCanGrabAuto());
+		autoPrograms.addObject("Do Nothing", new DoNothingAuto());
 		
 		SmartDashboard.putData("Autonomous Programs", autoPrograms);
 
@@ -199,7 +195,7 @@ public class Global
 	void initializeAuto()
 	{
 		Command autoCommand = (Command) autoPrograms.getSelected();
-		
+		Log.info("Global", "Starting auto program " + autoCommand.getName());
 		autoCommand.start();
 	}
 	
@@ -219,7 +215,7 @@ public class Global
 		});
 		
 				
-		_listenerManagerExtreme.addListener(Always.instance, () -> System.out.println(armRotateEncoder.getAngle()));
+		_listenerManagerExtreme.addListener(Always.instance, () -> System.out.println(armJointEncoder.getAngle()));
 		
 		//-----------------------------------------------------------
 		// Arm control code, on joysticks
@@ -227,14 +223,20 @@ public class Global
 		
 		_listenerManagerJoyRight.addListener(ControllerAttackJoy.JOYY, () ->
 		{
-			double power = _listenerManagerJoyRight.getRawAxis(ControllerAttackJoy.JOYY);
-			clawArm.onArmJoyInput((shoulderInverted ? 1 : -1) * power);
+			double power = (shoulderInverted ? .5 : -.5) * _listenerManagerJoyRight.getRawAxis(ControllerAttackJoy.JOYY);
+			
+			if(power < 0)
+			{
+				power /= 1.5;
+			}
+			
+			clawArm.onArmJoyInput(power);
 		});
 		
 		_listenerManagerJoyLeft.addListener(ControllerAttackJoy.JOYY, () ->
 		{
 			double power = _listenerManagerJoyLeft.getRawAxis(ControllerAttackJoy.JOYY);
-			clawArm.onJointJoyInput((elbowInverted ? 1 : -1) * power);
+			clawArm.onJointJoyInput((elbowInverted ? .5 : -.5) * power);
 		});
 		
 		_listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN2, () -> shoulderInverted = false);
@@ -246,10 +248,10 @@ public class Global
 		_listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN6, () -> elbowInverted = true);
 		_listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN7, () -> elbowInverted = false);
 		
-		_listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN1, () -> clawGrabMotor.setControlTarget(0.7));
-		_listenerManagerJoyLeft.addListener(ControllerAttackJoy.UP1, () -> clawGrabMotor.setControlTarget(0));
-		_listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN1, () -> clawGrabMotor.setControlTarget(-0.7));
+		_listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN1, () -> clawGrabMotor.setControlTarget(0.7));
 		_listenerManagerJoyRight.addListener(ControllerAttackJoy.UP1, () -> clawGrabMotor.setControlTarget(0));
+		_listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN1, () -> clawGrabMotor.setControlTarget(-0.7));
+		_listenerManagerJoyLeft.addListener(ControllerAttackJoy.UP1, () -> clawGrabMotor.setControlTarget(0));
 		
 		_listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN4, () -> frontHookMotor.setControlTarget(0.3));
 		_listenerManagerJoyRight.addListener(ControllerAttackJoy.UP4, () -> frontHookMotor.setControlTarget(0));
@@ -265,9 +267,6 @@ public class Global
 		_listenerManagerExtreme.addListener(ControllerExtreme3D.UP6, () -> frontHookMotor.setControlTarget(0));
 
 		_listenerManagerExtreme.addListener(ControllerExtreme3D.UP8, () -> frontHookMotor.setControlTarget(0));
-		
-		_listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN10, () -> clawArm.setArmAngle(150));
-		_listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN11, () -> clawArm.setArmAngle(200));
 		
 		//clawArm.startClawLimitThread();
 	}
