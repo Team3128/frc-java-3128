@@ -1,5 +1,7 @@
 package org.team3128;
 
+import java.util.ArrayList;
+
 import org.team3128.listener.ListenerManager;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -22,6 +24,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 public class RobotTemplate extends IterativeRobot 
 {
 	Global global;
+	ArrayList<ListenerManager> _listenerManagers = new ArrayList<ListenerManager>();
 	
     public void robotInit()
     {
@@ -29,7 +32,7 @@ public class RobotTemplate extends IterativeRobot
         Log.info("Global", "Initializing Robot...");
         global = new Global();
         
-        global.initializeRobot();
+        global.initializeRobot(this);
         
         Log.info("Global", "Initialization Done!");
         Log.info("Global", "\"The Clawwwwwww.....\"   Activated");
@@ -39,41 +42,38 @@ public class RobotTemplate extends IterativeRobot
     {
     	global.initializeDisabled();
     }
+    
+    public void addListenerManagerToTick(ListenerManager manager)
+    {
+    	_listenerManagers.add(manager);
+    }
+    
+    private void resetListeners()
+    {
+    	for(ListenerManager manager : _listenerManagers)
+    	{
+    		manager.removeAllListeners();
+    	}
+    }
 
     // ARE YOU CHANGING THINGS?
-   
-    boolean autonomousHasBeenInit = false;
     public void autonomousInit()
     {
-        if(!autonomousHasBeenInit) {
-            Log.info("Global", "Initializing Autonomous...");
-        	for(ListenerManager manager : global._listenerManagers)
-        	{
-        		manager.removeAllListeners();
-        	}
-            global.initializeAuto();
-            autonomousHasBeenInit = true;
-            teleopHasBeenInit = false;
-            Log.info("Global", "Auto Initialization Done!");
-        }
+        Log.info("Global", "Initializing Autonomous...");
+        resetListeners();
+        global.initializeAuto();
+        Log.info("Global", "Auto Initialization Done!");
     }
    
     // TURN BACK NOW.
     // YOUR CHANGES ARE NOT WANTED HERE.
    
-    boolean teleopHasBeenInit = false;
-    public void teleopInit() {
-        if(!teleopHasBeenInit) {
-            Log.info("Global", "Initializing Teleop...");
-        	for(ListenerManager manager : global._listenerManagers)
-        	{
-        		manager.removeAllListeners();
-        	}
-            global.initializeTeleop();
-            teleopHasBeenInit = true;
-            autonomousHasBeenInit = false;
-            Log.info("Global", "Teleop Initialization Done!");
-        }
+    public void teleopInit()
+    {
+        Log.info("Global", "Initializing Teleop...");
+    	resetListeners();
+        global.initializeTeleop();
+        Log.info("Global", "Teleop Initialization Done!");
     }
    
     public void disabledPeriodic()
@@ -99,7 +99,7 @@ public class RobotTemplate extends IterativeRobot
    
     public void teleopPeriodic()
     {        
-    	for(ListenerManager manager : global._listenerManagers)
+    	for(ListenerManager manager : _listenerManagers)
     	{
     		manager.tick();
     	}

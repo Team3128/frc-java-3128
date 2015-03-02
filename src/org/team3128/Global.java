@@ -1,7 +1,5 @@
 package org.team3128;
 
-import java.util.ArrayList;
-
 import org.team3128.autonomous.AutoHardware;
 import org.team3128.autonomous.programs.DoNothingAuto;
 import org.team3128.autonomous.programs.DriveIntoAutoZoneAuto;
@@ -36,7 +34,6 @@ import edu.wpi.first.wpilibj.vision.AxisCamera;
  */
 public class Global
 {
-	public ArrayList<ListenerManager> _listenerManagers = new ArrayList<ListenerManager>();
 	public ListenerManager _listenerManagerExtreme;
 	public ListenerManager _listenerManagerJoyLeft;
 	public ListenerManager _listenerManagerJoyRight;
@@ -85,10 +82,6 @@ public class Global
 		_listenerManagerExtreme = new ListenerManager(new Joystick(Options.instance()._controllerPort), ControllerExtreme3D.instance);
 		_listenerManagerJoyLeft = new ListenerManager(new Joystick(1), ControllerAttackJoy.instance);
 		_listenerManagerJoyRight = new ListenerManager(new Joystick(2), ControllerAttackJoy.instance);
-		
-		_listenerManagers.add(_listenerManagerExtreme);
-		_listenerManagers.add(_listenerManagerJoyLeft);
-		_listenerManagers.add(_listenerManagerJoyRight);
 		
 		powerDistPanel = new PowerDistributionPanel();
 		
@@ -162,12 +155,12 @@ public class Global
 
 	}
 
-	void initializeRobot()
+	void initializeRobot(RobotTemplate robotTemplate)
 	{
 		
-//		TachLink link = new TachLink(0, 54);
-//		
-//		Log.debug("Global", "Tachometer: " + link.getRaw());
+		robotTemplate.addListenerManagerToTick(_listenerManagerExtreme);
+		robotTemplate.addListenerManagerToTick(_listenerManagerJoyLeft);
+		robotTemplate.addListenerManagerToTick(_listenerManagerJoyRight);
 	}
 
 	void initializeDisabled()
