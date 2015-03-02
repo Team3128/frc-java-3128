@@ -1,5 +1,6 @@
 package org.team3128.hardware.motor.speedcontrol;
 
+import org.team3128.Log;
 import org.team3128.hardware.encoder.angular.IAngularEncoder;
 import org.team3128.hardware.motor.MotorControl;
 import org.team3128.util.RobotMath;
@@ -24,6 +25,10 @@ public class LinearAngleTarget extends MotorControl
     double errorSum = 0;
     double prevError = 0;
     
+    boolean _log;
+    
+    final static double errorLimit = 100000;
+    
     /**
      * 
      * @param kP constant of pid
@@ -31,13 +36,15 @@ public class LinearAngleTarget extends MotorControl
      * @param stopWhenDone whether to stop controlling the motor when it's reached its target
      * @param encoder
      */
-    public LinearAngleTarget(double kP, double kI, double kD, double threshold, boolean stopWhenDone, IAngularEncoder encoder)
+    public LinearAngleTarget(double kP, double kI, double kD, double threshold, boolean stopWhenDone, IAngularEncoder encoder, boolean log)
     {
     	_refreshTime = 10;
         
         this.kP = kP;
         this.kI = kI;
         this.kD = kD;
+        
+        _log = log;
         
         this.threshold = threshold;
         _encoder = encoder;
@@ -60,8 +67,26 @@ public class LinearAngleTarget extends MotorControl
     	double angle = _encoder.getAngle();
     	
     	double error = RobotMath.angleDistance(angle, this.targetAngle, _encoder.canRevolveMultipleTimes());
-    	
+    	    	
     	errorSum += error;
+    	
+    	if(_log)
+    	{
+    		Log.debug("LinearAngleTarget", "error: " + error);
+    	}
+    	
+//    	if(errorSum > errorLimit)
+//    	{
+//    		Log.unusual("LinearAngleTarget", "I error sum of " + errorSum + " went over limit of " + errorLimit);
+//    		errorSum = errorLimit;
+//    	}
+//    	else if(errorSum < -errorLimit)
+//    	{
+//    		Log.unusual("LinearAngleTarget", "I error sum of " + errorSum + " went under limit of " + -errorLimit);
+//    		errorSum = -errorLimit;
+//    	}
+    	
+
     	
         double output = error * kP + errorSum * kI + kD * (error - prevError);
         
@@ -86,6 +111,7 @@ public class LinearAngleTarget extends MotorControl
 
     public void clearControlRun()
     {
+    	errorSum = 0;
     	 consecutiveCorrectPositions = 0;
     }
 

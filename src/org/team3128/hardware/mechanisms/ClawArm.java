@@ -67,9 +67,9 @@ public class ClawArm
 		_clawGrab.startControl(0);
 		
 		
-		armRotateAngleTarget = new LinearAngleTarget(.02, .0002, 0, 4, false, armEncoder);
+		armRotateAngleTarget = new LinearAngleTarget(.010, .000005, .00015, 4, false, armEncoder, false);
 		
-		armJointAngleTarget = new LinearAngleTarget(.02, .0002, 0, 5, false, jointEncoder);
+		armJointAngleTarget = new LinearAngleTarget(.009, 0, 0, 5, false, jointEncoder, true);
 		
 		armRotateEndstopTarget = new AngleEndstopTarget(22, 295, 2, armEncoder);
 		
@@ -80,7 +80,7 @@ public class ClawArm
 		_armJointEncoder = jointEncoder;
 		
 		switchArmToAutoControl();
-		switchJointToAutoControl();
+		switchJointToManualControl();
 		
 	}
 	
@@ -155,7 +155,8 @@ public class ClawArm
 	/**
 	 * switch the arm to automatic, encoder-based control
 	 */
-	private void switchJointToAutoControl()
+	public
+	void switchJointToAutoControl()
 	{
 		jointUsingAutoControl = true;
 		
@@ -167,7 +168,7 @@ public class ClawArm
 	/**
 	 * switch the arm to automatic, encoder-based control
 	 */
-	private void switchArmToAutoControl()
+	public void switchArmToAutoControl()
 	{
 		armUsingAutoControl = true;
 		
@@ -179,19 +180,19 @@ public class ClawArm
 	/**
 	 * switch the joint to manual motor power-based control
 	 */
-	private void switchJointToManualControl()
+	public void switchJointToManualControl()
 	{
 		jointUsingAutoControl = false;
 		
 		_armJoint.stopSpeedControl();
-		_armJoint.setSpeedController(armJointEndstopTarget);
-		_armJoint.startControl(0);
+		_armJoint.setSpeedController(null);
+		//_armJoint.startControl(0);
 	}
 	
 	/**
 	 * switch the arm to manual motor power-based control
 	 */
-	private void switchArmToManualControl()
+	public void switchArmToManualControl()
 	{
 		armUsingAutoControl = false;
 
@@ -258,14 +259,14 @@ public class ClawArm
 		}
 		if(!jointUsingAutoControl)
 		{
-			if(Math.abs(joyPower) >= .1)
-			{
+			//if(Math.abs(joyPower) >= .1)
+			//{
 				_armJoint.setControlTarget(joyPower);
-			}
-			else
-			{
-				switchJointToAutoControl();
-			}
+			//}
+			//else
+			//{
+			//	switchJointToAutoControl();
+			//}
 		}
 	}
 	
@@ -292,5 +293,30 @@ public class ClawArm
 		    	switchArmToAutoControl();
 			}
 		}
+	}
+
+	/**
+	 * reset control targets so that the robot will not shift once the motors are enabled
+	 */
+	public void resetTargets()
+	{
+		if(armUsingAutoControl)
+		{
+			_armRotate.setControlTarget(_armRotateEncoder.getAngle());
+		}
+		else
+		{
+			_armRotate.setControlTarget(0);
+		}
+		
+		if(jointUsingAutoControl)
+		{
+			_armJoint.setControlTarget(_armJointEncoder.getAngle());
+		}
+		else
+		{
+			_armJoint.setControlTarget(0);
+		}
+		
 	}
 }

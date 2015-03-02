@@ -3,8 +3,8 @@ package org.team3128;
 import java.util.ArrayList;
 
 import org.team3128.autonomous.AutoHardware;
-import org.team3128.autonomous.programs.CloseCanGrabAuto;
 import org.team3128.autonomous.programs.DoNothingAuto;
+import org.team3128.autonomous.programs.DriveIntoAutoZoneAuto;
 import org.team3128.autonomous.programs.FarCanGrabAuto;
 import org.team3128.drive.ArcadeDrive;
 import org.team3128.hardware.encoder.angular.AnalogPotentiometerEncoder;
@@ -13,6 +13,7 @@ import org.team3128.hardware.mechanisms.ClawArm;
 import org.team3128.hardware.motor.MotorLink;
 import org.team3128.listener.IListenerCallback;
 import org.team3128.listener.ListenerManager;
+import org.team3128.listener.control.Always;
 import org.team3128.listener.controller.ControllerAttackJoy;
 import org.team3128.listener.controller.ControllerExtreme3D;
 
@@ -130,22 +131,13 @@ public class Global
 
 		_drive = new ArcadeDrive(leftMotors, rightMotors, _listenerManagerExtreme);
 		
-		updateDriveArcade = () ->
-		{
-			double joyX = _listenerManagerExtreme.getRawAxis(ControllerExtreme3D.JOYX);
-			double joyY = _listenerManagerExtreme.getRawAxis(ControllerExtreme3D.JOYY);
-			double throttle = -_listenerManagerExtreme.getRawAxis(ControllerExtreme3D.THROTTLE);
-			
-			_drive.steer(joyX, joyY, throttle);
-		};
-		
 		updateDriveCOD = () ->
 		{
 			double joyX = _listenerManagerExtreme.getRawAxis(ControllerExtreme3D.TWIST);
 			double joyY = _listenerManagerExtreme.getRawAxis(ControllerExtreme3D.JOYY);
 			double throttle = -_listenerManagerExtreme.getRawAxis(ControllerExtreme3D.THROTTLE);
 			
-			_drive.steer(joyX, joyY, throttle);
+			_drive.steer(joyX, joyY, throttle, _listenerManagerExtreme.getRawBool(ControllerExtreme3D.DOWN2));
 		};
 		
 		//--------------------------------------------------------------------------
@@ -163,7 +155,7 @@ public class Global
 		
 		autoPrograms = new SendableChooser();
 		autoPrograms.addDefault("Far Can Grab", new FarCanGrabAuto());
-		autoPrograms.addObject("Close Can Grab", new CloseCanGrabAuto());
+		autoPrograms.addObject("Drive Into Auto Zone", new DriveIntoAutoZoneAuto());
 		autoPrograms.addObject("Do Nothing", new DoNothingAuto());
 		
 		SmartDashboard.putData("Autonomous Programs", autoPrograms);
@@ -180,14 +172,22 @@ public class Global
 
 	void initializeDisabled()
 	{
-		clawArm.stopClawLimitThread();
+		clawArm.resetTargets();
 		
+		armTurnMotor.clearSpeedControlRun();
+		armJointMotor.clearSpeedControlRun();
+		clawArm.switchJointToManualControl();
+		
+		clawArm.stopClawLimitThread();
+				
 		leftMotors.clearSpeedControlRun();
 		rightMotors.clearSpeedControlRun();
 	}
 
 	void initializeAuto()
 	{
+		clawArm.resetTargets();
+
 		Command autoCommand = (Command) autoPrograms.getSelected();
 		Log.info("Global", "Starting auto program " + autoCommand.getName());
 		autoCommand.start();
@@ -201,7 +201,9 @@ public class Global
 		_listenerManagerExtreme.addListener(ControllerExtreme3D.TWIST, updateDriveCOD);
 		_listenerManagerExtreme.addListener(ControllerExtreme3D.JOYY, updateDriveCOD);
 		_listenerManagerExtreme.addListener(ControllerExtreme3D.THROTTLE, updateDriveCOD);
-		
+		_listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN2, updateDriveCOD);
+		_listenerManagerExtreme.addListener(ControllerExtreme3D.UP2, updateDriveCOD);
+
 		
 		_listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN12, () ->
 		{
@@ -209,7 +211,7 @@ public class Global
 		});
 		
 				
-		//_listenerManagerExtreme.addListener(Always.instance, () -> System.out.println(powerDistPanel.getCurrent(10)));
+		_listenerManagerExtreme.addListener(Always.instance, () -> System.out.println(armJointEncoder.getAngle()));
 		
 		//-----------------------------------------------------------
 		// Arm control code, on joysticks
@@ -217,7 +219,7 @@ public class Global
 		
 		_listenerManagerJoyRight.addListener(ControllerAttackJoy.JOYY, () ->
 		{
-			double power = (shoulderInverted ? .5 : -.5) * _listenerManagerJoyRight.getRawAxis(ControllerAttackJoy.JOYY);
+			double power = (shoulderInverted ? .8 : -.8) * _listenerManagerJoyRight.getRawAxis(ControllerAttackJoy.JOYY);
 			
 			if(power < 0)
 			{
@@ -225,6 +227,7 @@ public class Global
 			}
 			
 			clawArm.onArmJoyInput(power);
+			
 		});
 		
 		_listenerManagerJoyLeft.addListener(ControllerAttackJoy.JOYY, () ->

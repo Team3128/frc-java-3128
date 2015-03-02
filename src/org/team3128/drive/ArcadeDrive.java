@@ -29,7 +29,7 @@ public class ArcadeDrive
 	 * @param joyY vertical control input
 	 * @param throttle throttle control input scaled between 1 and -1 (-.8 is 10 %, 0 is 50%, 1.0 is 100%)
 	 */
-    public void steer(double joyX, double joyY, double throttle)
+    public void steer(double joyX, double joyY, double throttle, boolean fullSpeed)
     {
     	//read joystick values
     	//x1 = Math.abs(x1) > thresh ? Math.tanh(x1) : 0.0;
@@ -39,12 +39,21 @@ public class ArcadeDrive
     	//y1 = Math.abs(y1) > thresh ? Math.tanh(y1) : 0.0;
     	joyY = Math.abs(joyY) > thresh ? -1 * joyY : 0.0;
     	
+    	if(!fullSpeed)
+    	{
+    		joyY *= .65;
+    	}
+    	else
+    	{
+    		joyY *= 1;
+    	}
+    	
     	//scale from 1 to -1 to 1 to 0
     	throttle =  ( throttle + 1) / 2;
 
-    	if(throttle < .4)
+    	if(throttle < .3)
     	{
-    		throttle = .4;
+    		throttle = .3;
     	}
     	else if(throttle > .8)
     	{
