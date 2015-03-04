@@ -7,6 +7,23 @@ import org.team3128.util.RobotMath;
 
 import edu.wpi.first.wpilibj.command.Command;
 
+
+/*
+ *       /^\ 
+ *      / _ \
+ *     / [ ] \
+ *    /  [_]  \
+ *   /    _    \
+ *  /    (_)    \
+ * /_____________\
+ * -----------------------------------------------------
+ * UNTESTED CODE!
+ * This class has never been tried on an actual robot.
+ * It may be non or partially functional.
+ * Do not make any assumptions as to its behavior!
+ * And don't blink.  Not even for a second.
+ * -----------------------------------------------------*/
+
 /**
  * Command to stop the robot
  */

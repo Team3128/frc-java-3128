@@ -3,6 +3,22 @@ package org.team3128.hardware.motor.speedcontrol;
 import org.team3128.hardware.encoder.angular.IAngularEncoder;
 import org.team3128.hardware.motor.MotorControl;
 
+/*
+ *       /^\ 
+ *      / _ \
+ *     / [ ] \
+ *    /  [_]  \
+ *   /    _    \
+ *  /    (_)    \
+ * /_____________\
+ * -----------------------------------------------------
+ * UNTESTED CODE!
+ * This class has never been tried on an actual robot.
+ * It may be non or partially functional.
+ * Do not make any assumptions as to its behavior!
+ * And don't blink.  Not even for a second.
+ * -----------------------------------------------------*/
+
 /**
  * Motor control which uses an encoder to limit the range of something.  
  * 

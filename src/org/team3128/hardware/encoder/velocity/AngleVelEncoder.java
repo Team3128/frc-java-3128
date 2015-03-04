@@ -4,6 +4,22 @@ import org.team3128.Log;
 import org.team3128.hardware.encoder.angular.IAngularEncoder;
 import org.team3128.util.RobotMath;
 
+/*
+ *       /^\ 
+ *      / _ \
+ *     / [ ] \
+ *    /  [_]  \
+ *   /    _    \
+ *  /    (_)    \
+ * /_____________\
+ * -----------------------------------------------------
+ * UNTESTED CODE!
+ * This class has never been tried on an actual robot.
+ * It may be non or partially functional.
+ * Do not make any assumptions as to its behavior!
+ * And don't blink.  Not even for a second.
+ * -----------------------------------------------------*/
+
 /**
  * Class to use an angular encoder as a velocity encoder.
  * 
