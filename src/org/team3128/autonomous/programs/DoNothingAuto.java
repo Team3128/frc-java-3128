@@ -9,5 +9,6 @@ public class DoNothingAuto extends CommandGroup {
     
 	public DoNothingAuto()
 	{
+		
     }
 }
