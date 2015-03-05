@@ -3,22 +3,6 @@ package org.team3128.autonomous.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-/*
- *       /^\ 
- *      / _ \
- *     / [ ] \
- *    /  [_]  \
- *   /    _    \
- *  /    (_)    \
- * /_____________\
- * -----------------------------------------------------
- * UNTESTED CODE!
- * This class has never been tried on an actual robot.
- * It may be non or partially functional.
- * Do not make any assumptions as to its behavior!
- * And don't blink.  Not even for a second.
- * -----------------------------------------------------*/
-
 /**
  *	This command is constructed with a group of commands.
  * They will be run in series when the command is invoked.
