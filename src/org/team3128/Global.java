@@ -189,7 +189,7 @@ public class Global
 	}
 	
 	void initializeTeleop()
-	{
+	{	
 		//-----------------------------------------------------------
 		// Drive code, on Logitech Extreme3D joystick
 		//-----------------------------------------------------------
@@ -228,7 +228,7 @@ public class Global
 		_listenerManagerJoyLeft.addListener(ControllerAttackJoy.JOYY, () ->
 		{
 			double power = _listenerManagerJoyLeft.getRawAxis(ControllerAttackJoy.JOYY);
-			clawArm.onJointJoyInput((elbowInverted ? .5 : -.5) * power);
+			clawArm.onJointJoyInput((elbowInverted ? .8 : -.8) * power);
 		});
 		
 		_listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN2, () -> shoulderInverted = false);
