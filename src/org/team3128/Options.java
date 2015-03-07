@@ -68,6 +68,11 @@ public class Options
      * Gyro offset for swerve drive code
      */
 	public double _gyrBias;
+	
+	/**
+	 * Multiplier for teleop arm speed
+	 */
+	public double _armSpeedMultiplier;
     
     
     private static Options _instance;
@@ -108,5 +113,7 @@ public class Options
     	_wheelBase = 24.5 * Units.INCH;
     	
     	_gyrBias = 0;
+    	
+    	_armSpeedMultiplier = .8;
     }
 }

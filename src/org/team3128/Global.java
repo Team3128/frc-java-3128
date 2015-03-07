@@ -214,7 +214,7 @@ public class Global
 		
 		_listenerManagerJoyRight.addListener(ControllerAttackJoy.JOYY, () ->
 		{
-			double power = (shoulderInverted ? .8 : -.8) * _listenerManagerJoyRight.getRawAxis(ControllerAttackJoy.JOYY);
+			double power = (shoulderInverted ? Options.instance()._armSpeedMultiplier : -Options.instance()._armSpeedMultiplier) * _listenerManagerJoyRight.getRawAxis(ControllerAttackJoy.JOYY);
 			
 			if(power < 0)
 			{
@@ -228,7 +228,7 @@ public class Global
 		_listenerManagerJoyLeft.addListener(ControllerAttackJoy.JOYY, () ->
 		{
 			double power = _listenerManagerJoyLeft.getRawAxis(ControllerAttackJoy.JOYY);
-			clawArm.onJointJoyInput((elbowInverted ? .8 : -.8) * power);
+			clawArm.onJointJoyInput((elbowInverted ? Options.instance()._armSpeedMultiplier : -Options.instance()._armSpeedMultiplier) * power);
 		});
 		
 		_listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN2, () -> shoulderInverted = false);
