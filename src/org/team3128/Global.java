@@ -3,6 +3,7 @@ package org.team3128;
 import org.team3128.autonomous.AutoHardware;
 import org.team3128.autonomous.programs.DoNothingAuto;
 import org.team3128.autonomous.programs.DriveIntoAutoZoneAuto;
+import org.team3128.autonomous.programs.DualFarCanGrabAuto;
 import org.team3128.autonomous.programs.FarCanGrabAuto;
 import org.team3128.autonomous.programs.TestAuto;
 import org.team3128.drive.ArcadeDrive;
@@ -149,6 +150,7 @@ public class Global
 		
 		autoPrograms = new SendableChooser();
 		autoPrograms.addDefault("Far Can Grab", new FarCanGrabAuto());
+		autoPrograms.addObject("DualFar Can Grab", new DualFarCanGrabAuto());
 		autoPrograms.addObject("Drive Into Auto Zone", new DriveIntoAutoZoneAuto());
 		autoPrograms.addObject("Do Nothing", new DoNothingAuto());
 		autoPrograms.addObject("Dev Test Auto", new TestAuto());
