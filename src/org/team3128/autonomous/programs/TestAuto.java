@@ -15,6 +15,9 @@ public class TestAuto extends CommandGroup {
 		addSequential(new CmdLog("Step 1"));
 		addSequential(new CmdDelay(2000));
 		addParallel(new CmdRunInSeries(new CmdLog("Step 2 Start"), new CmdDelay(3000), new CmdLog("Step 2 End")));
-		addParallel(new CmdRunInSeries(new CmdLog("Step 3 Start"), new CmdDelay(5000), new CmdLog("Step 3 End")));
+		addSequential(new CmdRunInSeries(new CmdLog("Step 3 Start"), new CmdDelay(5000), new CmdLog("Step 3 End")));
+		addSequential(new CmdLog("Step 4 start"));
+		addSequential(new CmdDelay(2000));
+		addSequential(new CmdLog("Step 4 end"));
     }
 }

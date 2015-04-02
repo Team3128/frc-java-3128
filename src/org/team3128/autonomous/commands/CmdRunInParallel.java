@@ -3,8 +3,8 @@ package org.team3128.autonomous.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-/*
- *       /^\ 
+/*        _
+ *       / \ 
  *      / _ \
  *     / [ ] \
  *    /  [_]  \

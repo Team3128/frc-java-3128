@@ -7,8 +7,8 @@ import org.team3128.util.Units;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-/*
- *       /^\ 
+/*        _
+ *       / \ 
  *      / _ \
  *     / [ ] \
  *    /  [_]  \

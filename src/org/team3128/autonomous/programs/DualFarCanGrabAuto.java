@@ -20,7 +20,7 @@ public class DualFarCanGrabAuto extends CommandGroup
     	
     	addSequential(new CmdLog("Opening Claw And Positioning Arm"));
     	addParallel(new CmdOpenClaw(1400));
-    	addParallel(new CmdArmAngles(50, 145, 10, 7500));
+    	addSequential(new CmdArmAngles(50, 145, 10, 7500));
     	addSequential(new CmdDelay(4000));
     	
     	addSequential(new CmdLog("Driving To Can"));
@@ -35,15 +35,15 @@ public class DualFarCanGrabAuto extends CommandGroup
     	addSequential(new CmdMoveForward(-30, 10000));
     	
     	addSequential(new CmdLog("Opening Claw"));
-        addSequential(new CmdOpenClaw(2000));
+        addParallel(new CmdOpenClaw(2000));
     	
-    	addSequential(new CmdLog("Getting Into Position"));
+    	addParallel(new CmdLog("Getting Into Position"));
     	addSequential(new CmdArcTurn(90, 0, Direction.LEFT));
     	addSequential(new CmdMoveForward(50, 10000));
     	addSequential(new CmdArcTurn(90, 0, Direction.RIGHT));
     	addSequential(new CmdMoveForward(30, 10000));
     	
-    	addSequential(new CmdLog("Grabbing Can2"));
+    	addSequential(new CmdLog("Grabbing Can 2"));
         addSequential(new CmdCloseClaw(2000));
     	addSequential(new CmdArmAngles(45, 230, 5, 2500));
 
