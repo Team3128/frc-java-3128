@@ -1,9 +1,9 @@
 package org.team3128.autonomous.programs;
 
-import org.team3128.autonomous.commands.CmdArcTurn;
 import org.team3128.autonomous.commands.CmdArmAngles;
 import org.team3128.autonomous.commands.CmdCloseClaw;
 import org.team3128.autonomous.commands.CmdDelay;
+import org.team3128.autonomous.commands.CmdInPlaceTurn;
 import org.team3128.autonomous.commands.CmdLog;
 import org.team3128.autonomous.commands.CmdMoveForward;
 import org.team3128.autonomous.commands.CmdOpenClaw;
@@ -15,13 +15,10 @@ public class DualFarCanGrabAuto extends CommandGroup
 {
     public DualFarCanGrabAuto()
     {
-    	addSequential(new CmdArmAngles(48, 280, 11, 5000));
-    	addSequential(new CmdDelay(1500));
-    	
     	addSequential(new CmdLog("Opening Claw And Positioning Arm"));
     	addParallel(new CmdOpenClaw(1400));
     	addSequential(new CmdArmAngles(50, 145, 10, 7500));
-    	addSequential(new CmdDelay(4000));
+    	addSequential(new CmdDelay(3000));
     	
     	addSequential(new CmdLog("Driving To Can"));
     	addSequential(new CmdMoveForward(27, 2000));
@@ -38,9 +35,11 @@ public class DualFarCanGrabAuto extends CommandGroup
         addParallel(new CmdOpenClaw(2000));
     	
     	addParallel(new CmdLog("Getting Into Position"));
-    	addSequential(new CmdArcTurn(90, 0, Direction.LEFT));
+    	addSequential(new CmdInPlaceTurn(90, 0, Direction.LEFT));
     	addSequential(new CmdMoveForward(50, 10000));
-    	addSequential(new CmdArcTurn(90, 0, Direction.RIGHT));
+    	addSequential(new CmdInPlaceTurn(90, 0, Direction.RIGHT));
+    	addSequential(new CmdArmAngles(50, 145, 10, 7500));
+    	addSequential(new CmdDelay(3000));
     	addSequential(new CmdMoveForward(30, 10000));
     	
     	addSequential(new CmdLog("Grabbing Can 2"));

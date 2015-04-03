@@ -192,6 +192,10 @@ public class Global
 	
 	void initializeTeleop()
 	{	
+		clawArm.switchArmToAutoControl();
+		clawArm.switchJointToAutoControl();
+		clawArm._clawGrab.startControl(0);
+		
 		//-----------------------------------------------------------
 		// Drive code, on Logitech Extreme3D joystick
 		//-----------------------------------------------------------
@@ -208,7 +212,7 @@ public class Global
 		});
 		
 				
-		_listenerManagerExtreme.addListener(Always.instance, () -> System.out.println(armJointEncoder.getAngle()));
+		_listenerManagerExtreme.addListener(Always.instance, () -> System.out.println(armRotateEncoder.getAngle()));
 		
 		//-----------------------------------------------------------
 		// Arm control code, on joysticks

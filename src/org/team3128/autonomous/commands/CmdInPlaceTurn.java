@@ -55,8 +55,8 @@ public class CmdInPlaceTurn extends Command {
     	else
     	{
     		sideEncoder = AutoHardware._encRight;
-    		forwardMotors = AutoHardware._leftMotors;
-    		backwardMotors = AutoHardware._rightMotors;
+    		forwardMotors = AutoHardware._rightMotors;
+    		backwardMotors = AutoHardware._leftMotors;
     	}
     }
 
@@ -64,8 +64,8 @@ public class CmdInPlaceTurn extends Command {
     {
 		enc = RobotMath.floor_double_int(RobotMath.cmToRotations((Math.PI*Options.instance()._wheelBase)*(abs(_degs)/360.0)));
 		AutoUtils.clearEncoders();
-		forwardMotors.setControlTarget(AutoUtils.speedMultiplier * -1 * RobotMath.sgn(_degs) * .3);
-		backwardMotors.setControlTarget(AutoUtils.speedMultiplier *  RobotMath.sgn(_degs)* .3);
+		forwardMotors.setControlTarget(AutoUtils.speedMultiplier * RobotMath.sgn(_degs) * .5);
+		backwardMotors.setControlTarget(AutoUtils.speedMultiplier * -1 * RobotMath.sgn(_degs)* .5);
 		startTime = System.currentTimeMillis();
     }
 

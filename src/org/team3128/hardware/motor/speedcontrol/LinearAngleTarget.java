@@ -112,7 +112,8 @@ public class LinearAngleTarget extends MotorControl
     public void clearControlRun()
     {
     	errorSum = 0;
-    	 consecutiveCorrectPositions = 0;
+    	consecutiveCorrectPositions = 0;
+    	targetAngle = 0;
     }
 
     /**
