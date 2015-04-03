@@ -193,7 +193,7 @@ public class Global
 	void initializeTeleop()
 	{	
 		clawArm.switchArmToAutoControl();
-		clawArm.switchJointToAutoControl();
+		clawArm.switchJointToManualControl();
 		clawArm._clawGrab.startControl(0);
 		
 		//-----------------------------------------------------------

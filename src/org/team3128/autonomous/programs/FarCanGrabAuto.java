@@ -13,12 +13,12 @@ public class FarCanGrabAuto extends CommandGroup
 {
     public FarCanGrabAuto()
     {
-    	addSequential(new CmdArmAngles(44, 280, 11, 5000));//81
+    	addSequential(new CmdArmAngles(46, 280, 11, 5000));//81
     	addSequential(new CmdDelay(1500));
     	
     	addSequential(new CmdLog("Opening Claw"));
     	addSequential(new CmdOpenClaw(1400));
-    	addSequential(new CmdArmAngles(44, 145, 10, 7500));//81
+    	addSequential(new CmdArmAngles(46, 145, 10, 7500));//81
     	addSequential(new CmdDelay(4000));
     	
     	addSequential(new CmdLog("Driving To Can"));
@@ -26,7 +26,7 @@ public class FarCanGrabAuto extends CommandGroup
     	
     	addSequential(new CmdLog("Closing Claw"));
         addSequential(new CmdCloseClaw(2000));
-    	addSequential(new CmdArmAngles(42, 230, 5, 2500));//85
+    	addSequential(new CmdArmAngles(46, 230, 5, 2500));//85
     	addSequential(new CmdDelay(2000));
         
     	addSequential(new CmdLog("Backing Up"));
