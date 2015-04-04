@@ -55,7 +55,7 @@ public class LinearSpeedTarget extends MotorControl
     /**
      * Sets the speed update time in msec
      *
-     * @param refreshTime speed update rate in msec
+     * @param refreshTime time between updates in msec
      */
     public void setRefreshTime(int refreshTime)
     {

@@ -6,10 +6,25 @@ import org.team3128.hardware.motor.MotorControl;
 import org.team3128.util.RobotMath;
 import org.team3128.util.VelocityPID;
 
+/*        _
+ *       / \ 
+ *      / _ \
+ *     / [ ] \
+ *    /  [_]  \
+ *   /    _    \
+ *  /    (_)    \
+ * /_____________\
+ * -----------------------------------------------------
+ * UNTESTED CODE!
+ * This class has never been tried on an actual robot.
+ * It may be non or partially functional.
+ * Do not make any assumptions as to its behavior!
+ * And don't blink.  Not even for a second.
+ * -----------------------------------------------------*/
 /**
- * Used for computing a target power with a linear shift.
+ * Speed control that uses PID to hit its target speed more accurately.
  *
- * @author Noah Sutton-Smolin
+ * @author Jamie
  */
 public class PIDSpeedTarget extends MotorControl
 {   
@@ -17,16 +32,23 @@ public class PIDSpeedTarget extends MotorControl
     
     private VelocityPID _pidCalculator;
     
-    protected double calculatedSpeed;
+    /**
+     * Target speed in RPM.
+     */
+    protected double _targetSpeed;
 
     /**
      *
      * @param tgtSpeed    target speed in rpm
      * @param refreshTime speed update rate in msec
+     * @param encoder the encoder to use
+     * @param kP the Konstant of Proportional
+     * @param kI the Konstant of Integral
+     * @param kD the Konstant of Derivative
      */
     public PIDSpeedTarget(double tgtSpeed, int refreshTime, IVelocityEncoder encoder, double kP, double kI, double kD)
     {
-        calculatedSpeed = tgtSpeed;
+    	_targetSpeed = tgtSpeed;
         _refreshTime = refreshTime;
         _encoder = encoder;
         _pidCalculator = new VelocityPID(kP, kI, kD);
@@ -47,7 +69,8 @@ public class PIDSpeedTarget extends MotorControl
     public void setControlTarget(double d)
     {
         targetLock.lock();
-    	calculatedSpeed = d;
+        _pidCalculator.resetIntegral();
+        _targetSpeed = d;
     	_pidCalculator.setDesiredVelocity(d);
     	
         targetLock.unlock();
@@ -63,12 +86,12 @@ public class PIDSpeedTarget extends MotorControl
     	}
         _pidCalculator.update(speed);
         
+        double output = RobotMath.makeValidPower(RobotMath.getEstMotorPowerForRPM(_targetSpeed + _pidCalculator.getOutputAddition()));
         
-        Log.debug("PIDSpeedTarget", "Current RPM: " + speed + " Current: " + calculatedSpeed + " Output: " + RobotMath.makeValidPower(RobotMath.getEstMotorPowerForRPM(calculatedSpeed + _pidCalculator.getOutputAddition())));
+        Log.debug("PIDSpeedTarget", "Current RPM: " + speed + " Output: " + output);
         
-        calculatedSpeed += _pidCalculator.getOutputAddition();
         
-        return RobotMath.makeValidPower(RobotMath.getEstMotorPowerForRPM(calculatedSpeed));
+        return output;
     }
 
     /**

@@ -1,11 +1,7 @@
 package org.team3128;
 
+import org.team3128.autonomous.AutoChooser;
 import org.team3128.autonomous.AutoHardware;
-import org.team3128.autonomous.programs.DoNothingAuto;
-import org.team3128.autonomous.programs.DriveIntoAutoZoneAuto;
-import org.team3128.autonomous.programs.DualFarCanGrabAuto;
-import org.team3128.autonomous.programs.FarCanGrabAuto;
-import org.team3128.autonomous.programs.TestAuto;
 import org.team3128.drive.ArcadeDrive;
 import org.team3128.hardware.encoder.angular.AnalogPotentiometerEncoder;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
@@ -21,9 +17,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Talon;
-import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.vision.AxisCamera;
 
 /**
@@ -36,9 +30,11 @@ import edu.wpi.first.wpilibj.vision.AxisCamera;
  */
 public class Global
 {
-	public ListenerManager _listenerManagerExtreme;
-	public ListenerManager _listenerManagerJoyLeft;
-	public ListenerManager _listenerManagerJoyRight;
+	public ListenerManager listenerManagerExtreme;
+	public ListenerManager listenerManagerJoyLeft;
+	public ListenerManager listenerManagerJoyRight;
+	
+	AutoChooser autoChooser;
 	
 	public MotorLink _pidTestMotor;
 	
@@ -64,13 +60,11 @@ public class Global
 	
 	public PowerDistributionPanel powerDistPanel;
 	
-	public ArcadeDrive _drive;
+	public ArcadeDrive drive;
 	
 	public ClawArm clawArm;
 	
 	public AxisCamera camera;
-	
-	SendableChooser autoPrograms;
 	
 	IListenerCallback updateDriveArcade;
 	IListenerCallback updateDriveCOD;
@@ -81,9 +75,11 @@ public class Global
 	
 	public Global()
 	{	
-		_listenerManagerExtreme = new ListenerManager(new Joystick(Options.instance()._controllerPort), ControllerExtreme3D.instance);
-		_listenerManagerJoyLeft = new ListenerManager(new Joystick(1), ControllerAttackJoy.instance);
-		_listenerManagerJoyRight = new ListenerManager(new Joystick(2), ControllerAttackJoy.instance);
+		listenerManagerExtreme = new ListenerManager(new Joystick(Options.instance()._controllerPort), ControllerExtreme3D.instance);
+		listenerManagerJoyLeft = new ListenerManager(new Joystick(1), ControllerAttackJoy.instance);
+		listenerManagerJoyRight = new ListenerManager(new Joystick(2), ControllerAttackJoy.instance);
+		
+		autoChooser = new AutoChooser();
 		
 		powerDistPanel = new PowerDistributionPanel();
 		
@@ -124,15 +120,15 @@ public class Global
 		//camera = new AxisCamera("192.168.1.196");
 		clawArm = new ClawArm(armTurnMotor, armJointMotor, clawGrabMotor, armRotateEncoder, armJointEncoder, powerDistPanel);
 
-		_drive = new ArcadeDrive(leftMotors, rightMotors, _listenerManagerExtreme);
+		drive = new ArcadeDrive(leftMotors, rightMotors, listenerManagerExtreme);
 		
 		updateDriveCOD = () ->
 		{
-			double joyX = _listenerManagerExtreme.getRawAxis(ControllerExtreme3D.TWIST);
-			double joyY = _listenerManagerExtreme.getRawAxis(ControllerExtreme3D.JOYY);
-			double throttle = -_listenerManagerExtreme.getRawAxis(ControllerExtreme3D.THROTTLE);
+			double joyX = listenerManagerExtreme.getRawAxis(ControllerExtreme3D.TWIST);
+			double joyY = listenerManagerExtreme.getRawAxis(ControllerExtreme3D.JOYY);
+			double throttle = -listenerManagerExtreme.getRawAxis(ControllerExtreme3D.THROTTLE);
 			
-			_drive.steer(joyX, joyY, throttle, _listenerManagerExtreme.getRawBool(ControllerExtreme3D.DOWN2));
+			drive.steer(joyX, joyY, throttle, listenerManagerExtreme.getRawBool(ControllerExtreme3D.DOWN2));
 		};
 		
 		//--------------------------------------------------------------------------
@@ -147,24 +143,15 @@ public class Global
 		
 		AutoHardware.clawArm = clawArm;
 		
-		
-		autoPrograms = new SendableChooser();
-		autoPrograms.addDefault("Far Can Grab", new FarCanGrabAuto());
-		autoPrograms.addObject("DualFar Can Grab", new DualFarCanGrabAuto());
-		autoPrograms.addObject("Drive Into Auto Zone", new DriveIntoAutoZoneAuto());
-		autoPrograms.addObject("Do Nothing", new DoNothingAuto());
-		autoPrograms.addObject("Dev Test Auto", new TestAuto());
-		
-		SmartDashboard.putData("Autonomous Programs", autoPrograms);
 
 	}
 
 	void initializeRobot(RobotTemplate robotTemplate)
 	{
 		
-		robotTemplate.addListenerManagerToTick(_listenerManagerExtreme);
-		robotTemplate.addListenerManagerToTick(_listenerManagerJoyLeft);
-		robotTemplate.addListenerManagerToTick(_listenerManagerJoyRight);
+		robotTemplate.addListenerManagerToTick(listenerManagerExtreme);
+		robotTemplate.addListenerManagerToTick(listenerManagerJoyLeft);
+		robotTemplate.addListenerManagerToTick(listenerManagerJoyRight);
 	}
 
 	void initializeDisabled()
@@ -185,7 +172,7 @@ public class Global
 	{
 		clawArm.resetTargets();
 
-		Command autoCommand = (Command) autoPrograms.getSelected();
+		CommandGroup autoCommand = autoChooser.getChosen();
 		Log.info("Global", "Starting auto program " + autoCommand.getName());
 		autoCommand.start();
 	}
@@ -195,28 +182,28 @@ public class Global
 		//-----------------------------------------------------------
 		// Drive code, on Logitech Extreme3D joystick
 		//-----------------------------------------------------------
-		_listenerManagerExtreme.addListener(ControllerExtreme3D.TWIST, updateDriveCOD);
-		_listenerManagerExtreme.addListener(ControllerExtreme3D.JOYY, updateDriveCOD);
-		_listenerManagerExtreme.addListener(ControllerExtreme3D.THROTTLE, updateDriveCOD);
-		_listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN2, updateDriveCOD);
-		_listenerManagerExtreme.addListener(ControllerExtreme3D.UP2, updateDriveCOD);
+		listenerManagerExtreme.addListener(ControllerExtreme3D.TWIST, updateDriveCOD);
+		listenerManagerExtreme.addListener(ControllerExtreme3D.JOYY, updateDriveCOD);
+		listenerManagerExtreme.addListener(ControllerExtreme3D.THROTTLE, updateDriveCOD);
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN2, updateDriveCOD);
+		listenerManagerExtreme.addListener(ControllerExtreme3D.UP2, updateDriveCOD);
 
 		
-		_listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN12, () ->
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN12, () ->
 		{
 			powerDistPanel.clearStickyFaults();
 		});
 		
 				
-		_listenerManagerExtreme.addListener(Always.instance, () -> System.out.println(armJointEncoder.getAngle()));
+		listenerManagerExtreme.addListener(Always.instance, () -> System.out.println(armJointEncoder.getAngle()));
 		
 		//-----------------------------------------------------------
 		// Arm control code, on joysticks
 		//-----------------------------------------------------------
 		
-		_listenerManagerJoyRight.addListener(ControllerAttackJoy.JOYY, () ->
+		listenerManagerJoyRight.addListener(ControllerAttackJoy.JOYY, () ->
 		{
-			double power = (shoulderInverted ? Options.instance()._armSpeedMultiplier : -Options.instance()._armSpeedMultiplier) * _listenerManagerJoyRight.getRawAxis(ControllerAttackJoy.JOYY);
+			double power = (shoulderInverted ? Options.instance()._armSpeedMultiplier : -Options.instance()._armSpeedMultiplier) * listenerManagerJoyRight.getRawAxis(ControllerAttackJoy.JOYY);
 			
 			if(power < 0)
 			{
@@ -227,40 +214,40 @@ public class Global
 			
 		});
 		
-		_listenerManagerJoyLeft.addListener(ControllerAttackJoy.JOYY, () ->
+		listenerManagerJoyLeft.addListener(ControllerAttackJoy.JOYY, () ->
 		{
-			double power = _listenerManagerJoyLeft.getRawAxis(ControllerAttackJoy.JOYY);
+			double power = listenerManagerJoyLeft.getRawAxis(ControllerAttackJoy.JOYY);
 			clawArm.onJointJoyInput((elbowInverted ? Options.instance()._armSpeedMultiplier : -Options.instance()._armSpeedMultiplier) * power);
 		});
 		
-		_listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN2, () -> shoulderInverted = false);
-		_listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN3, () -> shoulderInverted = true);
-		_listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN6, () -> shoulderInverted = true);
-		_listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN7, () -> shoulderInverted = false);
-		_listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN2, () -> elbowInverted = false);
-		_listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN3, () -> elbowInverted = true);
-		_listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN6, () -> elbowInverted = true);
-		_listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN7, () -> elbowInverted = false);
+		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN2, () -> shoulderInverted = false);
+		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN3, () -> shoulderInverted = true);
+		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN6, () -> shoulderInverted = true);
+		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN7, () -> shoulderInverted = false);
+		listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN2, () -> elbowInverted = false);
+		listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN3, () -> elbowInverted = true);
+		listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN6, () -> elbowInverted = true);
+		listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN7, () -> elbowInverted = false);
 		
-		_listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN1, () -> clawGrabMotor.setControlTarget(0.7));
-		_listenerManagerJoyRight.addListener(ControllerAttackJoy.UP1, () -> clawGrabMotor.setControlTarget(0));
-		_listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN1, () -> clawGrabMotor.setControlTarget(-0.7));
-		_listenerManagerJoyLeft.addListener(ControllerAttackJoy.UP1, () -> clawGrabMotor.setControlTarget(0));
+		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN1, () -> clawGrabMotor.setControlTarget(0.7));
+		listenerManagerJoyRight.addListener(ControllerAttackJoy.UP1, () -> clawGrabMotor.setControlTarget(0));
+		listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN1, () -> clawGrabMotor.setControlTarget(-0.7));
+		listenerManagerJoyLeft.addListener(ControllerAttackJoy.UP1, () -> clawGrabMotor.setControlTarget(0));
 		
-		_listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN4, () -> frontHookMotor.setControlTarget(0.3));
-		_listenerManagerJoyRight.addListener(ControllerAttackJoy.UP4, () -> frontHookMotor.setControlTarget(0));
-		_listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN5, () -> frontHookMotor.setControlTarget(-0.3));
-		_listenerManagerJoyRight.addListener(ControllerAttackJoy.UP5, () -> frontHookMotor.setControlTarget(0));
-		_listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN3, () -> frontHookMotor.setControlTarget(0.3));
-		_listenerManagerExtreme.addListener(ControllerExtreme3D.UP3, () -> frontHookMotor.setControlTarget(0));
-		_listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN4, () -> frontHookMotor.setControlTarget(-0.3));
-		_listenerManagerExtreme.addListener(ControllerExtreme3D.UP4, () -> frontHookMotor.setControlTarget(0));
-		_listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN5, () -> frontHookMotor.setControlTarget(0.3));
-		_listenerManagerExtreme.addListener(ControllerExtreme3D.UP5, () -> frontHookMotor.setControlTarget(0));
-		_listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN6, () -> frontHookMotor.setControlTarget(-0.3));
-		_listenerManagerExtreme.addListener(ControllerExtreme3D.UP6, () -> frontHookMotor.setControlTarget(0));
+		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN4, () -> frontHookMotor.setControlTarget(0.3));
+		listenerManagerJoyRight.addListener(ControllerAttackJoy.UP4, () -> frontHookMotor.setControlTarget(0));
+		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN5, () -> frontHookMotor.setControlTarget(-0.3));
+		listenerManagerJoyRight.addListener(ControllerAttackJoy.UP5, () -> frontHookMotor.setControlTarget(0));
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN3, () -> frontHookMotor.setControlTarget(0.3));
+		listenerManagerExtreme.addListener(ControllerExtreme3D.UP3, () -> frontHookMotor.setControlTarget(0));
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN4, () -> frontHookMotor.setControlTarget(-0.3));
+		listenerManagerExtreme.addListener(ControllerExtreme3D.UP4, () -> frontHookMotor.setControlTarget(0));
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN5, () -> frontHookMotor.setControlTarget(0.3));
+		listenerManagerExtreme.addListener(ControllerExtreme3D.UP5, () -> frontHookMotor.setControlTarget(0));
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN6, () -> frontHookMotor.setControlTarget(-0.3));
+		listenerManagerExtreme.addListener(ControllerExtreme3D.UP6, () -> frontHookMotor.setControlTarget(0));
 
-		_listenerManagerExtreme.addListener(ControllerExtreme3D.UP8, () -> frontHookMotor.setControlTarget(0));
+		listenerManagerExtreme.addListener(ControllerExtreme3D.UP8, () -> frontHookMotor.setControlTarget(0));
 		
 		//clawArm.startClawLimitThread();
 	}

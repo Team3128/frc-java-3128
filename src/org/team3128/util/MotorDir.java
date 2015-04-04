@@ -1,5 +1,10 @@
 package org.team3128.util;
 
+/**
+ * This is a simple class which represents the motor direction.
+ * @author Jamie
+ *
+ */
 public enum MotorDir
 {
 	CCW(-1),

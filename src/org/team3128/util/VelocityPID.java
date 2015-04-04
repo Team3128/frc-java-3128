@@ -32,7 +32,7 @@ public class VelocityPID
 	
 	/**
 	 * Reset the internal sum of the error.
-	 * THis is a good thing to do if the robot has been sitting for some time and building up error.
+	 * This is a good thing to do if the robot has been sitting for some time and building up error.
 	 */
 	public void resetIntegral()
 	{
