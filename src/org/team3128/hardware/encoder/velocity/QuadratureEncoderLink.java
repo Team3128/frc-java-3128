@@ -43,7 +43,7 @@ public class QuadratureEncoderLink implements IVelocityEncoder, IDistanceEncoder
 	}
 
 	@Override
-	public double getDistance()
+	public double getDistanceInDegrees()
 	{
 		return encoder.getDistance();
 	}

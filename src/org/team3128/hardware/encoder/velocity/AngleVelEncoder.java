@@ -4,8 +4,8 @@ import org.team3128.Log;
 import org.team3128.hardware.encoder.angular.IAngularEncoder;
 import org.team3128.util.RobotMath;
 
-/*
- *       /^\ 
+/*        _
+ *       / \ 
  *      / _ \
  *     / [ ] \
  *    /  [_]  \

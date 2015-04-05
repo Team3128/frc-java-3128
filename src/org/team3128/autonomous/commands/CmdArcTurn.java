@@ -91,7 +91,7 @@ public class CmdArcTurn extends Command {
     protected boolean isFinished()
     {
     	//System.out.println(sideEncoder.getDistance());
-        return Math.abs(sideEncoder.getDistance()) >= enc;
+        return Math.abs(sideEncoder.getDistanceInDegrees()) >= enc;
     }
 
     // Called once after isFinished returns true
