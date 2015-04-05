@@ -144,6 +144,10 @@ public class ListenerManager
 		return retval;
 	}
 
+	/**
+	 * 
+	 * @return two HashMaps with the current button and axis values for the controller
+	 */
 	Pair<HashMap<Button, Boolean>, HashMap<Axis, Double>> pollControls()
 	{
 		HashMap<Button, Boolean> buttonValues = new HashMap<Button, Boolean>();

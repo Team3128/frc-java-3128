@@ -4,7 +4,7 @@ import org.team3128.listener.control.Axis;
 import org.team3128.listener.control.Button;
 
 /**
- * Enum which represents everything that can be read from the controller
+ * Controller object for an Xbox controller.
  * @author Jamie
  */
 public class ControllerXbox implements ControllerType
