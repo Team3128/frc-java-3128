@@ -1,7 +1,7 @@
 package org.team3128.hardware.motor.speedcontrol;
 
 import org.team3128.hardware.encoder.velocity.IVelocityEncoder;
-import org.team3128.hardware.motor.MotorControl;
+import org.team3128.hardware.motor.SpeedControl;
 import org.team3128.util.RobotMath;
 
 /**
@@ -9,7 +9,7 @@ import org.team3128.util.RobotMath;
  *
  * @author Noah Sutton-Smolin
  */
-public class LinearSpeedControl extends MotorControl
+public class LinearSpeedControl extends SpeedControl
 {
     private double tgtSpeed;
     

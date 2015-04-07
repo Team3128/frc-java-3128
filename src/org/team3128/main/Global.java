@@ -1,5 +1,8 @@
-package org.team3128;
+package org.team3128.main;
 
+import org.team3128.Log;
+import org.team3128.Options;
+import org.team3128.RobotTemplate;
 import org.team3128.autonomous.AutoChooser;
 import org.team3128.autonomous.AutoHardware;
 import org.team3128.drive.ArcadeDrive;

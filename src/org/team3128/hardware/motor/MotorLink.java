@@ -6,6 +6,15 @@ import org.team3128.Log;
 
 import edu.wpi.first.wpilibj.SpeedController;
 
+/* 	Class Diagram:
+ * The MotorLink, SpeedControl, and Limiter classes are related in somewhat convoluted ways.  
+ * Hopefully this will clear it up.
+ *   ___________                  ______________                  _________
+ *  |           |                |              |                |         |
+ *  | MotorLink | may have a --> | SpeedControl | may have a --> | Limiter |
+ *  |___________|                |______________|                |_________|
+ */
+
 /**
  * MotorLink is the class used in this code to represent a motor or several linked ones.
  * It can operate with several
@@ -14,7 +23,7 @@ import edu.wpi.first.wpilibj.SpeedController;
 public class MotorLink 
 {
     private final ArrayList<SpeedController> motors = new ArrayList<SpeedController>();
-    private MotorControl spdControl;
+    private SpeedControl spdControl;
     private boolean motorReversed = false;
     private double speedScalar = 1;
 
@@ -28,7 +37,7 @@ public class MotorLink
     	this.speedScalar = powscl;
     }
     
-    public MotorLink(MotorControl spd)
+    public MotorLink(SpeedControl spd)
     {
     	this.spdControl = spd;
     }
@@ -38,7 +47,7 @@ public class MotorLink
      * @param spd
      * @param powscl
      */
-    public MotorLink(MotorControl spd, double powscl)
+    public MotorLink(SpeedControl spd, double powscl)
     {
     	this.speedScalar = powscl;
     	this.spdControl = spd;
@@ -55,17 +64,29 @@ public class MotorLink
     	}
     }
 
+    /**
+     * Make the motor go the other direction.
+     */
     public void reverseMotor()
     {
     	motorReversed = !motorReversed;
     }
     
+    /**
+     * Set a speed scalar from 0 to 1 which will be applied to all motor powers set, after the speed control.
+     * @param powScl
+     */
     public void setSpeedScalar(double powScl)
     {
     	this.speedScalar = powScl;
     }
     
-    public double getSpeedScalar(double powScl)
+    /**
+     * Get the speed scalar.
+     * @param powScl
+     * @return
+     */
+    public double getSpeedScalar()
     {
     	return this.speedScalar;
     }
@@ -81,12 +102,21 @@ public class MotorLink
     	
     }
     
+    /**
+     * Add a motor to the list of motors that is controlled by this MotorLink.
+     * @param controller
+     */
     public void addControlledMotor(SpeedController controller)
     {
     	motors.add(controller);
     }
     
-    public void setSpeedController(MotorControl spdControl)
+    /**
+     * Set the speed controller object that this motor should use. <br>
+     * If null is passed, no speed control will be set.
+     * @param spdControl
+     */
+    public void setSpeedController(SpeedControl spdControl)
     {
         if(this.spdControl != null && this.spdControl.isRunning()) 
         {
@@ -98,7 +128,7 @@ public class MotorLink
     }
 
     /**
-     * Sets the controller target, or the speed directly if there is no controller
+     * Sets the SpeedControl target, or the speed directly if there is no controller.
      * @param target
      */
     public void setControlTarget(double target)
@@ -129,11 +159,6 @@ public class MotorLink
     	}
     	return spdControl.isRunning();
     }
-    
-    public void setSpeedControlTarget(double target)
-    {
-    	this.spdControl.setControlTarget(target);
-    }
 
     /**
      * Start the speed control and set the control target.  If the control is already running,
@@ -142,6 +167,11 @@ public class MotorLink
      */
     public void startControl(double target)
     {
+    	if(spdControl == null)
+    	{
+    		Log.unusual("MotorLink", "startControl() was called on a motor link with no speed controller.");
+    		return;
+    	}
         this.spdControl.clearControlRun();
         this.spdControl.setControlTarget(target);
         this.spdControl.setControlledMotor(this);

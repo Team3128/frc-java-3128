@@ -1,6 +1,6 @@
 package org.team3128.hardware.motor.speedcontrol;
 
-import org.team3128.hardware.motor.MotorControl;
+import org.team3128.hardware.motor.SpeedControl;
 
 /**
  * This class implements the abstract functions in SpeedControl, but simply mirrors having no speed control at all.
@@ -8,7 +8,7 @@ import org.team3128.hardware.motor.MotorControl;
  * @author Jamie
  *
  */
-public class BlankSpeedControl extends MotorControl
+public class BlankSpeedControl extends SpeedControl
 {
     private double tgtSpeed;
     

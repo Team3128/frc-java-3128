@@ -3,12 +3,12 @@
 import org.team3128.Options;
 
 /**
-* MotorControl is an abstract superclass for classes that define the behavior of a motor.  
+* SpeedControl is an abstract superclass for classes that define the behavior of a motor.  
 * This class does all of the boilerplate, like getters and setters, while the subclass
 * implements the actual math and logic.
 * @author Noah Sutton-Smolin
 */
-public abstract class MotorControl
+public abstract class SpeedControl
 {
 	//owned by the control thread
 	private long lastRuntime = 0;
@@ -20,16 +20,16 @@ public abstract class MotorControl
 	
 	protected int _refreshTime = Options.instance()._motorControlUpdateFrequency;
 		
-	public MotorControl()
+	public SpeedControl()
 	{
 	}
 
-   protected synchronized void setControlledMotor(MotorLink m)
-   {
-	   controlledMotor = m;
-   }
+	protected synchronized void setControlledMotor(MotorLink m)
+	{
+		controlledMotor = m;
+	}
 
-   //please make sure to make these two voids synchronized when overriding them.
+	//please make sure to make these two voids synchronized when overriding them.
    /**
     * Set the desired value for the motor controller to target.
     * Exactly what units this is in depends on the controller.
@@ -165,7 +165,7 @@ public abstract class MotorControl
    {
 	   if(thread == null || !thread.isAlive())
 	   {
-		   thread = new Thread(this::run, "MotorControl Thread");
+		   thread = new Thread(this::run, "SpeedControl Thread");
 		   thread.start();
 	   }
    }
