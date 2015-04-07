@@ -1,7 +1,7 @@
 package org.team3128.hardware.mechanisms;
 
 import org.team3128.Options;
-import org.team3128.hardware.motor.MotorLink;
+import org.team3128.hardware.motor.MotorGroup;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 
@@ -18,11 +18,11 @@ public class CockArm
 
     DigitalInput _shooterTSensor;
 
-    MotorLink _mShooter;
+    MotorGroup _mShooter;
 
     Thread _thread;
     
-    public CockArm(DigitalInput shooterTSensor, MotorLink mShooter)
+    public CockArm(DigitalInput shooterTSensor, MotorGroup mShooter)
     {
     	_shooterTSensor = shooterTSensor;
     	_mShooter = mShooter;

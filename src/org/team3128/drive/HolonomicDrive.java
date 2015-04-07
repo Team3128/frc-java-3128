@@ -1,7 +1,7 @@
 package org.team3128.drive;
 
 import org.team3128.Options;
-import org.team3128.hardware.motor.MotorLink;
+import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.listener.ListenerManager;
 import org.team3128.listener.controller.ControllerXbox;
 
@@ -9,15 +9,15 @@ public class HolonomicDrive
 {
     double _spdLF, _spdLB, _spdRF, _spdRB;
 
-    MotorLink _driveLeftFront;
-    MotorLink _driveLeftBack;
+    MotorGroup _driveLeftFront;
+    MotorGroup _driveLeftBack;
 
-    MotorLink _driveRightFront;
-    MotorLink _driveRightBack;
+    MotorGroup _driveRightFront;
+    MotorGroup _driveRightBack;
 
     ListenerManager _listenerManager;
     
-    public HolonomicDrive(MotorLink driveLeftFront, MotorLink driveLeftBack, MotorLink driveRightFront, MotorLink driveRightBack, ListenerManager listenerManager)
+    public HolonomicDrive(MotorGroup driveLeftFront, MotorGroup driveLeftBack, MotorGroup driveRightFront, MotorGroup driveRightBack, ListenerManager listenerManager)
     {
     	_driveLeftFront = driveLeftFront;
     	_driveLeftBack = driveLeftBack;

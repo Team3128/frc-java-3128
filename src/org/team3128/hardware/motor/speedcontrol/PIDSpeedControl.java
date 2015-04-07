@@ -2,7 +2,7 @@ package org.team3128.hardware.motor.speedcontrol;
 
 import org.team3128.Log;
 import org.team3128.hardware.encoder.velocity.IVelocityEncoder;
-import org.team3128.hardware.motor.SpeedControl;
+import org.team3128.hardware.motor.MotorLogic;
 import org.team3128.util.RobotMath;
 import org.team3128.util.VelocityPID;
 
@@ -26,7 +26,7 @@ import org.team3128.util.VelocityPID;
  *
  * @author Jamie
  */
-public class PIDSpeedControl extends SpeedControl
+public class PIDSpeedControl extends MotorLogic
 {   
     private IVelocityEncoder _encoder;
     

@@ -23,7 +23,7 @@ import org.team3128.hardware.motor.Limiter;
  * Motor control which uses an encoder to limit the range of something.  
  * 
  * Note that this class assumes that running the motor backwards 
- * decreases the encoder angle.  Use MotorLink.invertMotor() to make this happen.
+ * decreases the encoder angle.  Use MotorGroup.invertMotor() to make this happen.
  * @author Jamie
  *
  */

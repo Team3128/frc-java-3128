@@ -6,7 +6,7 @@ import org.team3128.Options;
 import org.team3128.autonomous.AutoHardware;
 import org.team3128.autonomous.AutoUtils;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
-import org.team3128.hardware.motor.MotorLink;
+import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.util.Direction;
 import org.team3128.util.RobotMath;
 
@@ -34,9 +34,9 @@ public class CmdArcTurn extends Command {
 	
 	QuadratureEncoderLink otherSideEncoder;
 	
-	MotorLink sideMotors;
+	MotorGroup sideMotors;
 	
-	MotorLink otherSideMotors;
+	MotorGroup otherSideMotors;
 	
 	/**
 	 * @param degs how far to turn in degrees.  Accepts negative values.

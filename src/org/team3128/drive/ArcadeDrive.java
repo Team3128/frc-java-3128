@@ -1,6 +1,6 @@
 package org.team3128.drive;
 
-import org.team3128.hardware.motor.MotorLink;
+import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.listener.ListenerManager;
 import org.team3128.util.RobotMath;
 
@@ -8,13 +8,13 @@ public class ArcadeDrive
 {
     double _spdL, _spdR;
 
-    MotorLink _leftMotors;
+    MotorGroup _leftMotors;
     
-    MotorLink _rightMotors;
+    MotorGroup _rightMotors;
 
     ListenerManager _listenerManager;
     
-    public ArcadeDrive(MotorLink leftMotors, MotorLink rightMotors, ListenerManager listenerManager)
+    public ArcadeDrive(MotorGroup leftMotors, MotorGroup rightMotors, ListenerManager listenerManager)
     {
     	_leftMotors = leftMotors;
     	_rightMotors = rightMotors;

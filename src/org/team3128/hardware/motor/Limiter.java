@@ -1,7 +1,7 @@
 package org.team3128.hardware.motor;
 
 /**
- * Limiters are classes which limit a SpeedControl's behavior.
+ * Limiters are classes which limit a MotorLogic's behavior.
  * For example, you might want to limit the current a thing draws, but also make it stop when it hits an endstop.
  * Before limiters, this wasn't possible without manually merging the speed control classes.
  * @author Jamie

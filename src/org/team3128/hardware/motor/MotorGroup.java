@@ -7,50 +7,50 @@ import org.team3128.Log;
 import edu.wpi.first.wpilibj.SpeedController;
 
 /* 	Class Diagram:
- * The MotorLink, SpeedControl, and Limiter classes are related in somewhat convoluted ways.  
+ * The MotorGroup, MotorLogic, and Limiter classes are related in somewhat convoluted ways.  
  * Hopefully this will clear it up.
- *   ___________                  ______________                  _________
- *  |           |                |              |                |         |
- *  | MotorLink | may have a --> | SpeedControl | may have a --> | Limiter |
- *  |___________|                |______________|                |_________|
+ *   ___________                  ____________                  _________
+ *  |           |                |            |                |         |
+ *  | MotorGroup | may have a --> | MotorLogic | may have a --> | Limiter |
+ *  |___________|                |____________|                |_________|
  */
 
 /**
- * MotorLink is the class used in this code to represent a motor or several linked ones.
+ * MotorGroup is the class used in this code to represent a motor or several linked ones.
  * It can operate with several
  * different varieties of motor control to use logic to control its speed, or none at all.
  */
-public class MotorLink 
+public class MotorGroup 
 {
     private final ArrayList<SpeedController> motors = new ArrayList<SpeedController>();
-    private SpeedControl spdControl;
+    private MotorLogic motorLogic;
     private boolean motorReversed = false;
     private double speedScalar = 1;
 
-    public MotorLink()
+    public MotorGroup()
     {
     	
     }
     
-    public MotorLink(double powscl)
+    public MotorGroup(double powscl)
     {
     	this.speedScalar = powscl;
     }
     
-    public MotorLink(SpeedControl spd)
+    public MotorGroup(MotorLogic spd)
     {
-    	this.spdControl = spd;
+    	this.motorLogic = spd;
     }
     
     /**
-     * Construct MotorLink with a motor control and speed scalar.
+     * Construct MotorGroup with a motor control and speed scalar.
      * @param spd
      * @param powscl
      */
-    public MotorLink(SpeedControl spd, double powscl)
+    public MotorGroup(MotorLogic spd, double powscl)
     {
     	this.speedScalar = powscl;
-    	this.spdControl = spd;
+    	this.motorLogic = spd;
     }
     
     /**
@@ -58,9 +58,9 @@ public class MotorLink
      */
     public void clearSpeedControlRun()
     {
-    	if(spdControl != null)
+    	if(motorLogic != null)
     	{
-    		spdControl.clearControlRun();
+    		motorLogic.clearControlRun();
     	}
     }
 
@@ -103,7 +103,7 @@ public class MotorLink
     }
     
     /**
-     * Add a motor to the list of motors that is controlled by this MotorLink.
+     * Add a motor to the list of motors that is controlled by this MotorGroup.
      * @param controller
      */
     public void addControlledMotor(SpeedController controller)
@@ -114,37 +114,37 @@ public class MotorLink
     /**
      * Set the speed controller object that this motor should use. <br>
      * If null is passed, no speed control will be set.
-     * @param spdControl
+     * @param motorLogic
      */
-    public void setSpeedController(SpeedControl spdControl)
+    public void setSpeedController(MotorLogic spdControl)
     {
-        if(this.spdControl != null && this.spdControl.isRunning()) 
+        if(this.motorLogic != null && this.motorLogic.isRunning()) 
         {
-            this.spdControl.shutDown();
-            throw new RuntimeException("MotorLink: The speed controller was changed when one was running.");
+            this.motorLogic.shutDown();
+            throw new RuntimeException("MotorGroup: The speed controller was changed when one was running.");
         }
         
-        this.spdControl = spdControl;
+        this.motorLogic = spdControl;
     }
 
     /**
-     * Sets the SpeedControl target, or the speed directly if there is no controller.
+     * Sets the MotorLogic target, or the speed directly if there is no controller.
      * @param target
      */
     public void setControlTarget(double target)
     {
-        if(spdControl == null)
+        if(motorLogic == null)
         {
         	 setInternalSpeed(target);
         	 return;
         }
-        if(!spdControl.isRunning())
+        if(!motorLogic.isRunning())
         {
-            Log.recoverable("MotorLink", "The speed controller's target was set, but it is not enabled.");
+            Log.recoverable("MotorGroup", "The speed controller's target was set, but it is not enabled.");
             return;
         }
 
-        this.spdControl.setControlTarget(target);
+        this.motorLogic.setControlTarget(target);
     }
 
     /**
@@ -153,11 +153,11 @@ public class MotorLink
      */
     public boolean isSpeedControlRunning()
     {
-    	if(spdControl == null)
+    	if(motorLogic == null)
     	{
     		return false;
     	}
-    	return spdControl.isRunning();
+    	return motorLogic.isRunning();
     }
 
     /**
@@ -167,17 +167,17 @@ public class MotorLink
      */
     public void startControl(double target)
     {
-    	if(spdControl == null)
+    	if(motorLogic == null)
     	{
-    		Log.unusual("MotorLink", "startControl() was called on a motor link with no speed controller.");
+    		Log.unusual("MotorGroup", "startControl() was called on a motor link with no speed controller.");
     		return;
     	}
-        this.spdControl.clearControlRun();
-        this.spdControl.setControlTarget(target);
-        this.spdControl.setControlledMotor(this);
-        if(!spdControl.isRunning())
+        this.motorLogic.clearControlRun();
+        this.motorLogic.setControlTarget(target);
+        this.motorLogic.setControlledMotor(this);
+        if(!motorLogic.isRunning())
         {
-        	spdControl.start();
+        	motorLogic.start();
         }
     }
 
@@ -186,9 +186,9 @@ public class MotorLink
      */
     public void stopSpeedControl()
     {
-    	if(spdControl != null)
+    	if(motorLogic != null)
     	{
-    		spdControl.shutDown();
+    		motorLogic.shutDown();
     	}
     }
 }

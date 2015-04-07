@@ -13,7 +13,7 @@ import org.team3128.drive.ArcadeDrive;
 import org.team3128.hardware.encoder.angular.AnalogPotentiometerEncoder;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
 import org.team3128.hardware.mechanisms.ClawArm;
-import org.team3128.hardware.motor.MotorLink;
+import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.listener.IListenerCallback;
 import org.team3128.listener.ListenerManager;
 import org.team3128.listener.control.Always;
@@ -38,23 +38,23 @@ public class MainTheClawwww extends MainClass
 	public ListenerManager listenerManagerJoyLeft;
 	public ListenerManager listenerManagerJoyRight;
 	
-	public MotorLink _pidTestMotor;
+	public MotorGroup _pidTestMotor;
 	
-	public MotorLink leftMotors;
-	public MotorLink rightMotors;
+	public MotorGroup leftMotors;
+	public MotorGroup rightMotors;
 	public QuadratureEncoderLink leftDriveEncoder;
 	public QuadratureEncoderLink rightDriveEncoder;
 	
-	public MotorLink armTurnMotor;
+	public MotorGroup armTurnMotor;
 	
-	public MotorLink armJointMotor;
+	public MotorGroup armJointMotor;
 	
 	Servo leftArmBrakeServo;
 	Servo rightArmBrakeServo;
 	
-	public MotorLink frontHookMotor;
+	public MotorGroup frontHookMotor;
 	
-	public MotorLink clawGrabMotor;
+	public MotorGroup clawGrabMotor;
 
 	public AnalogPotentiometerEncoder armRotateEncoder;
 	
@@ -85,32 +85,32 @@ public class MainTheClawwww extends MainClass
 		leftDriveEncoder = new QuadratureEncoderLink(0,	1, 128, false);
 		rightDriveEncoder = new QuadratureEncoderLink(3, 4, 128, true);
 		
-		leftMotors = new MotorLink(/*new PIDSpeedTarget(0, leftDriveEncoder, new VelocityPID(.1, 0, 0))*/);
+		leftMotors = new MotorGroup(/*new PIDSpeedTarget(0, leftDriveEncoder, new VelocityPID(.1, 0, 0))*/);
 		leftMotors.addControlledMotor(new Talon(1));
 		leftMotors.addControlledMotor(new Talon(2));
 		//leftMotors.startControl(0);
 		
 		
-		rightMotors = new MotorLink(/*new PIDSpeedTarget(0, rightDriveEncoder, new VelocityPID(.1, 0, 0))*/);
+		rightMotors = new MotorGroup(/*new PIDSpeedTarget(0, rightDriveEncoder, new VelocityPID(.1, 0, 0))*/);
 		rightMotors.addControlledMotor(new Talon(3));
 		rightMotors.addControlledMotor(new Talon(4));
 		rightMotors.reverseMotor();
 		//rightMotors.startControl(0);
 		
-		armTurnMotor = new MotorLink();
+		armTurnMotor = new MotorGroup();
 		armTurnMotor.addControlledMotor(new Talon(6));
 		
 		armRotateEncoder = new AnalogPotentiometerEncoder(0, 0, 4.829, 300);
 		
-		armJointMotor = new MotorLink();
+		armJointMotor = new MotorGroup();
 		armJointMotor.addControlledMotor(new Talon(5));
 		
 		armJointEncoder = new AnalogPotentiometerEncoder(1, 0, 4.829, 300);
 		
-		frontHookMotor = new MotorLink();
+		frontHookMotor = new MotorGroup();
 		frontHookMotor.addControlledMotor(new Talon(7));
 		
-		clawGrabMotor = new MotorLink();
+		clawGrabMotor = new MotorGroup();
 		clawGrabMotor.addControlledMotor(new Talon(8));
 		
 		leftArmBrakeServo = new Servo(9);

@@ -2,7 +2,7 @@ package org.team3128.hardware.motor.speedcontrol;
 
 import org.team3128.Log;
 import org.team3128.hardware.encoder.angular.IAngularEncoder;
-import org.team3128.hardware.motor.SpeedControl;
+import org.team3128.hardware.motor.MotorLogic;
 import org.team3128.util.RobotMath;
 
 /**
@@ -11,7 +11,7 @@ import org.team3128.util.RobotMath;
  * @author Jamie
  */
 
-public class PIDAngleControl extends SpeedControl
+public class PIDAngleControl extends MotorLogic
 {
     private double targetAngle, threshold;
     private IAngularEncoder _encoder;

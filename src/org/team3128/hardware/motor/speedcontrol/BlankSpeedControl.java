@@ -1,14 +1,14 @@
 package org.team3128.hardware.motor.speedcontrol;
 
-import org.team3128.hardware.motor.SpeedControl;
+import org.team3128.hardware.motor.MotorLogic;
 
 /**
- * This class implements the abstract functions in SpeedControl, but simply mirrors having no speed control at all.
+ * This class implements the abstract functions in MotorLogic, but simply mirrors having no speed control at all.
  * It is used as a base for making other speed controls as well as in the case where we need a limiter but no speed control.
  * @author Jamie
  *
  */
-public class BlankSpeedControl extends SpeedControl
+public class BlankSpeedControl extends MotorLogic
 {
     private double tgtSpeed;
     

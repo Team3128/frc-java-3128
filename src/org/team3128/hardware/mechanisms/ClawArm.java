@@ -1,7 +1,7 @@
 package org.team3128.hardware.mechanisms;
 
 import org.team3128.hardware.encoder.angular.IAngularEncoder;
-import org.team3128.hardware.motor.MotorLink;
+import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.hardware.motor.limiter.AngleLimiter;
 import org.team3128.hardware.motor.limiter.SwitchLimiter;
 import org.team3128.hardware.motor.speedcontrol.BlankSpeedControl;
@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
  */
 public class ClawArm
 {
-	public MotorLink _armRotate, _armJoint, _clawGrab;
+	public MotorGroup _armRotate, _armJoint, _clawGrab;
 	
 	PIDAngleControl armRotateAngleTarget;
 	
@@ -61,7 +61,7 @@ public class ClawArm
 	 * @param armJoint
 	 * @param clawGrab
 	 */
-	public ClawArm(MotorLink armRotate, MotorLink armJoint, MotorLink clawGrab, IAngularEncoder armEncoder, IAngularEncoder jointEncoder, PowerDistributionPanel panel)
+	public ClawArm(MotorGroup armRotate, MotorGroup armJoint, MotorGroup clawGrab, IAngularEncoder armEncoder, IAngularEncoder jointEncoder, PowerDistributionPanel panel)
 	{
 		_armRotate = armRotate;
 		_armJoint = armJoint;
