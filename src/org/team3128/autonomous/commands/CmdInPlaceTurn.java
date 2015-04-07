@@ -48,15 +48,15 @@ public class CmdInPlaceTurn extends Command {
     	
     	if(dir == Direction.RIGHT)
     	{
-    		sideEncoder = AutoHardware._encLeft;
-    		forwardMotors = AutoHardware._leftMotors;
-    		backwardMotors = AutoHardware._rightMotors;
+    		sideEncoder = AutoHardware.encLeft;
+    		forwardMotors = AutoHardware.leftMotors;
+    		backwardMotors = AutoHardware.rightMotors;
     	}
     	else
     	{
-    		sideEncoder = AutoHardware._encRight;
-    		forwardMotors = AutoHardware._leftMotors;
-    		backwardMotors = AutoHardware._rightMotors;
+    		sideEncoder = AutoHardware.encRight;
+    		forwardMotors = AutoHardware.leftMotors;
+    		backwardMotors = AutoHardware.rightMotors;
     	}
     }
 

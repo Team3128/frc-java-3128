@@ -44,9 +44,9 @@ public class RoboVision
        
         try {
             /**
-             * Do the image capture with the Global.camera and apply the algorithm
+             * Do the image capture with the MainTheClawwww.camera and apply the algorithm
              * described above. This sample will either get images from the
-             * Global.camera or from an image file stored in the top level directory in
+             * MainTheClawwww.camera or from an image file stored in the top level directory in
              * the flash memory on the cRIO. The file name in this case is
              * "testImage.jpg"
              *

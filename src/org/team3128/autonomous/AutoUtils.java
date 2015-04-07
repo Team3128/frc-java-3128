@@ -10,14 +10,14 @@ public class AutoUtils
 
 	public static void clearEncoders()
 	{
-		AutoHardware._encLeft.clear();
-		AutoHardware._encRight.clear();
+		AutoHardware.encLeft.clear();
+		AutoHardware.encRight.clear();
 	}
 
 	public static void stopMovement()
 	{
-		AutoHardware._leftMotors.setControlTarget(0);
-		AutoHardware._rightMotors.setControlTarget(0);
+		AutoHardware.leftMotors.setControlTarget(0);
+		AutoHardware.rightMotors.setControlTarget(0);
 	}
 
 	public static void killRobot(String cause)

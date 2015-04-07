@@ -50,19 +50,19 @@ public class CmdArcTurn extends Command {
     	
     	if(dir == Direction.RIGHT)
     	{
-    		sideEncoder = AutoHardware._encLeft;
-    		otherSideEncoder = AutoHardware._encRight;
+    		sideEncoder = AutoHardware.encLeft;
+    		otherSideEncoder = AutoHardware.encRight;
     		
-    		sideMotors = AutoHardware._leftMotors;
-    		otherSideMotors = AutoHardware._rightMotors;
+    		sideMotors = AutoHardware.leftMotors;
+    		otherSideMotors = AutoHardware.rightMotors;
     	}
     	else
     	{
-    		sideEncoder = AutoHardware._encRight;
-    		otherSideEncoder = AutoHardware._encLeft;
+    		sideEncoder = AutoHardware.encRight;
+    		otherSideEncoder = AutoHardware.encLeft;
     		
-    		sideMotors = AutoHardware._rightMotors;
-    		otherSideMotors = AutoHardware._leftMotors;
+    		sideMotors = AutoHardware.rightMotors;
+    		otherSideMotors = AutoHardware.leftMotors;
     	}
     }
 

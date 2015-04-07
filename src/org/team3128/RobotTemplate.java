@@ -3,16 +3,18 @@ package org.team3128;
 import java.util.ArrayList;
 
 import org.team3128.listener.ListenerManager;
-import org.team3128.main.Global;
+import org.team3128.main.MainTheClawwww;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 /*
  * THIS FILE SHOULD NOT BE MODIFIED
  * --------------------------------
- * It serves as a link to the Global class
- * Events triggered here will be forwarded to the Global class
+ * It serves as a link to the MainTheClawwww class
+ * Events triggered here will be forwarded to the MainTheClawwww class
  *
  * Do not call these functions under any circumstances. Do not modify this
  * class under any circumstances.
@@ -24,86 +26,148 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class RobotTemplate extends IterativeRobot 
 {
-	Global global;
-	ArrayList<ListenerManager> _listenerManagers = new ArrayList<ListenerManager>();
+	MainClass main;
+	ArrayList<ListenerManager> listenerManagers = new ArrayList<ListenerManager>();
+	SendableChooser autoChooser;
 	
+	int dashboardUpdateWavelength = 50;
+	
+	Thread dashboardUpdateThread;
+	
+	@Override
     public void robotInit()
     {
-        Log.info("Global", "Welcome to the FRC Team 3128 No-Longer-Event System version 3!");
-        Log.info("Global", "Initializing Robot...");
-        global = new Global();
+        Log.info("RobotTemplate", "Welcome to the FRC Team 3128 No-Longer-Event System version 4!");
+        Log.info("RobotTemplate", "Initializing Robot...");
+        main = new MainTheClawwww();
         
-        global.initializeRobot(this);
+        main.initializeRobot(this);
         
-        Log.info("Global", "Initialization Done!");
-        Log.info("Global", "\"The Clawwwwwww.....\"   Activated");
+        Log.info("RobotTemplate", "Setting Up Autonomous Chooser...");
+		autoChooser = new SendableChooser();
+        main.addAutoPrograms(autoChooser);        
+        Log.info("RobotTemplate", "Starting Dashboard Update Thread...");
+        dashboardUpdateThread = new Thread(this::updateDashboardLoop, "Dashboard Update Thread");
+        dashboardUpdateThread.start();
+        
+        Log.info("RobotTemplate", "Initialization Done!");
+        Log.info("RobotTemplate", "\"The Clawwwwwww.....\"   Activated");
     }
 
+    @Override
     public void disabledInit()
     {
-    	global.initializeDisabled();
+    	main.initializeDisabled();
     }
     
-    public void addListenerManagerToTick(ListenerManager manager)
+    /**
+     * This function is run in its own thread to call main.updateDashboard()
+     */
+    private void updateDashboardLoop()
     {
-    	_listenerManagers.add(manager);
+		Log.info("RobotTemplate", "Dashboard Update Thread starting");
+    	while(true)
+    	{
+    		main.updateDashboard();
+    		
+    		try
+			{
+				Thread.sleep(dashboardUpdateWavelength);
+			} 
+    		catch (InterruptedException e)
+			{
+    			Log.info("RobotTemplate", "Dashboard Update Thread shutting down");
+				return;
+			}
+    	}
+    	
     }
     
+    /**
+     * Add a listener manager to the list of ones to be ticked in teleopPeriodic().
+     * @param manager
+     */
+    public void addListenerManager(ListenerManager manager)
+    {
+    	listenerManagers.add(manager);
+    }
+    
+    /**
+     * Set the wavelength (time between updates) of the dashboard update thread.
+     * @param millis
+     */
+    public void setDashboardUpdateWavelength(int millis)
+    {
+    	dashboardUpdateWavelength = millis;
+    }
+    
+    /**
+     * Remove all listeners from every ListenerManager.
+     */
     private void resetListeners()
     {
-    	for(ListenerManager manager : _listenerManagers)
+    	for(ListenerManager manager : listenerManagers)
     	{
     		manager.removeAllListeners();
     	}
     }
 
     // ARE YOU CHANGING THINGS?
+    @Override
     public void autonomousInit()
     {
-        Log.info("Global", "Initializing Autonomous...");
+        Log.info("RobotTemplate", "Initializing Autonomous...");
         resetListeners();
-        global.initializeAuto();
-        Log.info("Global", "Auto Initialization Done!");
+        main.initializeAuto();
+		CommandGroup autoCommand = (CommandGroup) autoChooser.getSelected();
+		Log.info("RobotTemplate", "Starting auto program " + autoCommand.getName());
+		autoCommand.start();
+        Log.info("RobotTemplate", "Auto Initialization Done!");
     }
    
     // TURN BACK NOW.
     // YOUR CHANGES ARE NOT WANTED HERE.
-   
+    @Override
     public void teleopInit()
     {
-        Log.info("Global", "Initializing Teleop...");
+        Log.info("RobotTemplate", "Initializing Teleop...");
     	resetListeners();
-        global.initializeTeleop();
-        Log.info("Global", "Teleop Initialization Done!");
+    	main.initializeTeleop();
+        Log.info("RobotTemplate", "Teleop Initialization Done!");
     }
-   
+    
+    @Override
     public void disabledPeriodic()
     {
         try
 		{
-			Thread.sleep(100);
+			Thread.sleep(20);
 		}
         catch (InterruptedException e)
 		{
 			return;
 		}
+        main.updateDashboard();
     }
 
     // YOU'D BETTER NOT CHANGE ANYTHING
-   
+    @Override
     public void autonomousPeriodic()
     {   
 		Scheduler.getInstance().run();
+		main.updateDashboard();
     }
 
     // DO YOU REALLY WANT TO MODIFY YOUR SOUL?
-   
+    @Override
     public void teleopPeriodic()
     {        
-    	for(ListenerManager manager : _listenerManagers)
+    	for(ListenerManager manager : listenerManagers)
     	{
     		manager.tick();
     	}
+    	
+    	main.updateDashboard();
         
         try
 		{

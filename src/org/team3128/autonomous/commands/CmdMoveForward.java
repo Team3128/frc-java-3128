@@ -48,8 +48,8 @@ public class CmdMoveForward extends Command {
 		startTime = System.currentTimeMillis();
 
 		
-		AutoHardware._leftMotors.setControlTarget(AutoUtils.speedMultiplier * .25 * norm);
-		AutoHardware._rightMotors.setControlTarget(AutoUtils.speedMultiplier * .25 * norm);
+		AutoHardware.leftMotors.setControlTarget(AutoUtils.speedMultiplier * .25 * norm);
+		AutoHardware.rightMotors.setControlTarget(AutoUtils.speedMultiplier * .25 * norm);
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -64,8 +64,8 @@ public class CmdMoveForward extends Command {
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished()
     {
-    	leftDone = Math.abs(AutoHardware._encLeft.getDistanceInDegrees()) > enc;
-    	rightDone = Math.abs(AutoHardware._encRight.getDistanceInDegrees()) > enc;
+    	leftDone = Math.abs(AutoHardware.encLeft.getDistanceInDegrees()) > enc;
+    	rightDone = Math.abs(AutoHardware.encRight.getDistanceInDegrees()) > enc;
     	
         return leftDone || rightDone;
     }
@@ -77,11 +77,11 @@ public class CmdMoveForward extends Command {
     	
     	if(leftDone)
     	{
-    		Log.debug("CmdMoveForward", "The right side went at " + ((AutoHardware._encRight.getDistanceInDegrees() * 100.0) / AutoHardware._encRight.getDistanceInDegrees()) + "% of the left side");
+    		Log.debug("CmdMoveForward", "The right side went at " + ((AutoHardware.encRight.getDistanceInDegrees() * 100.0) / AutoHardware.encRight.getDistanceInDegrees()) + "% of the left side");
     	}
     	else
     	{
-    		Log.debug("CmdMoveForward", "The left side went at " + ((AutoHardware._encLeft.getDistanceInDegrees() * 100.0) / AutoHardware._encLeft.getDistanceInDegrees()) + "% of the right side");
+    		Log.debug("CmdMoveForward", "The left side went at " + ((AutoHardware.encLeft.getDistanceInDegrees() * 100.0) / AutoHardware.encLeft.getDistanceInDegrees()) + "% of the right side");
     	}
     }
 

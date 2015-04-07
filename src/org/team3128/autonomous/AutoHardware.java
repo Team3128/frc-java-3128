@@ -15,11 +15,11 @@ import edu.wpi.first.wpilibj.Ultrasonic;
  */
 public class AutoHardware
 {
-	public static QuadratureEncoderLink _encLeft;
-	public static QuadratureEncoderLink _encRight;
+	public static QuadratureEncoderLink encLeft;
+	public static QuadratureEncoderLink encRight;
 	
-	public static MotorLink _leftMotors;
-	public static MotorLink _rightMotors;
+	public static MotorLink leftMotors;
+	public static MotorLink rightMotors;
 	
 	public static Ultrasonic ultrasonic;
 	

@@ -69,8 +69,8 @@ public class CmdMoveUltrasonic extends Command {
 		
 		int norm = (int) RobotMath.sgn((AutoHardware.ultrasonic.getRangeMM() * Units.MM) - _cm);
 		
-		AutoHardware._leftMotors.setControlTarget(AutoUtils.speedMultiplier * .25 * norm);
-		AutoHardware._rightMotors.setControlTarget(AutoUtils.speedMultiplier * .25 * norm);
+		AutoHardware.leftMotors.setControlTarget(AutoUtils.speedMultiplier * .25 * norm);
+		AutoHardware.rightMotors.setControlTarget(AutoUtils.speedMultiplier * .25 * norm);
     }
 
     // Make this return true when this Command no longer needs to run execute()

@@ -1,10 +1,14 @@
 package org.team3128.main;
 
-import org.team3128.Log;
+import org.team3128.MainClass;
 import org.team3128.Options;
 import org.team3128.RobotTemplate;
-import org.team3128.autonomous.AutoChooser;
 import org.team3128.autonomous.AutoHardware;
+import org.team3128.autonomous.programs.DoNothingAuto;
+import org.team3128.autonomous.programs.DriveIntoAutoZoneAuto;
+import org.team3128.autonomous.programs.DualFarCanGrabAuto;
+import org.team3128.autonomous.programs.FarCanGrabAuto;
+import org.team3128.autonomous.programs.TestAuto;
 import org.team3128.drive.ArcadeDrive;
 import org.team3128.hardware.encoder.angular.AnalogPotentiometerEncoder;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
@@ -20,24 +24,19 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Talon;
-import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.vision.AxisCamera;
 
 /**
- * The Global class is where all of the hardware objects that represent the robot are stored.
- * It also sets up the control bindings.
- * 
- * Its functions are called only by RobotTemplate.
+ * Main class for our 2015 robot, The Clawwww.
  * @author Jamie
  *
  */
-public class Global
+public class MainTheClawwww extends MainClass
 {
 	public ListenerManager listenerManagerExtreme;
 	public ListenerManager listenerManagerJoyLeft;
 	public ListenerManager listenerManagerJoyRight;
-	
-	AutoChooser autoChooser;
 	
 	public MotorLink _pidTestMotor;
 	
@@ -76,14 +75,11 @@ public class Global
 	boolean shoulderInverted = true;
 	boolean elbowInverted = true;
 	
-	public Global()
+	public MainTheClawwww()
 	{	
 		listenerManagerExtreme = new ListenerManager(new Joystick(Options.instance()._controllerPort), ControllerExtreme3D.instance);
 		listenerManagerJoyLeft = new ListenerManager(new Joystick(1), ControllerAttackJoy.instance);
-		listenerManagerJoyRight = new ListenerManager(new Joystick(2), ControllerAttackJoy.instance);
-		
-		autoChooser = new AutoChooser();
-		
+		listenerManagerJoyRight = new ListenerManager(new Joystick(2), ControllerAttackJoy.instance);		
 		powerDistPanel = new PowerDistributionPanel();
 		
 		leftDriveEncoder = new QuadratureEncoderLink(0,	1, 128, false);
@@ -138,26 +134,25 @@ public class Global
 		// Auto Init
 		//--------------------------------------------------------------------------
 
-		AutoHardware._encLeft = leftDriveEncoder;
-		AutoHardware._encRight = rightDriveEncoder;
+		AutoHardware.encLeft = leftDriveEncoder;
+		AutoHardware.encRight = rightDriveEncoder;
 		
-		AutoHardware._leftMotors = leftMotors;
-		AutoHardware._rightMotors = rightMotors;
+		AutoHardware.leftMotors = leftMotors;
+		AutoHardware.rightMotors = rightMotors;
 		
 		AutoHardware.clawArm = clawArm;
 		
 
 	}
 
-	void initializeRobot(RobotTemplate robotTemplate)
-	{
-		
-		robotTemplate.addListenerManagerToTick(listenerManagerExtreme);
-		robotTemplate.addListenerManagerToTick(listenerManagerJoyLeft);
-		robotTemplate.addListenerManagerToTick(listenerManagerJoyRight);
+	protected void initializeRobot(RobotTemplate robotTemplate)
+	{	
+		robotTemplate.addListenerManager(listenerManagerExtreme);
+		robotTemplate.addListenerManager(listenerManagerJoyLeft);
+		robotTemplate.addListenerManager(listenerManagerJoyRight);
 	}
 
-	void initializeDisabled()
+	protected void initializeDisabled()
 	{
 		clawArm.resetTargets();
 		
@@ -171,16 +166,12 @@ public class Global
 		rightMotors.clearSpeedControlRun();
 	}
 
-	void initializeAuto()
+	protected void initializeAuto()
 	{
 		clawArm.resetTargets();
-
-		CommandGroup autoCommand = autoChooser.getChosen();
-		Log.info("Global", "Starting auto program " + autoCommand.getName());
-		autoCommand.start();
 	}
 	
-	void initializeTeleop()
+	protected void initializeTeleop()
 	{	
 		//-----------------------------------------------------------
 		// Drive code, on Logitech Extreme3D joystick
@@ -253,5 +244,21 @@ public class Global
 		listenerManagerExtreme.addListener(ControllerExtreme3D.UP8, () -> frontHookMotor.setControlTarget(0));
 		
 		//clawArm.startClawLimitThread();
+	}
+
+	@Override
+	protected void addAutoPrograms(SendableChooser autoChooser)
+	{
+		autoChooser.addDefault("Far Can Grab", new FarCanGrabAuto());
+		autoChooser.addObject("DualFar Can Grab", new DualFarCanGrabAuto());
+		autoChooser.addObject("Drive Into Auto Zone", new DriveIntoAutoZoneAuto());
+		autoChooser.addObject("Do Nothing", new DoNothingAuto());
+		autoChooser.addObject("Dev Test Auto", new TestAuto());
+	}
+
+	@Override
+	protected void updateDashboard()
+	{
+		//nothing, for now.
 	}
 }
