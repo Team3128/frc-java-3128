@@ -26,7 +26,7 @@ import org.team3128.util.VelocityPID;
  *
  * @author Jamie
  */
-public class PIDSpeedTarget extends MotorControl
+public class PIDSpeedControl extends MotorControl
 {   
     private IVelocityEncoder _encoder;
     
@@ -46,7 +46,7 @@ public class PIDSpeedTarget extends MotorControl
      * @param kI the Konstant of Integral
      * @param kD the Konstant of Derivative
      */
-    public PIDSpeedTarget(double tgtSpeed, int refreshTime, IVelocityEncoder encoder, double kP, double kI, double kD)
+    public PIDSpeedControl(double tgtSpeed, int refreshTime, IVelocityEncoder encoder, double kP, double kI, double kD)
     {
     	_targetSpeed = tgtSpeed;
         _refreshTime = refreshTime;
@@ -60,22 +60,21 @@ public class PIDSpeedTarget extends MotorControl
      *
      * @param tgtSpeed target speed in rpm
      */
-    public PIDSpeedTarget(double tgtSpeed, IVelocityEncoder encoder, VelocityPID pidCalc)
+    public PIDSpeedControl(double tgtSpeed, IVelocityEncoder encoder, VelocityPID pidCalc)
     {
         _encoder = encoder;
         _pidCalculator = pidCalc;
     }
    
-    public void setControlTarget(double d)
+    @Override
+    public synchronized void setControlTarget(double d)
     {
-        targetLock.lock();
         _pidCalculator.resetIntegral();
         _targetSpeed = d;
     	_pidCalculator.setDesiredVelocity(d);
-    	
-        targetLock.unlock();
     }
 
+    @Override
     public double speedControlStep(double dt)
     {
     	
@@ -93,25 +92,15 @@ public class PIDSpeedTarget extends MotorControl
         
         return output;
     }
-
-    /**
-     * Sets the speed update time in msec
-     *
-     * @param refreshTime speed update rate in msec
-     */
-    public void setRefreshTime(int refreshTime)
-    {
-    	targetLock.lock();
-    	super._refreshTime = refreshTime;
-    	targetLock.unlock();
-    }
    
-    public void clearControlRun()
+    @Override
+    public synchronized void clearControlRun()
     {
         setControlTarget(0);
         _pidCalculator.resetIntegral();
     }
 
+    @Override
     public boolean isComplete()
     {
     	return false;

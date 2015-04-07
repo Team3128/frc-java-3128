@@ -9,7 +9,7 @@ import org.team3128.util.RobotMath;
  *
  * @author Noah Sutton-Smolin
  */
-public class LinearSpeedTarget extends MotorControl
+public class LinearSpeedControl extends MotorControl
 {
     private double tgtSpeed;
     
@@ -20,7 +20,7 @@ public class LinearSpeedTarget extends MotorControl
      * @param tgtSpeed    target speed in rpm
      * @param refreshTime speed update rate in msec
      */
-    public LinearSpeedTarget(double tgtSpeed, int refreshTime, IVelocityEncoder encoder)
+    public LinearSpeedControl(double tgtSpeed, int refreshTime, IVelocityEncoder encoder)
     {
         this.tgtSpeed = tgtSpeed;
         _refreshTime = refreshTime;
@@ -32,45 +32,33 @@ public class LinearSpeedTarget extends MotorControl
      *
      * @param tgtSpeed target speed in rpm
      */
-    public LinearSpeedTarget(double tgtSpeed, IVelocityEncoder encoder)
+    public LinearSpeedControl(double tgtSpeed, IVelocityEncoder encoder)
     {
         this.tgtSpeed = tgtSpeed;
         _encoder = encoder;
     }
    
-    public void setControlTarget(double d)
+    @Override
+    public synchronized void setControlTarget(double d)
     {
-        targetLock.lock();
     	tgtSpeed = d;
-        targetLock.unlock();
     }
 
+    @Override
     public double speedControlStep(double dt)
     {
         double speed = _encoder.getSpeedInRPM();
 
         return RobotMath.makeValidPower(tgtSpeed * (speed / RobotMath.getMotorExpectedRPM(tgtSpeed)));
     }
-
-    /**
-     * Sets the speed update time in msec
-     *
-     * @param refreshTime time between updates in msec
-     */
-    public void setRefreshTime(int refreshTime)
-    {
-    	targetLock.lock();
-    	super._refreshTime = refreshTime;
-    	targetLock.unlock();
-    }
    
-    public void clearControlRun()
+    @Override
+    public synchronized void clearControlRun()
     {
-        targetLock.lock();
     	this.tgtSpeed = 0;
-        targetLock.unlock();
     }
 
+    @Override
     public boolean isComplete()
     {
     	return false;

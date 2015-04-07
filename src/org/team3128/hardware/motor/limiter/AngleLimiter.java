@@ -1,7 +1,7 @@
-package org.team3128.hardware.motor.speedcontrol;
+package org.team3128.hardware.motor.limiter;
 
 import org.team3128.hardware.encoder.angular.IAngularEncoder;
-import org.team3128.hardware.motor.MotorControl;
+import org.team3128.hardware.motor.Limiter;
 
 /*
  *       /^\ 
@@ -23,20 +23,18 @@ import org.team3128.hardware.motor.MotorControl;
  * Motor control which uses an encoder to limit the range of something.  
  * 
  * Note that this class assumes that running the motor backwards 
- * decreases the encoder angle.
+ * decreases the encoder angle.  Use MotorLink.invertMotor() to make this happen.
  * @author Jamie
  *
  */
-public class AngleEndstopTarget extends MotorControl
+public class AngleLimiter extends Limiter
 {
     private double _minAngle, _maxAngle;
     
     private double _jitter;
     
     private boolean hitMinStop, hitMaxStop;
-    
-    private double targetSpeed;
-    
+        
     private IAngularEncoder _encoder;
 
     /**
@@ -47,7 +45,7 @@ public class AngleEndstopTarget extends MotorControl
      * the thing time to stop.
      * @param encoder The encoder to use.
      */
-    public AngleEndstopTarget(double minAngle, double maxAngle, double jitter, IAngularEncoder encoder)
+    public AngleLimiter(double minAngle, double maxAngle, double jitter, IAngularEncoder encoder)
     {
     	_minAngle = minAngle;
     	_maxAngle = maxAngle;
@@ -55,46 +53,23 @@ public class AngleEndstopTarget extends MotorControl
         _encoder = encoder;
     }
 
-    /**
-     * sets speed
-     */
-    public void setControlTarget(double val)
-    {
-        targetLock.lock();
-        targetSpeed = val;
-        targetLock.unlock();
-    }
-
-    public double speedControlStep(double dt)
+    @Override
+    public boolean canMove(double speed)
     {
     	hitMinStop = _encoder.getAngle() < (_minAngle + _jitter);
     	
     	hitMaxStop = _encoder.getAngle() > (_maxAngle - _jitter);
     	
-    	if(hitMinStop && targetSpeed < 0)
+    	if(hitMinStop && speed < 0)
     	{
-    		return 0;
+    		return false;
     	}
-    	else if(hitMaxStop && targetSpeed > 0)
+    	else if(hitMaxStop && speed > 0)
     	{
-    		return 0;
+    		return false;
     	}
     	
-        return targetSpeed;
+        return true;
     }
-
-    public void clearControlRun()
-    {
-    	targetSpeed = 0;
-    }
-
-    /**
-     * Returns true if the motor is at the correct angle
-     */
-    public boolean isComplete()
-    {
-        return false;
-    }
-    
 }
 

@@ -8,9 +8,10 @@ import org.team3128.util.RobotMath;
 /**
  * Motor control which steers the motor to an angle using an encoder.
  * @author Yousuf Soliman
+ * @author Jamie
  */
 
-public class LinearAngleTarget extends MotorControl
+public class PIDAngleControl extends MotorControl
 {
     private double targetAngle, threshold;
     private IAngularEncoder _encoder;
@@ -36,7 +37,7 @@ public class LinearAngleTarget extends MotorControl
      * @param stopWhenDone whether to stop controlling the motor when it's reached its target
      * @param encoder
      */
-    public LinearAngleTarget(double kP, double kI, double kD, double threshold, boolean stopWhenDone, IAngularEncoder encoder, boolean log)
+    public PIDAngleControl(double kP, double kI, double kD, double threshold, boolean stopWhenDone, IAngularEncoder encoder, boolean log)
     {
     	_refreshTime = 10;
         
@@ -55,13 +56,13 @@ public class LinearAngleTarget extends MotorControl
     /**
      * sets degree value to move to
      */
-    public void setControlTarget(double val)
+    @Override
+    public synchronized void setControlTarget(double val)
     {
-        targetLock.lock();
         this.targetAngle = val;
-        targetLock.unlock();
     }
 
+    @Override
     public double speedControlStep(double dt)
     {
     	double angle = _encoder.getAngle();
@@ -86,8 +87,6 @@ public class LinearAngleTarget extends MotorControl
 //    		errorSum = -errorLimit;
 //    	}
     	
-
-    	
         double output = error * kP + errorSum * kI + kD * (error - prevError);
         
         prevError = error;
@@ -109,19 +108,19 @@ public class LinearAngleTarget extends MotorControl
         return RobotMath.makeValidPower(output);
     }
 
-    public void clearControlRun()
+    @Override
+    public synchronized void clearControlRun()
     {
     	errorSum = 0;
-    	 consecutiveCorrectPositions = 0;
+    	consecutiveCorrectPositions = 0;
     }
 
     /**
      * Returns true if the motor is at the correct angle
      */
     public boolean isComplete()
-    {
-    	
-        return _stopWhenDone & consecutiveCorrectPositions >= 5;
+    {	
+        return _stopWhenDone && consecutiveCorrectPositions >= 5;
     }
     
 }

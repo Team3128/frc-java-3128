@@ -2,9 +2,10 @@ package org.team3128.hardware.mechanisms;
 
 import org.team3128.hardware.encoder.angular.IAngularEncoder;
 import org.team3128.hardware.motor.MotorLink;
-import org.team3128.hardware.motor.speedcontrol.AngleEndstopTarget;
-import org.team3128.hardware.motor.speedcontrol.LimitSwitchEndstop;
-import org.team3128.hardware.motor.speedcontrol.LinearAngleTarget;
+import org.team3128.hardware.motor.limiter.AngleLimiter;
+import org.team3128.hardware.motor.limiter.SwitchLimiter;
+import org.team3128.hardware.motor.speedcontrol.BlankSpeedControl;
+import org.team3128.hardware.motor.speedcontrol.PIDAngleControl;
 import org.team3128.util.Units;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -14,13 +15,13 @@ public class ClawArm
 {
 	public MotorLink _armRotate, _armJoint, _clawGrab;
 	
-	LinearAngleTarget armRotateAngleTarget;
+	PIDAngleControl armRotateAngleTarget;
 	
-	LinearAngleTarget armJointAngleTarget;
+	PIDAngleControl armJointAngleTarget;
 	
-	AngleEndstopTarget armRotateEndstopTarget;
+	AngleLimiter armRotateEndstopTarget;
 	
-	AngleEndstopTarget armJointEndstopTarget;
+	AngleLimiter armJointEndstopTarget;
 	
 	public IAngularEncoder _armRotateEncoder;
 	
@@ -63,17 +64,19 @@ public class ClawArm
 		
 		clawMinLimitSwitch = new DigitalInput(9);
 		clawMaxLimitSwitch = new DigitalInput(8);
-		_clawGrab.setSpeedController(new LimitSwitchEndstop(clawMinLimitSwitch, clawMaxLimitSwitch, false, panel, 10, 24));
+		BlankSpeedControl clawControl = new BlankSpeedControl(0);
+		clawControl.setLimiter(new SwitchLimiter(clawMinLimitSwitch, clawMaxLimitSwitch, false, panel, 10, 24));
+		_clawGrab.setSpeedController(clawControl);
 		_clawGrab.startControl(0);
 		
 		
-		armRotateAngleTarget = new LinearAngleTarget(.010, .000005, .00015, 4, false, armEncoder, false);
+		armRotateAngleTarget = new PIDAngleControl(.010, .000005, .00015, 4, false, armEncoder, false);
 		
-		armJointAngleTarget = new LinearAngleTarget(.009, 0, 0, 5, false, jointEncoder, true);
+		armJointAngleTarget = new PIDAngleControl(.009, 0, 0, 5, false, jointEncoder, true);
 		
-		armRotateEndstopTarget = new AngleEndstopTarget(22, 295, 2, armEncoder);
+		armRotateEndstopTarget = new AngleLimiter(22, 295, 2, armEncoder);
 		
-		armJointEndstopTarget = new AngleEndstopTarget(0, 300, 5, jointEncoder);
+		armJointEndstopTarget = new AngleLimiter(0, 300, 5, jointEncoder);
 		
 		_armRotateEncoder = armEncoder;
 		

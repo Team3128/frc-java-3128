@@ -2,14 +2,17 @@ package org.team3128.hardware.motor;
 
 import java.util.ArrayList;
 
+import org.team3128.Log;
+
 import edu.wpi.first.wpilibj.SpeedController;
 
 /**
  * MotorLink is the class used in this code to represent a motor or several linked ones.
  * It can operate with several
- * different varieties of motor control or none at all.
+ * different varieties of motor control to use logic to control its speed, or none at all.
  */
-public class MotorLink {
+public class MotorLink 
+{
     private final ArrayList<SpeedController> motors = new ArrayList<SpeedController>();
     private MotorControl spdControl;
     private boolean motorReversed = false;
@@ -30,6 +33,11 @@ public class MotorLink {
     	this.spdControl = spd;
     }
     
+    /**
+     * Construct MotorLink with a motor control and speed scalar.
+     * @param spd
+     * @param powscl
+     */
     public MotorLink(MotorControl spd, double powscl)
     {
     	this.speedScalar = powscl;
@@ -100,15 +108,19 @@ public class MotorLink {
         	 setInternalSpeed(target);
         	 return;
         }
-//        if(!spdControl.isRunning())
-//        {
-//            Log.recoverable("MotorLink", "The speed controller's target was set, but it is not enabled.");
-//            return;
-//        }
+        if(!spdControl.isRunning())
+        {
+            Log.recoverable("MotorLink", "The speed controller's target was set, but it is not enabled.");
+            return;
+        }
 
         this.spdControl.setControlTarget(target);
     }
 
+    /**
+     * 
+     * @return true if the speed control is running.
+     */
     public boolean isSpeedControlRunning()
     {
     	if(spdControl == null)
@@ -123,6 +135,11 @@ public class MotorLink {
     	this.spdControl.setControlTarget(target);
     }
 
+    /**
+     * Start the speed control and set the control target.  If the control is already running,
+     * all this does is clear and set the target of the control.
+     * @param target
+     */
     public void startControl(double target)
     {
         this.spdControl.clearControlRun();

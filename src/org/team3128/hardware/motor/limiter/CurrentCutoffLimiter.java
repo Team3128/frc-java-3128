@@ -1,23 +1,22 @@
-package org.team3128.hardware.motor.speedcontrol;
+package org.team3128.hardware.motor.limiter;
 
 import org.team3128.Log;
-import org.team3128.hardware.motor.MotorControl;
+import org.team3128.hardware.motor.Limiter;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
 /**
  * Motor control which moves the motor in a certain direction until its current spikes, which
- * (hopefully) means that it has hit the end of its travel
+ * (hopefully) means that it has hit the end of its travel.
  */
 
-public class CurrentTarget extends MotorControl
+public class CurrentCutoffLimiter extends Limiter
 {
-    private double speed;
     private int _motorChannel;
     private PowerDistributionPanel _panel;
     
     private double _currentThreshold;
-    
+        
     private int consecutiveOvercurrents = 0;
 
     /**
@@ -28,35 +27,17 @@ public class CurrentTarget extends MotorControl
      * for each individual motor.
      * @param refreshMillis
      */
-    public CurrentTarget(PowerDistributionPanel panel, int motorChannel, double currentThreshold, int refreshMillis)
+    public CurrentCutoffLimiter(PowerDistributionPanel panel, int motorChannel, double currentThreshold, int refreshMillis)
     {
     	_panel = panel;
     	_motorChannel = motorChannel;
     	_currentThreshold = currentThreshold;
-    	
-    	_refreshTime = refreshMillis;
     }
 
-    /**
-     * sets speed and direction of travel
-     */
-    public void setControlTarget(double val)
+    @Override
+    public boolean canMove(double speed)
     {
-        targetLock.lock();
-        this.speed = val;
-        targetLock.unlock();
-    }
-
-    public double speedControlStep(double dt)
-    {
-        return speed;
-    }
-
-    public void clearControlRun() {}
-
-    public boolean isComplete()
-    {
-        Log.debug("CurrentTarget", "motor current: " + _panel.getCurrent(_motorChannel));
+    	Log.debug("CurrentTarget", "motor current: " + _panel.getCurrent(_motorChannel));
         if(_panel.getCurrent(_motorChannel) > _currentThreshold)
         {
         	++consecutiveOvercurrents;
@@ -72,6 +53,13 @@ public class CurrentTarget extends MotorControl
         }
         return false;
     }
+
+    @Override
+    public void reset()
+    {
+    	consecutiveOvercurrents = 0;
+    }
+
     
 }
 
