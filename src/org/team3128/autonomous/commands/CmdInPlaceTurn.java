@@ -81,7 +81,7 @@ public class CmdInPlaceTurn extends Command {
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished()
     {    	
-        return Math.abs(sideEncoder.getDistance()) >= enc;
+        return Math.abs(sideEncoder.getDistanceInDegrees()) >= enc;
     }
 
     // Called once after isFinished returns true

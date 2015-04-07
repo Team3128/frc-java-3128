@@ -5,6 +5,13 @@ import org.team3128.hardware.motor.MotorLink;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 
+/**
+ * Mechanism class to control the shooter of our 2014 robot, Sebastian.
+ * 
+ * @author Yousuf
+ * @author Noah
+ *
+ */
 public class CockArm
 {
     volatile boolean _cockArmActive = true;

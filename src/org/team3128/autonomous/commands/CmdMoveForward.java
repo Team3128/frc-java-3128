@@ -64,8 +64,8 @@ public class CmdMoveForward extends Command {
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished()
     {
-    	leftDone = Math.abs(AutoHardware._encLeft.getDistance()) > enc;
-    	rightDone = Math.abs(AutoHardware._encRight.getDistance()) > enc;
+    	leftDone = Math.abs(AutoHardware._encLeft.getDistanceInDegrees()) > enc;
+    	rightDone = Math.abs(AutoHardware._encRight.getDistanceInDegrees()) > enc;
     	
         return leftDone || rightDone;
     }
@@ -77,11 +77,11 @@ public class CmdMoveForward extends Command {
     	
     	if(leftDone)
     	{
-    		Log.debug("CmdMoveForward", "The right side went at " + ((AutoHardware._encRight.getDistance() * 100.0) / AutoHardware._encRight.getDistance()) + "% of the left side");
+    		Log.debug("CmdMoveForward", "The right side went at " + ((AutoHardware._encRight.getDistanceInDegrees() * 100.0) / AutoHardware._encRight.getDistanceInDegrees()) + "% of the left side");
     	}
     	else
     	{
-    		Log.debug("CmdMoveForward", "The left side went at " + ((AutoHardware._encLeft.getDistance() * 100.0) / AutoHardware._encLeft.getDistance()) + "% of the right side");
+    		Log.debug("CmdMoveForward", "The left side went at " + ((AutoHardware._encLeft.getDistanceInDegrees() * 100.0) / AutoHardware._encLeft.getDistanceInDegrees()) + "% of the right side");
     	}
     }
 

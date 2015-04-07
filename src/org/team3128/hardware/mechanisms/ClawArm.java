@@ -11,6 +11,11 @@ import org.team3128.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
+/**
+ * Mechanism to control our 2015 robot, The Clawwwwwww.  It basically manages the entire arm.
+ * @author Jamie
+ *
+ */
 public class ClawArm
 {
 	public MotorLink _armRotate, _armJoint, _clawGrab;
