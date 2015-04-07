@@ -7,7 +7,11 @@ import org.team3128.util.RobotMath;
 
 import edu.wpi.first.wpilibj.Gyro;
 
-
+/**
+ * Drive class for the swerve drive on our 2014 robot.
+ * @author Jamie
+ *
+ */
 public class SwerveDrive
 {
     private double vel, theta, rot, xVel, yVel;
@@ -29,6 +33,7 @@ public class SwerveDrive
     {
     	
     	//hopefully all encoders are all using the same type of encoders
+    	//otherwise the canRevolveMultipleTimes() will be wrong.
         double a = RobotMath.angleDistance(ang2, ang1, _encFL.canRevolveMultipleTimes());
         double o[] = new double[2];
         if (Math.abs(a) > 90) {

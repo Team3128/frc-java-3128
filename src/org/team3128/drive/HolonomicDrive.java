@@ -5,6 +5,11 @@ import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.listener.ListenerManager;
 import org.team3128.listener.controller.ControllerXbox;
 
+/**
+ * Drive class for holonomic wheels
+ * @author Jacob
+ *
+ */
 public class HolonomicDrive
 {
     double _spdLF, _spdLB, _spdRF, _spdRB;

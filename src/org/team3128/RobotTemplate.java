@@ -13,8 +13,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 /*
  * THIS FILE SHOULD NOT BE MODIFIED
  * --------------------------------
- * It serves as a link to the MainTheClawwww class
- * Events triggered here will be forwarded to the MainTheClawwww class
+ * It serves as a link to the main class
+ * Events triggered here will be forwarded to the main class
  *
  * Do not call these functions under any circumstances. Do not modify this
  * class under any circumstances.
