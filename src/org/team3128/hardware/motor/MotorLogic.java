@@ -18,7 +18,7 @@ public abstract class MotorLogic
 	
 	private Limiter limiter;
 	
-	protected int _refreshTime = Options.instance()._motorControlUpdateFrequency;
+	protected int _refreshTime = Options.motorControlUpdateFrequency;
 		
 	public MotorLogic()
 	{

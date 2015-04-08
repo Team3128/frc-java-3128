@@ -41,11 +41,11 @@ public class HolonomicDrive
     	
     	double mag = (10.0/7.0)*(Math.sqrt(joyX * joyX + joyY * joyY) - 0.3);
     	
-    	joyX = mag * (2-mag) *Options.instance()._glidingSpeedConstant * (Math.abs(joyX) > thresh ? joyX : 0.0);
-    	joyY = mag * (2-mag) * Options.instance()._glidingSpeedConstant * (Math.abs(joyY) > thresh ? joyY : 0.0);
+    	joyX = mag * (2-mag) *Options.glidingSpeedConstant * (Math.abs(joyX) > thresh ? joyX : 0.0);
+    	joyY = mag * (2-mag) * Options.glidingSpeedConstant * (Math.abs(joyY) > thresh ? joyY : 0.0);
     	
     	double joyTurn = _listenerManager.getRawAxis(ControllerXbox.JOY2X);
-    	joyTurn =-1* Options.instance()._turningSpeedConstant * (Math.abs(joyTurn) > thresh ? joyTurn : 0.0);
+    	joyTurn =-1* Options.turningSpeedConstant * (Math.abs(joyTurn) > thresh ? joyTurn : 0.0);
     	
     	/*if (joyTurn > thresh) {
     		_spdLB = _spdRF = _spdLF = _spdRB = 0.4 *joyTurn;

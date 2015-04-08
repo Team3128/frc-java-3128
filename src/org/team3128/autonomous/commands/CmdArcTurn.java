@@ -68,7 +68,7 @@ public class CmdArcTurn extends Command {
 
     protected void initialize()
     {
-		enc = RobotMath.cmToRotations((2.0*Math.PI*Options.instance()._wheelBase)*(abs(_degs)/360.0));
+		enc = RobotMath.cmToRotations((2.0*Math.PI*Options.wheelBase)*(abs(_degs)/360.0));
 		AutoUtils.clearEncoders();
 		
 		sideMotors.setControlTarget(AutoUtils.speedMultiplier * RobotMath.sgn(_degs) * .25);

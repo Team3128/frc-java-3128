@@ -30,7 +30,7 @@ public class Lights
 			_redLights.setOff();
 			_redLights.setOff();
 		}
-		else if(Options.instance()._alliance == Options.Alliance.BLUE)
+		else if(Options.alliance == Options.Alliance.BLUE)
 	    {
 	    	_redLights.setOff();
 	    	_blueLights.setOn();
@@ -44,7 +44,7 @@ public class Lights
 
 	void lightChangeToCurrentAlliance()
 	{
-		lightChange(Options.instance()._alliance);
+		lightChange(Options.alliance);
 	}
 	
 }

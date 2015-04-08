@@ -188,7 +188,7 @@ public class RobotMath {
 	 */
 	public static double cmToDegrees(double cm)
 	{
-		return Options.instance()._degreesPercm * cm;
+		return Options.degreesPercm * cm;
 	}
 	
 	/**
@@ -198,6 +198,6 @@ public class RobotMath {
 	 */
 	public static double cmToRotations(double cm)
 	{
-		return cm / Options.instance()._wheelCircumfrence;
+		return cm / Options.wheelCircumfrence;
 	}
 }

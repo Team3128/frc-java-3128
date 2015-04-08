@@ -57,7 +57,7 @@ public class SwerveDrive
         rot = maxRot * x2 * 0.3;
 
         if (Math.abs(vel) > 0.1)
-            theta = RobotMath.rTD(Math.atan2(y1, x1)) + _gyr.getAngle() + Options.instance()._gyrBias;
+            theta = RobotMath.rTD(Math.atan2(y1, x1)) + _gyr.getAngle() + Options.gyrBias;
         else 
             vel = 0;
 

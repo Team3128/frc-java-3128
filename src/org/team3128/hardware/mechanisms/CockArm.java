@@ -33,7 +33,7 @@ public class CockArm
     	while(true)
     	{
 
-        	if(!_cockArmActive || !Options.instance()._armEnabled)
+        	if(!_cockArmActive || !Options.armEnabled)
         	{
         		return;
         	}

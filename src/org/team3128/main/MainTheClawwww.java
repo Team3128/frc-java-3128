@@ -77,7 +77,7 @@ public class MainTheClawwww extends MainClass
 	
 	public MainTheClawwww()
 	{	
-		listenerManagerExtreme = new ListenerManager(new Joystick(Options.instance()._controllerPort), ControllerExtreme3D.instance);
+		listenerManagerExtreme = new ListenerManager(new Joystick(Options.controllerPort), ControllerExtreme3D.instance);
 		listenerManagerJoyLeft = new ListenerManager(new Joystick(1), ControllerAttackJoy.instance);
 		listenerManagerJoyRight = new ListenerManager(new Joystick(2), ControllerAttackJoy.instance);		
 		powerDistPanel = new PowerDistributionPanel();
@@ -197,7 +197,7 @@ public class MainTheClawwww extends MainClass
 		
 		listenerManagerJoyRight.addListener(ControllerAttackJoy.JOYY, () ->
 		{
-			double power = (shoulderInverted ? Options.instance()._armSpeedMultiplier : -Options.instance()._armSpeedMultiplier) * listenerManagerJoyRight.getRawAxis(ControllerAttackJoy.JOYY);
+			double power = (shoulderInverted ? Options.armSpeedMultiplier : -Options.armSpeedMultiplier) * listenerManagerJoyRight.getRawAxis(ControllerAttackJoy.JOYY);
 			
 			if(power < 0)
 			{
@@ -211,7 +211,7 @@ public class MainTheClawwww extends MainClass
 		listenerManagerJoyLeft.addListener(ControllerAttackJoy.JOYY, () ->
 		{
 			double power = listenerManagerJoyLeft.getRawAxis(ControllerAttackJoy.JOYY);
-			clawArm.onJointJoyInput((elbowInverted ? Options.instance()._armSpeedMultiplier : -Options.instance()._armSpeedMultiplier) * power);
+			clawArm.onJointJoyInput((elbowInverted ? Options.armSpeedMultiplier : -Options.armSpeedMultiplier) * power);
 		});
 		
 		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN2, () -> shoulderInverted = false);
