@@ -1,4 +1,4 @@
-package org.team3128.hardware.motor.speedcontrol;
+package org.team3128.hardware.motor.logic;
 
 import org.team3128.hardware.encoder.velocity.IVelocityEncoder;
 import org.team3128.hardware.motor.MotorLogic;
@@ -9,7 +9,7 @@ import org.team3128.util.RobotMath;
  *
  * @author Noah Sutton-Smolin
  */
-public class LinearSpeedControl extends MotorLogic
+public class LinearSpeedLogic extends MotorLogic
 {
     private double tgtSpeed;
     
@@ -20,7 +20,7 @@ public class LinearSpeedControl extends MotorLogic
      * @param tgtSpeed    target speed in rpm
      * @param refreshTime speed update rate in msec
      */
-    public LinearSpeedControl(double tgtSpeed, int refreshTime, IVelocityEncoder encoder)
+    public LinearSpeedLogic(double tgtSpeed, int refreshTime, IVelocityEncoder encoder)
     {
         this.tgtSpeed = tgtSpeed;
         _refreshTime = refreshTime;
@@ -32,7 +32,7 @@ public class LinearSpeedControl extends MotorLogic
      *
      * @param tgtSpeed target speed in rpm
      */
-    public LinearSpeedControl(double tgtSpeed, IVelocityEncoder encoder)
+    public LinearSpeedLogic(double tgtSpeed, IVelocityEncoder encoder)
     {
         this.tgtSpeed = tgtSpeed;
         _encoder = encoder;

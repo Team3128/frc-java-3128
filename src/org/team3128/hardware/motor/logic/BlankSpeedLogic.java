@@ -1,4 +1,4 @@
-package org.team3128.hardware.motor.speedcontrol;
+package org.team3128.hardware.motor.logic;
 
 import org.team3128.hardware.motor.MotorLogic;
 
@@ -8,15 +8,15 @@ import org.team3128.hardware.motor.MotorLogic;
  * @author Jamie
  *
  */
-public class BlankSpeedControl extends MotorLogic
+public class BlankSpeedLogic extends MotorLogic
 {
     private double tgtSpeed;
     
     /**
-     * Construct BlankSpeedControl
+     * Construct BlankSpeedLogic
      * @param tgtSpeed    target speed in motor power
      */
-    public BlankSpeedControl(double tgtSpeed)
+    public BlankSpeedLogic(double tgtSpeed)
     {
         this.tgtSpeed = tgtSpeed;
     }

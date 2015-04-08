@@ -1,4 +1,4 @@
-package org.team3128.hardware.motor.speedcontrol;
+package org.team3128.hardware.motor.logic;
 
 import org.team3128.Log;
 import org.team3128.hardware.encoder.velocity.IVelocityEncoder;
@@ -26,7 +26,7 @@ import org.team3128.util.VelocityPID;
  *
  * @author Jamie
  */
-public class PIDSpeedControl extends MotorLogic
+public class PIDSpeedLogic extends MotorLogic
 {   
     private IVelocityEncoder _encoder;
     
@@ -46,7 +46,7 @@ public class PIDSpeedControl extends MotorLogic
      * @param kI the Konstant of Integral
      * @param kD the Konstant of Derivative
      */
-    public PIDSpeedControl(double tgtSpeed, int refreshTime, IVelocityEncoder encoder, double kP, double kI, double kD)
+    public PIDSpeedLogic(double tgtSpeed, int refreshTime, IVelocityEncoder encoder, double kP, double kI, double kD)
     {
     	_targetSpeed = tgtSpeed;
         _refreshTime = refreshTime;
@@ -60,7 +60,7 @@ public class PIDSpeedControl extends MotorLogic
      *
      * @param tgtSpeed target speed in rpm
      */
-    public PIDSpeedControl(double tgtSpeed, IVelocityEncoder encoder, VelocityPID pidCalc)
+    public PIDSpeedLogic(double tgtSpeed, IVelocityEncoder encoder, VelocityPID pidCalc)
     {
         _encoder = encoder;
         _pidCalculator = pidCalc;

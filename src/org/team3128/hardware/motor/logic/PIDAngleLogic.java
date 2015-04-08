@@ -1,4 +1,4 @@
-package org.team3128.hardware.motor.speedcontrol;
+package org.team3128.hardware.motor.logic;
 
 import org.team3128.Log;
 import org.team3128.hardware.encoder.angular.IAngularEncoder;
@@ -11,7 +11,7 @@ import org.team3128.util.RobotMath;
  * @author Jamie
  */
 
-public class PIDAngleControl extends MotorLogic
+public class PIDAngleLogic extends MotorLogic
 {
     private double targetAngle, threshold;
     private IAngularEncoder _encoder;
@@ -37,7 +37,7 @@ public class PIDAngleControl extends MotorLogic
      * @param stopWhenDone whether to stop controlling the motor when it's reached its target
      * @param encoder
      */
-    public PIDAngleControl(double kP, double kI, double kD, double threshold, boolean stopWhenDone, IAngularEncoder encoder, boolean log)
+    public PIDAngleLogic(double kP, double kI, double kD, double threshold, boolean stopWhenDone, IAngularEncoder encoder, boolean log)
     {
     	_refreshTime = 10;
         
