@@ -15,105 +15,62 @@ public class Options
     	BLUE
     };
 
-    public Alliance _alliance;
-
-    public boolean _armEnabled;
+    public static Alliance alliance = Alliance.BLUE;
+    
+    public static boolean armEnabled = false;
 
     /**
      * port the xbox controller connected to the drivers' console is on
      */
-    public short _controllerPort;
+    public static short controllerPort = 0;
     
     /**
      * update frequency of the motor control code
      */
-    public int _motorControlUpdateFrequency;
+    public static int motorControlUpdateFrequency = 75;
     
     /**
      * 7-bit address of the tachometer
      */
-    public byte _tachI2CAddress;
+    public static byte tachI2CAddress = (byte) 0b11111110;
     
     /**
      * constant for holonomic turning speed
      */
-    public double _turningSpeedConstant;
+    public static double turningSpeedConstant = .4;
     
     /**
      * constant for holonomic gliding speed
      */
-    public double _glidingSpeedConstant;
+    public static double glidingSpeedConstant = .5/Math.sqrt(2);
     
     /**
      * circumfrence of wheels in cm
      */
-    public double _wheelCircumfrence;
+    public static double wheelCircumfrence = 6 * Units.INCH * Math.PI;
     
     /**
      * centimeters moved per wheel degree
      */
-    public double _cmMovedPerDegree;
+    public static double cmMovedPerDegree = wheelCircumfrence / 360;
     
     /**
      * degrees moved per linear centimeter
      */
-    public double _degreesPercm;
+    public static double degreesPercm = 360 / wheelCircumfrence;
     
     /**
      * horizontal distance between wheels in cm
      */
-    public double _wheelBase;
+    public static double wheelBase = 24.5 * Units.INCH;;
 
     /**
      * Gyro offset for swerve drive code
      */
-	public double _gyrBias;
+	public static double gyrBias = 0;
 	
 	/**
 	 * Multiplier for teleop arm speed
 	 */
-	public double _armSpeedMultiplier;
-    
-    
-    private static Options _instance;
-    
-    public static Options instance()
-    {
-    	if(_instance == null)
-    	{	
-    		_instance = new Options();
-    	}
-    	return _instance;
-    }
-    
-    //====================================================================
-    // Configuration settings go HERE
-    private Options()
-    {
-    	_alliance = Alliance.BLUE;
-    	
-    	_armEnabled = false;
-    	
-    	_controllerPort = 0;
-    	
-    	_motorControlUpdateFrequency = 75;
-    	
-    	_tachI2CAddress = (byte) 0b11111110;
-    	
-    	_turningSpeedConstant = .4;
-    	
-    	_glidingSpeedConstant = .5/Math.sqrt(2);
-    	
-    	_wheelCircumfrence = 6 * Units.INCH * Math.PI;
-    	
-    	_cmMovedPerDegree = _wheelCircumfrence / 360;
-    	
-    	_degreesPercm = 360 / _wheelCircumfrence;
-    	
-    	_wheelBase = 24.5 * Units.INCH;
-    	
-    	_gyrBias = 0;
-    	
-    	_armSpeedMultiplier = .8;
-    }
+	public static double armSpeedMultiplier = .8;
 }
