@@ -20,7 +20,6 @@ public class ConstantCurrentLogic extends MotorLogic
 	//so, we can use the same math object
 	private VelocityPID pidCalc;
     private double feedForward;
-    private double targetCurrent = 0;
     private double estimatedOutput = 0;
     
     /**
@@ -44,7 +43,6 @@ public class ConstantCurrentLogic extends MotorLogic
      */
     public synchronized void setControlTarget(double d)
     {
-    	targetCurrent = d;
     	pidCalc.setDesiredVelocity(d);
     	
     	//estimate the motor power needed to get this current
@@ -63,7 +61,6 @@ public class ConstantCurrentLogic extends MotorLogic
     @Override
     public synchronized void clearControlRun()
     {
-    	targetCurrent = 0;
     	pidCalc.setDesiredVelocity(0);
     	estimatedOutput = 0;
     	pidCalc.resetIntegral();
