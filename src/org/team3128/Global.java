@@ -5,6 +5,8 @@ import org.team3128.autonomous.programs.DoNothingAuto;
 import org.team3128.autonomous.programs.DriveIntoAutoZoneAuto;
 import org.team3128.autonomous.programs.DualFarCanGrabAuto;
 import org.team3128.autonomous.programs.FarCanGrabAuto;
+import org.team3128.autonomous.programs.FarToteCanGrabAuto;
+import org.team3128.autonomous.programs.OtherSideToteAndCanAuto;
 import org.team3128.autonomous.programs.TestAuto;
 import org.team3128.drive.ArcadeDrive;
 import org.team3128.hardware.encoder.angular.AnalogPotentiometerEncoder;
@@ -36,9 +38,18 @@ import edu.wpi.first.wpilibj.vision.AxisCamera;
  */
 public class Global
 {
+	//--------------------------------------------------------------------------
+	// Some required stuff
+	//--------------------------------------------------------------------------
+	
 	public ListenerManager _listenerManagerExtreme;
 	public ListenerManager _listenerManagerJoyLeft;
 	public ListenerManager _listenerManagerJoyRight;
+	
+	
+	//--------------------------------------------------------------------------
+	// Robot config starts here
+	//--------------------------------------------------------------------------
 	
 	public MotorLink _pidTestMotor;
 	
@@ -84,6 +95,9 @@ public class Global
 		_listenerManagerExtreme = new ListenerManager(new Joystick(Options.instance()._controllerPort), ControllerExtreme3D.instance);
 		_listenerManagerJoyLeft = new ListenerManager(new Joystick(1), ControllerAttackJoy.instance);
 		_listenerManagerJoyRight = new ListenerManager(new Joystick(2), ControllerAttackJoy.instance);
+		//--------------------------------------------------------------------------
+		// Hardware Init
+		//--------------------------------------------------------------------------
 		
 		powerDistPanel = new PowerDistributionPanel();
 		
@@ -144,9 +158,11 @@ public class Global
 		
 		AutoHardware._leftMotors = leftMotors;
 		AutoHardware._rightMotors = rightMotors;
-		
+		AutoHardware._frontHookMotor = frontHookMotor;
 		AutoHardware.clawArm = clawArm;
 		
+		
+		AutoHardware.global = this;
 		
 		autoPrograms = new SendableChooser();
 		autoPrograms.addDefault("Far Can Grab", new FarCanGrabAuto());
@@ -154,6 +170,8 @@ public class Global
 		autoPrograms.addObject("Drive Into Auto Zone", new DriveIntoAutoZoneAuto());
 		autoPrograms.addObject("Do Nothing", new DoNothingAuto());
 		autoPrograms.addObject("Dev Test Auto", new TestAuto());
+		autoPrograms.addObject("Tote and Can", new FarToteCanGrabAuto());
+		autoPrograms.addObject("Other Side Can", new OtherSideToteAndCanAuto());
 		
 		SmartDashboard.putData("Autonomous Programs", autoPrograms);
 
@@ -183,8 +201,9 @@ public class Global
 
 	void initializeAuto()
 	{
+		clawArm.switchArmToAutoControl();
 		clawArm.resetTargets();
-
+		
 		Command autoCommand = (Command) autoPrograms.getSelected();
 		Log.info("Global", "Starting auto program " + autoCommand.getName());
 		autoCommand.start();

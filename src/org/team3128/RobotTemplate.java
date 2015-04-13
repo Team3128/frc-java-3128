@@ -92,7 +92,7 @@ public class RobotTemplate extends IterativeRobot
    
     public void autonomousPeriodic()
     {   
-		Scheduler.getInstance().run();
+    	Scheduler.getInstance().run();
     }
 
     // DO YOU REALLY WANT TO MODIFY YOUR SOUL?

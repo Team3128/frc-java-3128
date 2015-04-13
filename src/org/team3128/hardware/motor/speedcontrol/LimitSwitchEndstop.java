@@ -1,8 +1,6 @@
 package org.team3128.hardware.motor.speedcontrol;
 
-import org.team3128.Log;
 import org.team3128.hardware.motor.MotorControl;
-import org.team3128.util.RobotMath;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -22,7 +20,7 @@ public class LimitSwitchEndstop extends MotorControl
     
     private boolean _activeLow;
     
-    private double targetSpeed;
+    private double speed, targetSpeed;
     
     private boolean hitMinStop, hitMaxStop;
     
@@ -50,7 +48,7 @@ public class LimitSwitchEndstop extends MotorControl
     	
     	pdpChannel = channel;
     	
-    	_refreshTime = 100;
+    	_refreshTime = 50;
     	
     	_maxAllowedCurrent = maxAllowedCurrent;
     }
@@ -83,17 +81,27 @@ public class LimitSwitchEndstop extends MotorControl
     		return 0;
     	}
     	
-    	if(_maxAllowedCurrent > 0 && _panel.getCurrent(pdpChannel) > _maxAllowedCurrent)
-    	{
-    		Log.debug("LimitSwitchEndstop", Double.toString(targetSpeed));
-    		targetSpeed -= RobotMath.sgn(targetSpeed) * .04;
-    	}
-    	
+//    	if(_panel.getCurrent(pdpChannel) > _maxAllowedCurrent)
+//        {
+//        	if(speed > 0)
+//    		{
+//    		speed -= .5;
+//    		}
+//        }
+//        else
+//        {
+//        	if(speed < targetSpeed)
+//        	{
+//        		speed += .5;
+//        	}
+//        }
+        
         return targetSpeed;
     }
 
     public void clearControlRun()
     {
+    	speed = 0;
     	targetSpeed = 0;
     }
 

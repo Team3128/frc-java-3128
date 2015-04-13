@@ -34,6 +34,24 @@ public class ClawArm
 	 */
 	boolean jointUsingAutoControl, armUsingAutoControl;
 	
+	/**
+	 * 
+	 * @return true if the arm/shoulder is in auto mode
+	 */
+	public boolean isJointUsingAutoControl()
+	{
+		return jointUsingAutoControl;
+	}
+
+	/**
+	 * 
+	 * @return true if the joint/elbow is in auto mode
+	 */
+	public boolean isArmUsingAutoControl()
+	{
+		return armUsingAutoControl;
+	}
+
 	final double clawCurrentThreshold = 3;
 	
 	Thread clawLimitThread;
@@ -63,7 +81,7 @@ public class ClawArm
 		
 		clawMinLimitSwitch = new DigitalInput(9);
 		clawMaxLimitSwitch = new DigitalInput(8);
-		_clawGrab.setSpeedController(new LimitSwitchEndstop(clawMinLimitSwitch, clawMaxLimitSwitch, false, panel, 10, 24));
+		_clawGrab.setSpeedController(new LimitSwitchEndstop(clawMinLimitSwitch, clawMaxLimitSwitch, false, panel, 10, 10));
 		_clawGrab.startControl(0);
 		
 		
@@ -87,13 +105,13 @@ public class ClawArm
 	public void closeClaw()
 	{
 		//the limit switch will stop it
-		_clawGrab.setControlTarget(-.7);
+		_clawGrab.setControlTarget(-1);
 	}
 	
 	public void openClaw()
 	{
 		//the limit switch will stop it
-		_clawGrab.setControlTarget(.7);
+		_clawGrab.setControlTarget(1);
 	}
 	
 	public void stopClawLimitThread()

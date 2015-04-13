@@ -1,6 +1,8 @@
 package org.team3128.autonomous.programs;
 
+import org.team3128.autonomous.AutoUtils;
 import org.team3128.autonomous.commands.CmdDelay;
+import org.team3128.autonomous.commands.CmdLambda;
 import org.team3128.autonomous.commands.CmdLog;
 import org.team3128.autonomous.commands.CmdRunInSeries;
 
@@ -16,6 +18,7 @@ public class TestAuto extends CommandGroup {
 		addSequential(new CmdDelay(2000));
 		addParallel(new CmdRunInSeries(new CmdLog("Step 2 Start"), new CmdDelay(3000), new CmdLog("Step 2 End")));
 		addSequential(new CmdRunInSeries(new CmdLog("Step 3 Start"), new CmdDelay(5000), new CmdLog("Step 3 End")));
+		addSequential(new CmdLambda(() -> AutoUtils.killRobot("I'm too tired.")));
 		addSequential(new CmdLog("Step 4 start"));
 		addSequential(new CmdDelay(2000));
 		addSequential(new CmdLog("Step 4 end"));
