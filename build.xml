@@ -81,6 +81,8 @@
     </javac>
   </target>
   
+  <!-- below code from http://stackoverflow.com/questions/25628253/ant-junit-task-where-to-download-ant-junit-jar-and-where-to-put-it -->
+  
   <available classname="org.junit.runner.Runner" property="junit.installed"/>
 
   <target name="install-junit" description="Install junit" unless="junit.installed">
