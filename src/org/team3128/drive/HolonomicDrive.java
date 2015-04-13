@@ -1,23 +1,28 @@
 package org.team3128.drive;
 
 import org.team3128.Options;
-import org.team3128.hardware.motor.MotorLink;
+import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.listener.ListenerManager;
 import org.team3128.listener.controller.ControllerXbox;
 
+/**
+ * Drive class for holonomic wheels
+ * @author Jacob
+ *
+ */
 public class HolonomicDrive
 {
     double _spdLF, _spdLB, _spdRF, _spdRB;
 
-    MotorLink _driveLeftFront;
-    MotorLink _driveLeftBack;
+    MotorGroup _driveLeftFront;
+    MotorGroup _driveLeftBack;
 
-    MotorLink _driveRightFront;
-    MotorLink _driveRightBack;
+    MotorGroup _driveRightFront;
+    MotorGroup _driveRightBack;
 
     ListenerManager _listenerManager;
     
-    public HolonomicDrive(MotorLink driveLeftFront, MotorLink driveLeftBack, MotorLink driveRightFront, MotorLink driveRightBack, ListenerManager listenerManager)
+    public HolonomicDrive(MotorGroup driveLeftFront, MotorGroup driveLeftBack, MotorGroup driveRightFront, MotorGroup driveRightBack, ListenerManager listenerManager)
     {
     	_driveLeftFront = driveLeftFront;
     	_driveLeftBack = driveLeftBack;
@@ -36,11 +41,11 @@ public class HolonomicDrive
     	
     	double mag = (10.0/7.0)*(Math.sqrt(joyX * joyX + joyY * joyY) - 0.3);
     	
-    	joyX = mag * (2-mag) *Options.instance()._glidingSpeedConstant * (Math.abs(joyX) > thresh ? joyX : 0.0);
-    	joyY = mag * (2-mag) * Options.instance()._glidingSpeedConstant * (Math.abs(joyY) > thresh ? joyY : 0.0);
+    	joyX = mag * (2-mag) *Options.glidingSpeedConstant * (Math.abs(joyX) > thresh ? joyX : 0.0);
+    	joyY = mag * (2-mag) * Options.glidingSpeedConstant * (Math.abs(joyY) > thresh ? joyY : 0.0);
     	
     	double joyTurn = _listenerManager.getRawAxis(ControllerXbox.JOY2X);
-    	joyTurn =-1* Options.instance()._turningSpeedConstant * (Math.abs(joyTurn) > thresh ? joyTurn : 0.0);
+    	joyTurn =-1* Options.turningSpeedConstant * (Math.abs(joyTurn) > thresh ? joyTurn : 0.0);
     	
     	/*if (joyTurn > thresh) {
     		_spdLB = _spdRF = _spdLF = _spdRB = 0.4 *joyTurn;

@@ -6,7 +6,7 @@ import org.team3128.Options;
 import org.team3128.autonomous.AutoHardware;
 import org.team3128.autonomous.AutoUtils;
 import org.team3128.hardware.encoder.distance.IDistanceEncoder;
-import org.team3128.hardware.motor.MotorLink;
+import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.util.Direction;
 import org.team3128.util.RobotMath;
 
@@ -32,9 +32,9 @@ public class CmdInPlaceTurn extends Command {
 	
 	IDistanceEncoder sideEncoder;
 	
-	MotorLink forwardMotors;
+	MotorGroup forwardMotors;
 	
-	MotorLink backwardMotors;
+	MotorGroup backwardMotors;
 	
 	/**
 	 * @param degs how far to turn in degrees.  Accepts negative values.
@@ -48,21 +48,21 @@ public class CmdInPlaceTurn extends Command {
     	
     	if(dir == Direction.RIGHT)
     	{
-    		sideEncoder = AutoHardware._encLeft;
-    		forwardMotors = AutoHardware._leftMotors;
-    		backwardMotors = AutoHardware._rightMotors;
+    		sideEncoder = AutoHardware.encLeft;
+    		forwardMotors = AutoHardware.leftMotors;
+    		backwardMotors = AutoHardware.rightMotors;
     	}
     	else
     	{
-    		sideEncoder = AutoHardware._encRight;
-    		forwardMotors = AutoHardware._rightMotors;
-    		backwardMotors = AutoHardware._leftMotors;
+    		sideEncoder = AutoHardware.encRight;
+    		forwardMotors = AutoHardware.rightMotors;
+    		backwardMotors = AutoHardware.leftMotors;
     	}
     }
 
     protected void initialize()
     {
-		enc = RobotMath.floor_double_int(RobotMath.cmToRotations((Math.PI*Options.instance()._wheelBase)*(abs(_degs)/360.0)));
+		enc = RobotMath.floor_double_int(RobotMath.cmToRotations((Math.PI*Options.wheelBase)*(abs(_degs)/360.0)));
 		AutoUtils.clearEncoders();
 		forwardMotors.setControlTarget(AutoUtils.speedMultiplier * RobotMath.sgn(_degs) * .5);
 		backwardMotors.setControlTarget(AutoUtils.speedMultiplier * -1 * RobotMath.sgn(_degs)* .5);
@@ -81,7 +81,7 @@ public class CmdInPlaceTurn extends Command {
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished()
     {    	
-        return Math.abs(sideEncoder.getDistance()) >= enc;
+        return Math.abs(sideEncoder.getDistanceInDegrees()) >= enc;
     }
 
     // Called once after isFinished returns true

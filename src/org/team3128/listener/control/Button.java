@@ -1,5 +1,12 @@
 package org.team3128.listener.control;
 
+/**
+ * Object to represent a button of a joystick.  It can either be for an up state or a down state.
+ * Its code represents its place in the joystick it is for. 
+ * It implements hashCode() and equals(), so it can be used as a HashMap key. 
+ * @author Jamie
+ *
+ */
 public class Button implements IControl
 {
 	int _code;

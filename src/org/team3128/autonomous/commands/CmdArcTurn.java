@@ -6,7 +6,7 @@ import org.team3128.Options;
 import org.team3128.autonomous.AutoHardware;
 import org.team3128.autonomous.AutoUtils;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
-import org.team3128.hardware.motor.MotorLink;
+import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.util.Direction;
 import org.team3128.util.RobotMath;
 
@@ -34,9 +34,9 @@ public class CmdArcTurn extends Command {
 	
 	QuadratureEncoderLink otherSideEncoder;
 	
-	MotorLink sideMotors;
+	MotorGroup sideMotors;
 	
-	MotorLink otherSideMotors;
+	MotorGroup otherSideMotors;
 	
 	/**
 	 * @param degs how far to turn in degrees.  Accepts negative values.
@@ -50,25 +50,25 @@ public class CmdArcTurn extends Command {
     	
     	if(dir == Direction.RIGHT)
     	{
-    		sideEncoder = AutoHardware._encLeft;
-    		otherSideEncoder = AutoHardware._encRight;
+    		sideEncoder = AutoHardware.encLeft;
+    		otherSideEncoder = AutoHardware.encRight;
     		
-    		sideMotors = AutoHardware._leftMotors;
-    		otherSideMotors = AutoHardware._rightMotors;
+    		sideMotors = AutoHardware.leftMotors;
+    		otherSideMotors = AutoHardware.rightMotors;
     	}
     	else
     	{
-    		sideEncoder = AutoHardware._encRight;
-    		otherSideEncoder = AutoHardware._encLeft;
+    		sideEncoder = AutoHardware.encRight;
+    		otherSideEncoder = AutoHardware.encLeft;
     		
-    		sideMotors = AutoHardware._rightMotors;
-    		otherSideMotors = AutoHardware._leftMotors;
+    		sideMotors = AutoHardware.rightMotors;
+    		otherSideMotors = AutoHardware.leftMotors;
     	}
     }
 
     protected void initialize()
     {
-		enc = RobotMath.cmToRotations((2.0*Math.PI*Options.instance()._wheelBase)*(abs(_degs)/360.0));
+		enc = RobotMath.cmToRotations((2.0*Math.PI*Options.wheelBase)*(abs(_degs)/360.0));
 		AutoUtils.clearEncoders();
 		
 		sideMotors.setControlTarget(AutoUtils.speedMultiplier * RobotMath.sgn(_degs) * .25);
@@ -91,7 +91,7 @@ public class CmdArcTurn extends Command {
     protected boolean isFinished()
     {
     	//System.out.println(sideEncoder.getDistance());
-        return Math.abs(sideEncoder.getDistance()) >= enc;
+        return Math.abs(sideEncoder.getDistanceInDegrees()) >= enc;
     }
 
     // Called once after isFinished returns true

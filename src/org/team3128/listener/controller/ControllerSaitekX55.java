@@ -4,7 +4,7 @@ import org.team3128.listener.control.Axis;
 import org.team3128.listener.control.Button;
 
 /**
- * Class to define the buttons and axes of a Logitech attack joystick
+ * Controller object for a Saitek X55 flight simulator joystick.
  * @author Jamie
  */
 public class ControllerSaitekX55 implements ControllerType

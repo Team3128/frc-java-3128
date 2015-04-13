@@ -2,12 +2,16 @@ package org.team3128.drive;
 
 import org.team3128.Options;
 import org.team3128.hardware.encoder.angular.IAngularEncoder;
-import org.team3128.hardware.motor.MotorLink;
+import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.util.RobotMath;
 
 import edu.wpi.first.wpilibj.Gyro;
 
-
+/**
+ * Drive class for the swerve drive on our 2014 robot.
+ * @author Jamie
+ *
+ */
 public class SwerveDrive
 {
     private double vel, theta, rot, xVel, yVel;
@@ -19,9 +23,9 @@ public class SwerveDrive
     
     private Gyro _gyr;
     
-    private MotorLink _rotFL, _rotFR, _rotBk;
+    private MotorGroup _rotFL, _rotFR, _rotBk;
     
-    private MotorLink _drvFL, _drvFR, _drvBk;
+    private MotorGroup _drvFL, _drvFR, _drvBk;
     
     private IAngularEncoder _encFL, _encFR, _encBk;
 
@@ -29,6 +33,7 @@ public class SwerveDrive
     {
     	
     	//hopefully all encoders are all using the same type of encoders
+    	//otherwise the canRevolveMultipleTimes() will be wrong.
         double a = RobotMath.angleDistance(ang2, ang1, _encFL.canRevolveMultipleTimes());
         double o[] = new double[2];
         if (Math.abs(a) > 90) {
@@ -52,7 +57,7 @@ public class SwerveDrive
         rot = maxRot * x2 * 0.3;
 
         if (Math.abs(vel) > 0.1)
-            theta = RobotMath.rTD(Math.atan2(y1, x1)) + _gyr.getAngle() + Options.instance()._gyrBias;
+            theta = RobotMath.rTD(Math.atan2(y1, x1)) + _gyr.getAngle() + Options.gyrBias;
         else 
             vel = 0;
 
@@ -93,9 +98,9 @@ public class SwerveDrive
     }
 
 
-	public SwerveDrive(Gyro gyr, MotorLink rotFL, MotorLink rotFR,
-			MotorLink rotBk, MotorLink drvFL, MotorLink drvFR,
-			MotorLink drvBk, IAngularEncoder encFL, IAngularEncoder encFR,
+	public SwerveDrive(Gyro gyr, MotorGroup rotFL, MotorGroup rotFR,
+			MotorGroup rotBk, MotorGroup drvFL, MotorGroup drvFR,
+			MotorGroup drvBk, IAngularEncoder encFL, IAngularEncoder encFR,
 			IAngularEncoder encBk)
 	{
 		_gyr = gyr;

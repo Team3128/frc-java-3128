@@ -26,5 +26,72 @@
   <property file="${user.home}/wpilib/java/${version}/ant/build.properties"/>
   
   <import file="${wpilib.ant.dir}/build.xml"/>
+	
+  <!-- +++++++++++++++++++++++++++++++++++++   FRC-Test Start   +++++++++++++++++++++++++++++++++++++ -->
+	
+  <property name="jarpath" value="${build.dir}/"/>
+  
+  <property name="javassist-jar" value="lib/guava-18.0.jar"/>
+  <property name="guava-jar" value="lib/javasssist.jar"/>
+  <property name="reflections-jar" value="lib/reflections-0.9.9-RC1.jar"/>
+  <property name="frctest-jar" value="lib/frctest.jar"/>
+
+  <property name="emulatorclasspath" value="${javassist-jar}:${guava-jar}:${reflections-jar}:${frctest-jar}"/>
+  
+  <target name="test" depends="install-junit,emulatorjar">
+  	
+  </target>
+  
+  <target name="runemulator" depends="emulatorjar">
+  	<java jar="${dist.jar}" fork="true" classpath="${emulatorclasspath}"/>
+  </target>
+	
+  <target name="emulatorjar" depends="emulatorcompile">
+  	<jar destfile="${dist.jar}" update="true">
+  	    <fileset dir="${build.dir}" includes="**/*.class"/>
+  	    <zipgroupfileset dir="${build.jars}">
+  	      <include name="**/*.jar" />
+  	    </zipgroupfileset>
+  	   </jar>
+  </target>
+  
+  <target name="emulatorcompile" description="Compile the source code using the emulator jar.">
+    <mkdir dir="${build.dir}"/>
+    <echo level="warn">[FRC-Test] Compiling ${src.dir} to ${build.dir} using java ${ant.java.version}</echo>
+
+    <!-- check javac version, since the Eclipse-included Ant seems to somethimes use an older one-->
+    <if>
+  	  <equals arg1="${ant.java.version}" arg2="1.8"/>
+      <then>
+	  </then>
+  	  <else>
+  		<echo>[FRC-Test] Ant is using an older java version (${ant.java.version}), if the compile fails that's probably why!</echo>
+  	  </else>
+    </if>
+    
+    <javac srcdir="${src.dir}"
+     destdir="${build.dir}"
+     includeAntRuntime="no"
+     includeJavaRuntime="no"
+     classpath="${emulatorclasspath}"
+     target="${ant.java.version}"
+     source="${ant.java.version}"
+     compiler="javac${ant.java.version}"
+     debug="true">
+    </javac>
+  </target>
+  
+  <!-- below code from http://stackoverflow.com/questions/25628253/ant-junit-task-where-to-download-ant-junit-jar-and-where-to-put-it -->
+  
+  <available classname="org.junit.runner.Runner" property="junit.installed"/>
+
+  <target name="install-junit" description="Install junit" unless="junit.installed">
+      <mkdir dir="${user.home}/.ant/lib"/>
+
+      <get dest="${user.home}/.ant/lib/ant-junit.jar" src="http://search.maven.org/remotecontent?filepath=org/apache/ant/ant-junit/1.9.4/ant-junit-1.9.4.jar"/>
+      <get dest="${user.home}/.ant/lib/junit.jar" src="http://search.maven.org/remotecontent?filepath=junit/junit/4.11/junit-4.11.jar"/>
+
+      <fail message="Junit has been installed. Run the build again"/>
+  </target>
 
 </project> 

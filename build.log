@@ -1,0 +1,396 @@
+Buildfile: C:\Eclipse\Workspace\2014-frc-java\build.xml
+Trying to override old definition of task classloader
+
+emulatorcompile:
+     [echo] [FRC-Test] Compiling src with classpath=C:\Users\Jamie/wpilib/java/current/lib/WPILib.jar:C:\Users\Jamie/wpilib/java/current/lib/NetworkTables.jar to build using java 1.8
+    [javac] Compiling 71 source files to C:\Eclipse\Workspace\2014-frc-java\build
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\MainClass.java:3: error: package edu.wpi.first.wpilibj.smartdashboard does not exist
+    [javac] import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+    [javac]                                            ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\RobotTemplate.java:8: error: package edu.wpi.first.wpilibj does not exist
+    [javac] import edu.wpi.first.wpilibj.IterativeRobot;
+    [javac]                             ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\RobotTemplate.java:9: error: package edu.wpi.first.wpilibj.command does not exist
+    [javac] import edu.wpi.first.wpilibj.command.CommandGroup;
+    [javac]                                     ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\RobotTemplate.java:10: error: package edu.wpi.first.wpilibj.command does not exist
+    [javac] import edu.wpi.first.wpilibj.command.Scheduler;
+    [javac]                                     ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\RobotTemplate.java:11: error: package edu.wpi.first.wpilibj.smartdashboard does not exist
+    [javac] import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+    [javac]                                            ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\RobotTemplate.java:27: error: cannot find symbol
+    [javac] public class RobotTemplate extends IterativeRobot 
+    [javac]                                    ^
+    [javac]   symbol: class IterativeRobot
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\MainClass.java:30: error: cannot find symbol
+    [javac] 	protected abstract void addAutoPrograms(SendableChooser autoChooser);
+    [javac] 	                                        ^
+    [javac]   symbol:   class SendableChooser
+    [javac]   location: class MainClass
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\listener\ListenerManager.java:18: error: package edu.wpi.first.wpilibj does not exist
+    [javac] import edu.wpi.first.wpilibj.Joystick;
+    [javac]                             ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\RobotTemplate.java:31: error: cannot find symbol
+    [javac] 	SendableChooser autoChooser;
+    [javac] 	^
+    [javac]   symbol:   class SendableChooser
+    [javac]   location: class RobotTemplate
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\listener\ListenerManager.java:45: error: cannot find symbol
+    [javac] 	Joystick _joystick;
+    [javac] 	^
+    [javac]   symbol:   class Joystick
+    [javac]   location: class ListenerManager
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\listener\ListenerManager.java:55: error: cannot find symbol
+    [javac] 	public ListenerManager(Joystick joystick, ControllerType controlType)
+    [javac] 	                       ^
+    [javac]   symbol:   class Joystick
+    [javac]   location: class ListenerManager
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\AutoHardware.java:7: error: package edu.wpi.first.wpilibj does not exist
+    [javac] import edu.wpi.first.wpilibj.Ultrasonic;
+    [javac]                             ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\encoder\velocity\QuadratureEncoderLink.java:5: error: package edu.wpi.first.wpilibj does not exist
+    [javac] import edu.wpi.first.wpilibj.Encoder;
+    [javac]                             ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\motor\MotorGroup.java:7: error: package edu.wpi.first.wpilibj does not exist
+    [javac] import edu.wpi.first.wpilibj.SpeedController;
+    [javac]                             ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\AutoHardware.java:24: error: cannot find symbol
+    [javac] 	public static Ultrasonic ultrasonic;
+    [javac] 	              ^
+    [javac]   symbol:   class Ultrasonic
+    [javac]   location: class AutoHardware
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\mechanisms\ClawArm.java:11: error: package edu.wpi.first.wpilibj does not exist
+    [javac] import edu.wpi.first.wpilibj.DigitalInput;
+    [javac]                             ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\mechanisms\ClawArm.java:12: error: package edu.wpi.first.wpilibj does not exist
+    [javac] import edu.wpi.first.wpilibj.PowerDistributionPanel;
+    [javac]                             ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\encoder\velocity\QuadratureEncoderLink.java:14: error: cannot find symbol
+    [javac] 	Encoder encoder;
+    [javac] 	^
+    [javac]   symbol:   class Encoder
+    [javac]   location: class QuadratureEncoderLink
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\motor\MotorGroup.java:25: error: cannot find symbol
+    [javac]     private final ArrayList<SpeedController> motors = new ArrayList<SpeedController>();
+    [javac]                             ^
+    [javac]   symbol:   class SpeedController
+    [javac]   location: class MotorGroup
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\motor\MotorGroup.java:109: error: cannot find symbol
+    [javac]     public void addControlledMotor(SpeedController controller)
+    [javac]                                    ^
+    [javac]   symbol:   class SpeedController
+    [javac]   location: class MotorGroup
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\mechanisms\ClawArm.java:35: error: cannot find symbol
+    [javac] 	public DigitalInput clawMinLimitSwitch;
+    [javac] 	       ^
+    [javac]   symbol:   class DigitalInput
+    [javac]   location: class ClawArm
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\mechanisms\ClawArm.java:36: error: cannot find symbol
+    [javac] 	public DigitalInput clawMaxLimitSwitch;
+    [javac] 	       ^
+    [javac]   symbol:   class DigitalInput
+    [javac]   location: class ClawArm
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\mechanisms\ClawArm.java:64: error: cannot find symbol
+    [javac] 	public ClawArm(MotorGroup armRotate, MotorGroup armJoint, MotorGroup clawGrab, IAngularEncoder armEncoder, IAngularEncoder jointEncoder, PowerDistributionPanel panel)
+    [javac] 	                                                                                                                                         ^
+    [javac]   symbol:   class PowerDistributionPanel
+    [javac]   location: class ClawArm
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdArcTurn.java:13: error: package edu.wpi.first.wpilibj.command does not exist
+    [javac] import edu.wpi.first.wpilibj.command.Command;
+    [javac]                                     ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdArcTurn.java:20: error: cannot find symbol
+    [javac] public class CmdArcTurn extends Command {
+    [javac]                                 ^
+    [javac]   symbol: class Command
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdArmAngles.java:6: error: package edu.wpi.first.wpilibj.command does not exist
+    [javac] import edu.wpi.first.wpilibj.command.Command;
+    [javac]                                     ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdArmAngles.java:8: error: cannot find symbol
+    [javac] public class CmdArmAngles extends Command
+    [javac]                                   ^
+    [javac]   symbol: class Command
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdBrake.java:8: error: package edu.wpi.first.wpilibj.command does not exist
+    [javac] import edu.wpi.first.wpilibj.command.Command;
+    [javac]                                     ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdBrake.java:30: error: cannot find symbol
+    [javac] public class CmdBrake extends Command 
+    [javac]                               ^
+    [javac]   symbol: class Command
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdCloseClaw.java:5: error: package edu.wpi.first.wpilibj.command does not exist
+    [javac] import edu.wpi.first.wpilibj.command.Command;
+    [javac]                                     ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdCloseClaw.java:7: error: cannot find symbol
+    [javac] public class CmdCloseClaw extends Command
+    [javac]                                   ^
+    [javac]   symbol: class Command
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdDelay.java:3: error: package edu.wpi.first.wpilibj.command does not exist
+    [javac] import edu.wpi.first.wpilibj.command.Command;
+    [javac]                                     ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdDelay.java:5: error: cannot find symbol
+    [javac] public class CmdDelay extends Command
+    [javac]                               ^
+    [javac]   symbol: class Command
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdInPlaceTurn.java:13: error: package edu.wpi.first.wpilibj.command does not exist
+    [javac] import edu.wpi.first.wpilibj.command.Command;
+    [javac]                                     ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdInPlaceTurn.java:20: error: cannot find symbol
+    [javac] public class CmdInPlaceTurn extends Command {
+    [javac]                                     ^
+    [javac]   symbol: class Command
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdLog.java:5: error: package edu.wpi.first.wpilibj.command does not exist
+    [javac] import edu.wpi.first.wpilibj.command.Command;
+    [javac]                                     ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdLog.java:12: error: cannot find symbol
+    [javac] public class CmdLog extends Command
+    [javac]                             ^
+    [javac]   symbol: class Command
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdMoveForward.java:10: error: package edu.wpi.first.wpilibj.command does not exist
+    [javac] import edu.wpi.first.wpilibj.command.Command;
+    [javac]                                     ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdMoveForward.java:15: error: cannot find symbol
+    [javac] public class CmdMoveForward extends Command {
+    [javac]                                     ^
+    [javac]   symbol: class Command
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdMoveUltrasonic.java:8: error: package edu.wpi.first.wpilibj.command does not exist
+    [javac] import edu.wpi.first.wpilibj.command.Command;
+    [javac]                                     ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdMoveUltrasonic.java:29: error: cannot find symbol
+    [javac] public class CmdMoveUltrasonic extends Command {
+    [javac]                                        ^
+    [javac]   symbol: class Command
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdOpenClaw.java:5: error: package edu.wpi.first.wpilibj.command does not exist
+    [javac] import edu.wpi.first.wpilibj.command.Command;
+    [javac]                                     ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdOpenClaw.java:7: error: cannot find symbol
+    [javac] public class CmdOpenClaw extends Command
+    [javac]                                  ^
+    [javac]   symbol: class Command
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdRunInParallel.java:3: error: package edu.wpi.first.wpilibj.command does not exist
+    [javac] import edu.wpi.first.wpilibj.command.Command;
+    [javac]                                     ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdRunInParallel.java:4: error: package edu.wpi.first.wpilibj.command does not exist
+    [javac] import edu.wpi.first.wpilibj.command.CommandGroup;
+    [javac]                                     ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdRunInParallel.java:26: error: cannot find symbol
+    [javac] public class CmdRunInParallel extends CommandGroup {
+    [javac]                                       ^
+    [javac]   symbol: class CommandGroup
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdRunInParallel.java:28: error: cannot find symbol
+    [javac]     public CmdRunInParallel(Command... commands)
+    [javac]                             ^
+    [javac]   symbol:   class Command
+    [javac]   location: class CmdRunInParallel
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdRunInSeries.java:3: error: package edu.wpi.first.wpilibj.command does not exist
+    [javac] import edu.wpi.first.wpilibj.command.Command;
+    [javac]                                     ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdRunInSeries.java:4: error: package edu.wpi.first.wpilibj.command does not exist
+    [javac] import edu.wpi.first.wpilibj.command.CommandGroup;
+    [javac]                                     ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdRunInSeries.java:10: error: cannot find symbol
+    [javac] public class CmdRunInSeries extends CommandGroup {
+    [javac]                                     ^
+    [javac]   symbol: class CommandGroup
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdRunInSeries.java:12: error: cannot find symbol
+    [javac]     public CmdRunInSeries(Command... commands)
+    [javac]                           ^
+    [javac]   symbol:   class Command
+    [javac]   location: class CmdRunInSeries
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdVisonFindCan.java:5: error: package edu.wpi.first.wpilibj.command does not exist
+    [javac] import edu.wpi.first.wpilibj.command.Command;
+    [javac]                                     ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\commands\CmdVisonFindCan.java:23: error: cannot find symbol
+    [javac] public class CmdVisonFindCan extends Command {
+    [javac]                                      ^
+    [javac]   symbol: class Command
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\programs\DoNothingAuto.java:3: error: package edu.wpi.first.wpilibj.command does not exist
+    [javac] import edu.wpi.first.wpilibj.command.CommandGroup;
+    [javac]                                     ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\programs\DoNothingAuto.java:8: error: cannot find symbol
+    [javac] public class DoNothingAuto extends CommandGroup {
+    [javac]                                    ^
+    [javac]   symbol: class CommandGroup
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\programs\DriveIntoAutoZoneAuto.java:5: error: package edu.wpi.first.wpilibj.command does not exist
+    [javac] import edu.wpi.first.wpilibj.command.CommandGroup;
+    [javac]                                     ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\programs\DriveIntoAutoZoneAuto.java:7: error: cannot find symbol
+    [javac] public class DriveIntoAutoZoneAuto extends CommandGroup
+    [javac]                                            ^
+    [javac]   symbol: class CommandGroup
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\programs\DualFarCanGrabAuto.java:12: error: package edu.wpi.first.wpilibj.command does not exist
+    [javac] import edu.wpi.first.wpilibj.command.CommandGroup;
+    [javac]                                     ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\programs\DualFarCanGrabAuto.java:14: error: cannot find symbol
+    [javac] public class DualFarCanGrabAuto extends CommandGroup
+    [javac]                                         ^
+    [javac]   symbol: class CommandGroup
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\programs\FarCanGrabAuto.java:10: error: package edu.wpi.first.wpilibj.command does not exist
+    [javac] import edu.wpi.first.wpilibj.command.CommandGroup;
+    [javac]                                     ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\programs\FarCanGrabAuto.java:12: error: cannot find symbol
+    [javac] public class FarCanGrabAuto extends CommandGroup
+    [javac]                                     ^
+    [javac]   symbol: class CommandGroup
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\programs\TestAuto.java:7: error: package edu.wpi.first.wpilibj.command does not exist
+    [javac] import edu.wpi.first.wpilibj.command.CommandGroup;
+    [javac]                                     ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\autonomous\programs\TestAuto.java:11: error: cannot find symbol
+    [javac] public class TestAuto extends CommandGroup {
+    [javac]                               ^
+    [javac]   symbol: class CommandGroup
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\drive\SwerveDrive.java:8: error: package edu.wpi.first.wpilibj does not exist
+    [javac] import edu.wpi.first.wpilibj.Gyro;
+    [javac]                             ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\drive\SwerveDrive.java:24: error: cannot find symbol
+    [javac]     private Gyro _gyr;
+    [javac]             ^
+    [javac]   symbol:   class Gyro
+    [javac]   location: class SwerveDrive
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\drive\SwerveDrive.java:101: error: cannot find symbol
+    [javac] 	public SwerveDrive(Gyro gyr, MotorGroup rotFL, MotorGroup rotFR,
+    [javac] 	                   ^
+    [javac]   symbol:   class Gyro
+    [javac]   location: class SwerveDrive
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\encoder\angular\AnalogPotentiometerEncoder.java:3: error: package edu.wpi.first.wpilibj does not exist
+    [javac] import edu.wpi.first.wpilibj.AnalogInput;
+    [javac]                             ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\encoder\angular\AnalogPotentiometerEncoder.java:12: error: cannot find symbol
+    [javac] 	private AnalogInput enc;
+    [javac] 	        ^
+    [javac]   symbol:   class AnalogInput
+    [javac]   location: class AnalogPotentiometerEncoder
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\encoder\angular\MagneticPotentiometerEncoder.java:3: error: package edu.wpi.first.wpilibj does not exist
+    [javac] import edu.wpi.first.wpilibj.AnalogInput;
+    [javac]                             ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\encoder\angular\MagneticPotentiometerEncoder.java:16: error: cannot find symbol
+    [javac]     private AnalogInput enc;
+    [javac]             ^
+    [javac]   symbol:   class AnalogInput
+    [javac]   location: class MagneticPotentiometerEncoder
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\encoder\angular\OpticalDiskEncoder.java:3: error: package edu.wpi.first.wpilibj does not exist
+    [javac] import edu.wpi.first.wpilibj.Encoder;
+    [javac]                             ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\encoder\angular\OpticalDiskEncoder.java:8: error: cannot find symbol
+    [javac]     private final Encoder enc;
+    [javac]                   ^
+    [javac]   symbol:   class Encoder
+    [javac]   location: class OpticalDiskEncoder
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\encoder\angular\OpticalDiskEncoder.java:10: error: cannot find symbol
+    [javac]     public OpticalDiskEncoder(Encoder e)
+    [javac]                               ^
+    [javac]   symbol:   class Encoder
+    [javac]   location: class OpticalDiskEncoder
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\encoder\velocity\TachLink.java:7: error: package edu.wpi.first.wpilibj does not exist
+    [javac] import edu.wpi.first.wpilibj.I2C;
+    [javac]                             ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\encoder\velocity\TachLink.java:32: error: cannot find symbol
+    [javac] 	private static I2C _tachConnection;
+    [javac] 	               ^
+    [javac]   symbol:   class I2C
+    [javac]   location: class TachLink
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\mechanisms\CockArm.java:6: error: package edu.wpi.first.wpilibj does not exist
+    [javac] import edu.wpi.first.wpilibj.DigitalInput;
+    [javac]                             ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\mechanisms\CockArm.java:19: error: cannot find symbol
+    [javac]     DigitalInput _shooterTSensor;
+    [javac]     ^
+    [javac]   symbol:   class DigitalInput
+    [javac]   location: class CockArm
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\mechanisms\CockArm.java:25: error: cannot find symbol
+    [javac]     public CockArm(DigitalInput shooterTSensor, MotorGroup mShooter)
+    [javac]                    ^
+    [javac]   symbol:   class DigitalInput
+    [javac]   location: class CockArm
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\misc\RelayLink.java:3: error: package edu.wpi.first.wpilibj does not exist
+    [javac] import edu.wpi.first.wpilibj.Relay;
+    [javac]                             ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\misc\RelayLink.java:7: error: cannot find symbol
+    [javac] 	Relay _rel;
+    [javac] 	^
+    [javac]   symbol:   class Relay
+    [javac]   location: class RelayLink
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\misc\RelayLink.java:14: error: cannot find symbol
+    [javac]     public RelayLink(Relay rel)
+    [javac]                      ^
+    [javac]   symbol:   class Relay
+    [javac]   location: class RelayLink
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\misc\Piston.java:5: error: package edu.wpi.first.wpilibj does not exist
+    [javac] import edu.wpi.first.wpilibj.Solenoid;
+    [javac]                             ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\misc\Piston.java:15: error: cannot find symbol
+    [javac]     private final Solenoid solA, solB;
+    [javac]                   ^
+    [javac]   symbol:   class Solenoid
+    [javac]   location: class Piston
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\misc\Piston.java:18: error: cannot find symbol
+    [javac]     public Piston(Solenoid solA, Solenoid solB)
+    [javac]                   ^
+    [javac]   symbol:   class Solenoid
+    [javac]   location: class Piston
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\misc\Piston.java:18: error: cannot find symbol
+    [javac]     public Piston(Solenoid solA, Solenoid solB)
+    [javac]                                  ^
+    [javac]   symbol:   class Solenoid
+    [javac]   location: class Piston
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\misc\Piston.java:23: error: cannot find symbol
+    [javac]     public Piston(Solenoid solA, Solenoid solB, boolean solStateA, boolean solStateB)
+    [javac]                   ^
+    [javac]   symbol:   class Solenoid
+    [javac]   location: class Piston
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\misc\Piston.java:23: error: cannot find symbol
+    [javac]     public Piston(Solenoid solA, Solenoid solB, boolean solStateA, boolean solStateB)
+    [javac]                                  ^
+    [javac]   symbol:   class Solenoid
+    [javac]   location: class Piston
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\motor\limiter\CurrentCutoffLimiter.java:6: error: package edu.wpi.first.wpilibj does not exist
+    [javac] import edu.wpi.first.wpilibj.PowerDistributionPanel;
+    [javac]                             ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\motor\limiter\CurrentCutoffLimiter.java:16: error: cannot find symbol
+    [javac]     private PowerDistributionPanel _panel;
+    [javac]             ^
+    [javac]   symbol:   class PowerDistributionPanel
+    [javac]   location: class CurrentCutoffLimiter
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\motor\limiter\CurrentCutoffLimiter.java:30: error: cannot find symbol
+    [javac]     public CurrentCutoffLimiter(PowerDistributionPanel panel, int motorChannel, double currentThreshold, int refreshMillis)
+    [javac]                                 ^
+    [javac]   symbol:   class PowerDistributionPanel
+    [javac]   location: class CurrentCutoffLimiter
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\motor\limiter\SwitchLimiter.java:5: error: package edu.wpi.first.wpilibj does not exist
+    [javac] import edu.wpi.first.wpilibj.DigitalInput;
+    [javac]                             ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\motor\limiter\SwitchLimiter.java:6: error: package edu.wpi.first.wpilibj does not exist
+    [javac] import edu.wpi.first.wpilibj.PowerDistributionPanel;
+    [javac]                             ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\motor\limiter\SwitchLimiter.java:19: error: cannot find symbol
+    [javac]     private DigitalInput _minSwitch, _maxSwitch;
+    [javac]             ^
+    [javac]   symbol:   class DigitalInput
+    [javac]   location: class SwitchLimiter
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\motor\limiter\SwitchLimiter.java:31: error: cannot find symbol
+    [javac]     public SwitchLimiter(DigitalInput minSwitch, DigitalInput maxSwitch, boolean activeLow, PowerDistributionPanel panel, int channel, double maxAllowedCurrent)
+    [javac]                          ^
+    [javac]   symbol:   class DigitalInput
+    [javac]   location: class SwitchLimiter
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\motor\limiter\SwitchLimiter.java:31: error: cannot find symbol
+    [javac]     public SwitchLimiter(DigitalInput minSwitch, DigitalInput maxSwitch, boolean activeLow, PowerDistributionPanel panel, int channel, double maxAllowedCurrent)
+    [javac]                                                  ^
+    [javac]   symbol:   class DigitalInput
+    [javac]   location: class SwitchLimiter
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\hardware\motor\limiter\SwitchLimiter.java:31: error: cannot find symbol
+    [javac]     public SwitchLimiter(DigitalInput minSwitch, DigitalInput maxSwitch, boolean activeLow, PowerDistributionPanel panel, int channel, double maxAllowedCurrent)
+    [javac]                                                                                             ^
+    [javac]   symbol:   class PowerDistributionPanel
+    [javac]   location: class SwitchLimiter
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\main\MainTheClawwww.java:23: error: package edu.wpi.first.wpilibj does not exist
+    [javac] import edu.wpi.first.wpilibj.Joystick;
+    [javac]                             ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\main\MainTheClawwww.java:24: error: package edu.wpi.first.wpilibj does not exist
+    [javac] import edu.wpi.first.wpilibj.PowerDistributionPanel;
+    [javac]                             ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\main\MainTheClawwww.java:25: error: package edu.wpi.first.wpilibj does not exist
+    [javac] import edu.wpi.first.wpilibj.Servo;
+    [javac]                             ^
+    [javac] C:\Eclipse\Workspace\2014-frc-java\src\org\team3128\main\MainTheClawwww.java:26: error: package edu.wpi.first.wpilibj does not exist
+    [javac] import edu.wpi.first.wpilibj.Talon;
+    [javac]                             ^
+    [javac] 100 errors

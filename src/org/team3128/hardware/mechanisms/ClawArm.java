@@ -1,26 +1,32 @@
 package org.team3128.hardware.mechanisms;
 
 import org.team3128.hardware.encoder.angular.IAngularEncoder;
-import org.team3128.hardware.motor.MotorLink;
-import org.team3128.hardware.motor.speedcontrol.AngleEndstopTarget;
-import org.team3128.hardware.motor.speedcontrol.LimitSwitchEndstop;
-import org.team3128.hardware.motor.speedcontrol.LinearAngleTarget;
+import org.team3128.hardware.motor.MotorGroup;
+import org.team3128.hardware.motor.limiter.AngleLimiter;
+import org.team3128.hardware.motor.limiter.SwitchLimiter;
+import org.team3128.hardware.motor.logic.BlankSpeedLogic;
+import org.team3128.hardware.motor.logic.PIDAngleLogic;
 import org.team3128.util.Units;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
+/**
+ * Mechanism to control our 2015 robot, The Clawwwwwww.  It basically manages the entire arm.
+ * @author Jamie
+ *
+ */
 public class ClawArm
 {
-	public MotorLink _armRotate, _armJoint, _clawGrab;
+	public MotorGroup _armRotate, _armJoint, _clawGrab;
 	
-	LinearAngleTarget armRotateAngleTarget;
+	PIDAngleLogic armRotateAngleTarget;
 	
-	LinearAngleTarget armJointAngleTarget;
+	PIDAngleLogic armJointAngleTarget;
 	
-	AngleEndstopTarget armRotateEndstopTarget;
+	AngleLimiter armRotateEndstopTarget;
 	
-	AngleEndstopTarget armJointEndstopTarget;
+	AngleLimiter armJointEndstopTarget;
 	
 	public IAngularEncoder _armRotateEncoder;
 	
@@ -73,7 +79,7 @@ public class ClawArm
 	 * @param armJoint
 	 * @param clawGrab
 	 */
-	public ClawArm(MotorLink armRotate, MotorLink armJoint, MotorLink clawGrab, IAngularEncoder armEncoder, IAngularEncoder jointEncoder, PowerDistributionPanel panel)
+	public ClawArm(MotorGroup armRotate, MotorGroup armJoint, MotorGroup clawGrab, IAngularEncoder armEncoder, IAngularEncoder jointEncoder, PowerDistributionPanel panel)
 	{
 		_armRotate = armRotate;
 		_armJoint = armJoint;
@@ -81,17 +87,19 @@ public class ClawArm
 		
 		clawMinLimitSwitch = new DigitalInput(9);
 		clawMaxLimitSwitch = new DigitalInput(8);
-		_clawGrab.setSpeedController(new LimitSwitchEndstop(clawMinLimitSwitch, clawMaxLimitSwitch, false, panel, 10, 10));
+		BlankSpeedLogic clawControl = new BlankSpeedLogic(0);
+		clawControl.setLimiter(new SwitchLimiter(clawMinLimitSwitch, clawMaxLimitSwitch, false, panel, 10, 10));
+		_clawGrab.setSpeedController(clawControl);
 		_clawGrab.startControl(0);
 		
 		
-		armRotateAngleTarget = new LinearAngleTarget(.010, .000005, .00015, 4, false, armEncoder, false);
+		armRotateAngleTarget = new PIDAngleLogic(.010, .000005, .00015, 4, false, armEncoder, false);
 		
-		armJointAngleTarget = new LinearAngleTarget(.009, 0, 0, 5, false, jointEncoder, false);
+		armJointAngleTarget = new PIDAngleLogic(.009, 0, 0, 5, false, jointEncoder, false);
 		
-		armRotateEndstopTarget = new AngleEndstopTarget(22, 295, 2, armEncoder);
+		armRotateEndstopTarget = new AngleLimiter(22, 295, 2, armEncoder);
 		
-		armJointEndstopTarget = new AngleEndstopTarget(0, 300, 5, jointEncoder);
+		armJointEndstopTarget = new AngleLimiter(0, 300, 5, jointEncoder);
 		
 		_armRotateEncoder = armEncoder;
 		

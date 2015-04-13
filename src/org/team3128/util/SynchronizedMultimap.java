@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Our homegrown replacement for a Guava multimap
+ * Our homegrown replacement for a Guava multimap.
+ * 
+ * Currently, this is needed to make the ListenerManager work.
  * @author Jamie
  *
  * @param <Key>

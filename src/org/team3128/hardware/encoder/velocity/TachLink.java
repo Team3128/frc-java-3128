@@ -6,6 +6,27 @@ import org.team3128.Options;
 
 import edu.wpi.first.wpilibj.I2C;
 
+/*        _
+ *       / \ 
+ *      / _ \
+ *     / [ ] \
+ *    /  [_]  \
+ *   /    _    \
+ *  /    (_)    \
+ * /_____________\
+ * -----------------------------------------------------
+ * UNTESTED CODE!
+ * This class has never been tried on an actual robot.
+ * It may be non or partially functional.
+ * Do not make any assumptions as to its behavior!
+ * And don't blink.  Not even for a second.
+ * -----------------------------------------------------*/
+
+/**
+ * Work-in-progress class to interface with Ray's tachometer.
+ * @author Jamie
+ *
+ */
 public class TachLink implements IVelocityEncoder
 {
 	private static I2C _tachConnection;
@@ -31,7 +52,7 @@ public class TachLink implements IVelocityEncoder
 		//init static variables if this is the first use of the class
 		if(_tachConnection == null)
 		{
-			_tachConnection = new I2C(I2C.Port.kOnboard, Options.instance()._tachI2CAddress);
+			_tachConnection = new I2C(I2C.Port.kOnboard, Options.tachI2CAddress);
 			
 			_tachConnMutex = new ReentrantLock();
 		}
@@ -44,7 +65,7 @@ public class TachLink implements IVelocityEncoder
 	 * 
 	 * Time-wise, this is a relatively expensive operation, so don't call this function unnecessarily.
 	 */
-	public short getRaw()
+	public int getRaw()
 	{
 		_tachConnMutex.lock();
 		
@@ -54,9 +75,9 @@ public class TachLink implements IVelocityEncoder
 		//read raw value
 		byte[] result = new byte[4];
 		_tachConnection.transaction(new byte[0], 0, result, 4);
-		short rawValue = 0;
+		int rawValue = 0;
 		
-		//combine 4 bytes to make a short
+		//combine 4 bytes to make a int
 		for(int counter = 0; counter < 4; ++counter)
 		{
 			rawValue |= result[3 - counter] << counter;

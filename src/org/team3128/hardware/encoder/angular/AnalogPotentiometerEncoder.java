@@ -2,7 +2,13 @@ package org.team3128.hardware.encoder.angular;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 
-public class AnalogPotentiometerEncoder implements IAngularEncoder {
+/**
+ * Represents a variable resistor/potentiometer encoder. 
+ * @author Kian, Jamie
+ *
+ */
+public class AnalogPotentiometerEncoder implements IAngularEncoder
+{
 	private AnalogInput enc;
 	private double degreesPerVolt;
     private final double offset;
@@ -29,7 +35,8 @@ public class AnalogPotentiometerEncoder implements IAngularEncoder {
 	}
 
 	@Override
-	public double getRawValue() {
+	public double getRawValue()
+	{
 		return enc.getVoltage();
 	}
 

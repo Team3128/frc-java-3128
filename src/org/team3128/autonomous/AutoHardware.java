@@ -3,7 +3,7 @@ package org.team3128.autonomous;
 import org.team3128.Global;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
 import org.team3128.hardware.mechanisms.ClawArm;
-import org.team3128.hardware.motor.MotorLink;
+import org.team3128.hardware.motor.MotorGroup;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Ultrasonic;
@@ -17,11 +17,11 @@ import edu.wpi.first.wpilibj.Ultrasonic;
  */
 public class AutoHardware
 {
-	public static QuadratureEncoderLink _encLeft;
-	public static QuadratureEncoderLink _encRight;
+	public static QuadratureEncoderLink encLeft;
+	public static QuadratureEncoderLink encRight;
 	
-	public static MotorLink _leftMotors;
-	public static MotorLink _rightMotors;
+	public static MotorGroup leftMotors;
+	public static MotorGroup rightMotors;
 	public static MotorLink _frontHookMotor;
 	
 	public static PowerDistributionPanel _distPanel;

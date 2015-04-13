@@ -21,9 +21,9 @@ import edu.wpi.first.wpilibj.Joystick;
  *This class combines the functions of XControl and ListenerManager from the old robot code.
  *It is constructed with one Joystick object, which, confusingly, seems to be the wpilib metaphor for an entire controller.
  *It polls the controller at a set interval, and invokes listeners
- *whenever a value they're set for has changed (the button listeners are set for either call on up or down).
+ *whenever a value they're set for has changed (the button listeners are set for either up or down).
  *Listeners are run on the object's polling thread, and will need to be passed a reference
- *to the listener manager somehow if they need control data.
+ *to the listener manager somehow if they need control data (or they can use lambda capture).
  *You may register the same instance of a listener for as many
  *controls as you like, but it will only be invoked once per polling cycle no matter how many of its registered
  *controls have changed.  However, if you register two different instances of the same listener object for two different controls, 
@@ -65,29 +65,47 @@ public class ListenerManager
 		_buttonValues = controlValues.left;
 	}
 	
-	//add listener for given listenable
-	//multiple listeners can be added for the same listenable
+	/**
+	 * Add a listener for the given listenable.
+	 * Multiple listeners can be added for the same listenable.
+	 * 
+	 * @param key
+	 * @param listener
+	 */
 	public void addListener(IControl key, IListenerCallback listener)
 	{
 		_listeners.put(key, listener);
 	}
 
-	//remove all listeners, period
+	/**
+	 * remove all listeners, period
+	 */
 	public void removeAllListeners()
 	{
 		_listeners.clear();
 	}
 
-	//remove all listeners set for the given listener
-	//note that removeAllListenersForControl(IControl.AUP) is NOT the same as removeAllListenersForControl(IControl.ADOWN)
+	/**
+	 * Remove all listeners set for the given listener. <br>
+	 * Note that removeAllListenersForControl(SomeController.FOOUP) is <b>not</b> the same as removeAllListenersForControl(SomeController.FOODOWN).
+	 * @param listener
+	 */
 	public void removeAllListenersForControl(IControl listener)
 	{
 		_listeners.removeAll(listener);
 	}
 
-	//returns the boolean value of a button listenable (between A and R3).
-	//returns true if presses whether $buttonUP or $buttonDOWN was given
-	//Does bounds checking, throws if value is out of range.
+	//
+	//
+	//
+	
+	/**
+	 * Returns the boolean value of a button listenable (between A and R3).
+	 * Returns true if the button is pressed whether FOOUP or FOODOWN was given.
+	 * Does bounds checking, throws if value is out of range.
+	 * @param button
+	 * @return
+	 */
 	public boolean getRawBool(Button button)
 	{
 		_controlValuesMutex.lock();
@@ -105,8 +123,11 @@ public class ListenerManager
 		return retval;
 	}
 
-	//returns the double value of an axis listenable (between JOY1X and TRIGGERS).
-	//Does bounds checking, throws if value is out of range.
+	/**
+	 * Get the raw value for an axis.
+	 * @param axis
+	 * @return
+	 */
 	public double getRawAxis(Axis axis)
 	{
 		_controlValuesMutex.lock();
@@ -123,6 +144,10 @@ public class ListenerManager
 		return retval;
 	}
 
+	/**
+	 * 
+	 * @return two HashMaps with the current button and axis values for the controller
+	 */
 	Pair<HashMap<Button, Boolean>, HashMap<Axis, Double>> pollControls()
 	{
 		HashMap<Button, Boolean> buttonValues = new HashMap<Button, Boolean>();

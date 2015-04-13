@@ -1,20 +1,25 @@
 package org.team3128.drive;
 
-import org.team3128.hardware.motor.MotorLink;
+import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.listener.ListenerManager;
 import org.team3128.util.RobotMath;
 
+/**
+ * Class which controls the robot drivetrain in arcade mode.
+ * @author Jamie
+ *
+ */
 public class ArcadeDrive
 {
-    double _spdL, _spdR;
+    double spdL, spdR;
 
-    MotorLink _leftMotors;
+    MotorGroup _leftMotors;
     
-    MotorLink _rightMotors;
+    MotorGroup _rightMotors;
 
     ListenerManager _listenerManager;
     
-    public ArcadeDrive(MotorLink leftMotors, MotorLink rightMotors, ListenerManager listenerManager)
+    public ArcadeDrive(MotorGroup leftMotors, MotorGroup rightMotors, ListenerManager listenerManager)
     {
     	_leftMotors = leftMotors;
     	_rightMotors = rightMotors;
@@ -24,7 +29,7 @@ public class ArcadeDrive
 	//threshold below which joystick movements are ignored.
 	final static double thresh = 0.2;
 	/**
-	 * 
+	 * Update the motor outputs with the given control values.
 	 * @param joyX horizontal control input
 	 * @param joyY vertical control input
 	 * @param throttle throttle control input scaled between 1 and -1 (-.8 is 10 %, 0 is 50%, 1.0 is 100%)
@@ -62,12 +67,12 @@ public class ArcadeDrive
     	
     	joyX *= throttle;
     	
-    	_spdR = RobotMath.makeValidPower(joyY + joyX);
-    	_spdL = RobotMath.makeValidPower(joyY - joyX);
+    	spdR = RobotMath.makeValidPower(joyY + joyX);
+    	spdL = RobotMath.makeValidPower(joyY - joyX);
     	
-    	//Log.debug("ArcadeDrive", "x1: " + joyX + " throttle: " + throttle + " spdR: " + _spdR + " spdL: " + _spdL);
+    	//Log.debug("ArcadeDrive", "x1: " + joyX + " throttle: " + throttle + " spdR: " + spdR + " spdL: " + spdL);
 
-    	_leftMotors.setControlTarget(_spdL);
-    	_rightMotors.setControlTarget(_spdR);
+    	_leftMotors.setControlTarget(spdL);
+    	_rightMotors.setControlTarget(spdR);
     }
 }

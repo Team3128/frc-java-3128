@@ -14,11 +14,11 @@ public class RobotMath {
     * <p/>
     * @param angle the angle to be normalized
     * <p/>
-    * @return the normalized angle on [-179, 180]
+    * @return the normalized angle on [0, 359]
     */
-   public static double normalizeAngle(double angle) {
+   public static double normalizeAngle(double angle)
+   {
        double theta = ((angle % 360) + 360) % 360;
-       //if (theta > 180) return (theta - 360);
        return theta;
    }
 
@@ -30,21 +30,32 @@ public class RobotMath {
     * @param shortWay if true, go the shorter way to make moves always <= 180
     * @return shortest angular distance between
     */
-   public static double angleDistance(double angle1, double angle2, boolean shortWay) {
+   public static double angleDistance(double angle1, double angle2, boolean shortWay)
+   {
        double dist = normalizeAngle(angle2) - normalizeAngle(angle1);
-       if(shortWay && Math.abs(dist) > 180) {
+       
+       if(shortWay && Math.abs(dist) > 180)
+       {
            double sgn = RobotMath.sgn(dist);
            return -sgn * (360 - Math.abs(dist));
        }
+       
        return dist;
    }
 
+   
+   /**
+    * Standard-ish sign function
+    * @param n
+    * @return
+    */
    public static double sgn(double n)
    {
 	   if(n == 0)
 	   {
 		   return 0;
 	   }
+	   
        return Math.abs(n) / n;
    
    }
@@ -55,12 +66,13 @@ public class RobotMath {
    }
   
    /**
-    *
+    * Check if a motor power is between -1 and 1 inclusive
     * @param pow motor power
     * <p/>
     * @return whether or not the power is valid
     */
-   public static boolean isValidPower(double pow) {
+   public static boolean isValidPower(double pow)
+   {
        return (pow >= -1 && pow <= 1);
    }
 
@@ -71,12 +83,13 @@ public class RobotMath {
     * <p/>
     * @return a properly-limited power level
     */
-   public static double makeValidPower(double pow) {
+   public static double makeValidPower(double pow)
+   {
        return (pow < -1 ? -1 : (pow > 1 ? 1 : pow));
    }
 
    /**
-    * Determines the appropriate direction for a motor to turn.
+    * Determines the appropriate direction for a motor to turn. to get to an angle.
     * <p/>
     * @param currentAngle the current angle of the motor
     * @param targetAngle the target angle of the motor
@@ -165,6 +178,7 @@ public class RobotMath {
 	   return (int)floored;
    }
 
+   //hidden constructor
    private RobotMath() {}
 
 	/**
@@ -174,7 +188,7 @@ public class RobotMath {
 	 */
 	public static double cmToDegrees(double cm)
 	{
-		return Options.instance()._degreesPercm * cm;
+		return Options.degreesPercm * cm;
 	}
 	
 	/**
@@ -184,6 +198,6 @@ public class RobotMath {
 	 */
 	public static double cmToRotations(double cm)
 	{
-		return cm / Options.instance()._wheelCircumfrence;
+		return cm / Options.wheelCircumfrence;
 	}
 }

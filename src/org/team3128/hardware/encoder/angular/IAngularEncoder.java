@@ -1,5 +1,10 @@
 package org.team3128.hardware.encoder.angular;
 
+/**
+ * Interface to represent a generic angular encoder.
+ * @author Jamie
+ *
+ */
 public interface IAngularEncoder
 {
     public double getAngle();

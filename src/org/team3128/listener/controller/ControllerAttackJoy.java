@@ -4,7 +4,8 @@ import org.team3128.listener.control.Axis;
 import org.team3128.listener.control.Button;
 
 /**
- * Class to define the buttons and axes of a Logitech attack joystick
+ * Controller object for a Logitech Attack joystick.
+ * 
  * @author Jamie
  */
 public class ControllerAttackJoy implements ControllerType

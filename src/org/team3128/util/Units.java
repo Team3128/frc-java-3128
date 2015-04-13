@@ -3,8 +3,8 @@ package org.team3128.util;
 /**
  * Conversion ratios of various units to cm, used so that you don't have
  * to convert a value before entering it into the code
- * 
- * Made using the android app ConvertPad
+ * .
+ * Made using the android app ConvertPad.
  * @author Jamie
  *
  */

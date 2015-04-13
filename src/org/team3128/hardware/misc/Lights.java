@@ -2,6 +2,11 @@ package org.team3128.hardware.misc;
 
 import org.team3128.Options;
 
+/**
+ * Controls red and blue lights on the robot, connected by relays to the controller.
+ * @author Jamie
+ *
+ */
 public class Lights
 {
 	RelayLink _redLights;
@@ -15,7 +20,7 @@ public class Lights
 	}
 	
 	/**
-	 * Change the light color.  A null argument will turn off the lights
+	 * Change the light color.  A null argument will turn off the lights.
 	 * @param alliance
 	 */
 	public void lightChange(Options.Alliance alliance)
@@ -25,7 +30,7 @@ public class Lights
 			_redLights.setOff();
 			_redLights.setOff();
 		}
-		else if(Options.instance()._alliance == Options.Alliance.BLUE)
+		else if(Options.alliance == Options.Alliance.BLUE)
 	    {
 	    	_redLights.setOff();
 	    	_blueLights.setOn();
@@ -39,7 +44,7 @@ public class Lights
 
 	void lightChangeToCurrentAlliance()
 	{
-		lightChange(Options.instance()._alliance);
+		lightChange(Options.alliance);
 	}
 	
 }

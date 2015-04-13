@@ -1,21 +1,28 @@
 package org.team3128.hardware.mechanisms;
 
 import org.team3128.Options;
-import org.team3128.hardware.motor.MotorLink;
+import org.team3128.hardware.motor.MotorGroup;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 
+/**
+ * Mechanism class to control the shooter of our 2014 robot, Sebastian.
+ * 
+ * @author Yousuf
+ * @author Noah
+ *
+ */
 public class CockArm
 {
     volatile boolean _cockArmActive = true;
 
     DigitalInput _shooterTSensor;
 
-    MotorLink _mShooter;
+    MotorGroup _mShooter;
 
     Thread _thread;
     
-    public CockArm(DigitalInput shooterTSensor, MotorLink mShooter)
+    public CockArm(DigitalInput shooterTSensor, MotorGroup mShooter)
     {
     	_shooterTSensor = shooterTSensor;
     	_mShooter = mShooter;
@@ -26,7 +33,7 @@ public class CockArm
     	while(true)
     	{
 
-        	if(!_cockArmActive || !Options.instance()._armEnabled)
+        	if(!_cockArmActive || !Options.armEnabled)
         	{
         		return;
         	}
