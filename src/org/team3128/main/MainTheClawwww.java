@@ -24,8 +24,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Talon;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.vision.AxisCamera;
 
 /**
  * Main class for our 2015 robot, The Clawwww.
@@ -66,7 +64,7 @@ public class MainTheClawwww extends MainClass
 	
 	public ClawArm clawArm;
 	
-	public AxisCamera camera;
+	//public AxisCamera camera;
 	
 	IListenerCallback updateDriveArcade;
 	IListenerCallback updateDriveCOD;

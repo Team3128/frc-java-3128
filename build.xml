@@ -27,7 +27,7 @@
   
   <import file="${wpilib.ant.dir}/build.xml"/>
 	
-  <!-- FRC-Test Start -->
+  <!-- +++++++++++++++++++++++++++++++++++++   FRC-Test Start   +++++++++++++++++++++++++++++++++++++ -->
 	
   <property name="jarpath" value="${build.dir}/"/>
   
@@ -38,7 +38,7 @@
 
   <property name="emulatorclasspath" value="${javassist-jar}:${guava-jar}:${reflections-jar}:${frctest-jar}"/>
   
-  <target name="test" depends="emulatorjar">
+  <target name="test" depends="install-junit,emulatorjar">
   	
   </target>
   
@@ -79,6 +79,17 @@
      compiler="javac${ant.java.version}"
      debug="true">
     </javac>
+  </target>
+  
+  <available classname="org.junit.runner.Runner" property="junit.installed"/>
+
+  <target name="install-junit" description="Install junit" unless="junit.installed">
+      <mkdir dir="${user.home}/.ant/lib"/>
+
+      <get dest="${user.home}/.ant/lib/ant-junit.jar" src="http://search.maven.org/remotecontent?filepath=org/apache/ant/ant-junit/1.9.4/ant-junit-1.9.4.jar"/>
+      <get dest="${user.home}/.ant/lib/junit.jar" src="http://search.maven.org/remotecontent?filepath=junit/junit/4.11/junit-4.11.jar"/>
+
+      <fail message="Junit has been installed. Run the build again"/>
   </target>
 
 </project> 

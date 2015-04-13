@@ -9,10 +9,10 @@ import edu.wpi.first.wpilibj.SpeedController;
 /* 	Class Diagram:
  * The MotorGroup, MotorLogic, and Limiter classes are related in somewhat convoluted ways.  
  * Hopefully this will clear it up.
- *   ___________                  ____________                  _________
- *  |           |                |            |                |         |
+ *   ____________                  ____________                  _________
+ *  |            |                |            |                |         |
  *  | MotorGroup | may have a --> | MotorLogic | may have a --> | Limiter |
- *  |___________|                |____________|                |_________|
+ *  |____________|                |____________|                |_________|
  */
 
 /**
