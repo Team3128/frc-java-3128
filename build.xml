@@ -29,34 +29,37 @@
 	
   <!-- +++++++++++++++++++++++++++++++++++++   FRC-Test Start   +++++++++++++++++++++++++++++++++++++ -->
 	
-  <property name="jarpath" value="${build.dir}/"/>
+	
+  <property name="emubuild.dir" value="build-emu"/>
+  <property name="emu.jar" value="${emubuild.dir}/FRC-Program.jar"/>
   
   <property name="javassist-jar" value="lib/guava-18.0.jar"/>
   <property name="guava-jar" value="lib/javasssist.jar"/>
   <property name="reflections-jar" value="lib/reflections-0.9.9-RC1.jar"/>
-  <property name="frctest-jar" value="lib/frctest.jar"/>
+  <property name="frctest-jar" value="lib/FRC-Test.jar"/>
 
   <property name="emulatorclasspath" value="${javassist-jar}:${guava-jar}:${reflections-jar}:${frctest-jar}"/>
   
   <target name="test" depends="install-junit,emulatorjar">
-  	
+  	<junit fork="true"/>
   </target>
   
   <target name="runemulator" depends="emulatorjar">
-  	<java jar="${dist.jar}" fork="true" classpath="${emulatorclasspath}"/>
+  	<java fork="true" jar="${emu.jar}"/>
   </target>
 	
-  <target name="emulatorjar" depends="emulatorcompile">
-  	<jar destfile="${dist.jar}" update="true">
-  	    <fileset dir="${build.dir}" includes="**/*.class"/>
-  	    <zipgroupfileset dir="${build.jars}">
-  	      <include name="**/*.jar" />
-  	    </zipgroupfileset>
-  	   </jar>
+  <target name="emulatorjar" depends="emulatorcompile" description="Run the GUI emulator.">
+  	<jar destfile="${emu.jar}" update="true">
+  	  <fileset dir="${emubuild.dir}" includes="**/*.class"/>
+  	  <manifest>
+        <attribute name="Main-Class" value="robotemulator.RobotEmulator"/>
+        <attribute name="Class-Path" value="${emulatorclasspath}"/>
+      </manifest>
+  	</jar>
   </target>
   
   <target name="emulatorcompile" description="Compile the source code using the emulator jar.">
-    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${emubuild.dir}"/>
     <echo level="warn">[FRC-Test] Compiling ${src.dir} to ${build.dir} using java ${ant.java.version}</echo>
 
     <!-- check javac version, since the Eclipse-included Ant seems to somethimes use an older one-->
@@ -70,7 +73,7 @@
     </if>
     
     <javac srcdir="${src.dir}"
-     destdir="${build.dir}"
+     destdir="${emubuild.dir}"
      includeAntRuntime="no"
      includeJavaRuntime="no"
      classpath="${emulatorclasspath}"
