@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Main class for our 2015 robot, The Clawwww.
@@ -258,6 +259,6 @@ public class MainTheClawwww extends MainClass
 	@Override
 	protected void updateDashboard()
 	{
-		//nothing, for now.
+		SmartDashboard.putData("armRotateEncoder", armRotateEncoder);
 	}
 }
