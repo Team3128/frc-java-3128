@@ -28,8 +28,8 @@ public class AutoUtils
 	{
 		Log.recoverable("AutoUtils", "Robot killed by autonomous error: " + cause);
 
-		AutoHardware._leftMotors.setControlTarget(0);
-		AutoHardware._rightMotors.setControlTarget(0);
+		AutoHardware.leftMotors.setControlTarget(0);
+		AutoHardware.rightMotors.setControlTarget(0);
 		AutoHardware.clawArm.switchArmToManualControl();
 		AutoHardware.clawArm.switchJointToManualControl();
 		AutoHardware.clawArm.resetTargets();

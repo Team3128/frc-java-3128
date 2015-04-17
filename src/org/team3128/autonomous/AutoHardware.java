@@ -1,9 +1,9 @@
 package org.team3128.autonomous;
 
-import org.team3128.Global;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
 import org.team3128.hardware.mechanisms.ClawArm;
 import org.team3128.hardware.motor.MotorGroup;
+import org.team3128.main.MainTheClawwww;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Ultrasonic;
@@ -22,7 +22,7 @@ public class AutoHardware
 	
 	public static MotorGroup leftMotors;
 	public static MotorGroup rightMotors;
-	public static MotorLink _frontHookMotor;
+	public static MotorGroup _frontHookMotor;
 	
 	public static PowerDistributionPanel _distPanel;
 	
@@ -30,5 +30,5 @@ public class AutoHardware
 	
 	public static ClawArm clawArm;
 	
-	public static Global global;
+	public static MainTheClawwww global;
 }
