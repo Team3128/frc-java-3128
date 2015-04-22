@@ -1,17 +1,21 @@
 package org.team3128.hardware.encoder.angular;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.Sendable;
+import edu.wpi.first.wpilibj.tables.ITable;
 
 /**
  * Represents a variable resistor/potentiometer encoder. 
  * @author Kian, Jamie
  *
  */
-public class AnalogPotentiometerEncoder implements IAngularEncoder
+public class AnalogPotentiometerEncoder implements IAngularEncoder, Sendable
 {
 	private AnalogInput enc;
 	private double degreesPerVolt;
     private final double offset;
+    
+    private ITable table;
     
     /**
      * 
@@ -44,6 +48,33 @@ public class AnalogPotentiometerEncoder implements IAngularEncoder
 	public boolean canRevolveMultipleTimes()
 	{
 		return false;
+	}
+
+	@Override
+	public void initTable(ITable subtable)
+	{
+		table = subtable;
+		updateTable();
+	}
+	
+	/**
+	 * Call this to update the angle stored in the ITable
+	 */
+	private void updateTable()
+	{
+		table.putNumber("Angle", getAngle());
+	}
+
+	@Override
+	public ITable getTable()
+	{
+		return table;
+	}
+
+	@Override
+	public String getSmartDashboardType()
+	{
+		return "Potentiometer";
 	}
 
 }

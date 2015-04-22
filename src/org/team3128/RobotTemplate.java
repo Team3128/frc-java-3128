@@ -147,7 +147,6 @@ public class RobotTemplate extends IterativeRobot
 		{
 			return;
 		}
-        main.updateDashboard();
     }
 
     // YOU'D BETTER NOT CHANGE ANYTHING
@@ -155,7 +154,6 @@ public class RobotTemplate extends IterativeRobot
     public void autonomousPeriodic()
     {   
     	Scheduler.getInstance().run();
-		main.updateDashboard();
     }
 
     // DO YOU REALLY WANT TO MODIFY YOUR SOUL?
@@ -166,9 +164,7 @@ public class RobotTemplate extends IterativeRobot
     	{
     		manager.tick();
     	}
-    	
-    	main.updateDashboard();
-        
+    	        
         try
 		{
 			Thread.sleep(20);

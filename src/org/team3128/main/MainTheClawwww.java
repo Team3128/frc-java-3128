@@ -16,7 +16,6 @@ import org.team3128.hardware.mechanisms.ClawArm;
 import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.listener.IListenerCallback;
 import org.team3128.listener.ListenerManager;
-import org.team3128.listener.control.Always;
 import org.team3128.listener.controller.ControllerAttackJoy;
 import org.team3128.listener.controller.ControllerExtreme3D;
 
@@ -25,6 +24,7 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Main class for our 2015 robot, The Clawwww.
@@ -187,9 +187,7 @@ public class MainTheClawwww extends MainClass
 			powerDistPanel.clearStickyFaults();
 		});
 		
-				
-		listenerManagerExtreme.addListener(Always.instance, () -> System.out.println(armJointEncoder.getAngle()));
-		
+					
 		//-----------------------------------------------------------
 		// Arm control code, on joysticks
 		//-----------------------------------------------------------
@@ -258,6 +256,6 @@ public class MainTheClawwww extends MainClass
 	@Override
 	protected void updateDashboard()
 	{
-		//nothing, for now.
+		SmartDashboard.putData("armRotateEncoder", armRotateEncoder);
 	}
 }
