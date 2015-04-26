@@ -62,6 +62,11 @@ public class RobotMath {
    
    public static int sgn(int n)
    {
+	   if(n == 0)
+	   {
+		   return 0;
+	   }
+	   
        return Math.abs(n) / n;
    }
   
@@ -89,7 +94,7 @@ public class RobotMath {
    }
 
    /**
-    * Determines the appropriate direction for a motor to turn. to get to an angle.
+    * Determines the appropriate direction for a motor to turn to get to an angle.
     * <p/>
     * @param currentAngle the current angle of the motor
     * @param targetAngle the target angle of the motor
@@ -103,7 +108,7 @@ public class RobotMath {
        targetAngle = RobotMath.normalizeAngle(targetAngle);
        int retDir = 1 * ((shortWay && Math.abs(currentAngle - targetAngle) > 180 )? 1 : -1) * (currentAngle - targetAngle < 0 ? -1 : 1);
 
-       if (currentAngle - targetAngle == 0 || currentAngle - targetAngle == 180) return MotorDir.NONE;
+       if (currentAngle - targetAngle == 0) return MotorDir.NONE;
        return (retDir == 1 ? MotorDir.CW : MotorDir.CCW);
    }
 

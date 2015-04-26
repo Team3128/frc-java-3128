@@ -257,5 +257,6 @@ public class MainTheClawwww extends MainClass
 	protected void updateDashboard()
 	{
 		SmartDashboard.putData("armRotateEncoder", armRotateEncoder);
+		SmartDashboard.putNumber("Total Current: ", powerDistPanel.getTotalCurrent());
 	}
 }
