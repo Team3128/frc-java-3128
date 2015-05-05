@@ -3,7 +3,6 @@ package org.team3128.hardware.motor.limiter;
 import org.team3128.hardware.motor.Limiter;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
 /**
  * Motor control which uses an encoder to limit the range of something.  
@@ -28,7 +27,7 @@ public class SwitchLimiter extends Limiter
      * @param maxSwitch limit switch which can be reached by setting the motor to go forward
      * @param activeLow whether the switches are active low
      */
-    public SwitchLimiter(DigitalInput minSwitch, DigitalInput maxSwitch, boolean activeLow, PowerDistributionPanel panel, int channel, double maxAllowedCurrent)
+    public SwitchLimiter(DigitalInput minSwitch, DigitalInput maxSwitch, boolean activeLow)
     {
     	_minSwitch = minSwitch;
     	_maxSwitch = maxSwitch;

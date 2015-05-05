@@ -21,7 +21,6 @@ import org.team3128.listener.controller.ControllerExtreme3D;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -47,9 +46,6 @@ public class MainTheClawwww extends MainClass
 	public MotorGroup armTurnMotor;
 	
 	public MotorGroup armJointMotor;
-	
-	Servo leftArmBrakeServo;
-	Servo rightArmBrakeServo;
 	
 	public MotorGroup frontHookMotor;
 	
@@ -111,9 +107,6 @@ public class MainTheClawwww extends MainClass
 		
 		clawGrabMotor = new MotorGroup();
 		clawGrabMotor.addControlledMotor(new Talon(8));
-		
-		leftArmBrakeServo = new Servo(9);
-		rightArmBrakeServo = new Servo(0);
 		
 		//camera = new AxisCamera("192.168.1.196");
 		clawArm = new ClawArm(armTurnMotor, armJointMotor, clawGrabMotor, armRotateEncoder, armJointEncoder, powerDistPanel);

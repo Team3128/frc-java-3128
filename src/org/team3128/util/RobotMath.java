@@ -108,7 +108,7 @@ public class RobotMath {
        targetAngle = RobotMath.normalizeAngle(targetAngle);
        int retDir = 1 * ((shortWay && Math.abs(currentAngle - targetAngle) > 180 )? 1 : -1) * (currentAngle - targetAngle < 0 ? -1 : 1);
 
-       if (currentAngle - targetAngle == 0) return MotorDir.NONE;
+       if (Math.abs(currentAngle - targetAngle) < .001) return MotorDir.NONE;
        return (retDir == 1 ? MotorDir.CW : MotorDir.CCW);
    }
 
