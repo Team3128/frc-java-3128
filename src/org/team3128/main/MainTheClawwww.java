@@ -15,6 +15,7 @@ import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
 import org.team3128.hardware.lights.PWMLights;
 import org.team3128.hardware.mechanisms.ClawArm;
 import org.team3128.hardware.motor.MotorGroup;
+import org.team3128.hardware.motor.logic.Color;
 import org.team3128.listener.IListenerCallback;
 import org.team3128.listener.ListenerManager;
 import org.team3128.listener.controller.ControllerAttackJoy;
@@ -166,12 +167,12 @@ public class MainTheClawwww extends MainClass
 	protected void initializeAuto()
 	{
 		clawArm.resetTargets();
-		lights.setColor8BitRGB(0xaa, 0x22, 0x22);
+		lights.setColor(Color.new4Bit(0xa, 2, 2));
 	}
 	
 	protected void initializeTeleop()
 	{	
-		lights.setColor8BitRGB(0x22, 0x22, 0xaa);
+		lights.setColor(Color.new4Bit(2, 2, 0xa));
 		
 		//-----------------------------------------------------------
 		// Drive code, on Logitech Extreme3D joystick

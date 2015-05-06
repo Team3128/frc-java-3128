@@ -88,7 +88,7 @@ public class ClawArm
 		clawMinLimitSwitch = new DigitalInput(9);
 		clawMaxLimitSwitch = new DigitalInput(8);
 		BlankSpeedLogic clawControl = new BlankSpeedLogic(0);
-		clawControl.setLimiter(new SwitchLimiter(clawMinLimitSwitch, clawMaxLimitSwitch, false));
+		clawControl.addLimiter(new SwitchLimiter(clawMinLimitSwitch, clawMaxLimitSwitch, false));
 		_clawGrab.setSpeedController(clawControl);
 		_clawGrab.startControl(0);
 		

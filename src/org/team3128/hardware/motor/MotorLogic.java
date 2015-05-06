@@ -1,5 +1,7 @@
  package org.team3128.hardware.motor;
 
+import java.util.HashSet;
+
 import org.team3128.Options;
 
 /**
@@ -16,12 +18,13 @@ public abstract class MotorLogic
 	private MotorGroup controlledMotor = null;
 	private Thread thread;
 	
-	private Limiter limiter;
+	private HashSet<Limiter> limiters;
 	
 	protected int _refreshTime = Options.motorControlUpdateFrequency;
 		
 	public MotorLogic()
 	{
+		limiters = new HashSet<Limiter>();
 	}
 
 	protected synchronized void setControlledMotor(MotorGroup m)
@@ -64,22 +67,33 @@ public abstract class MotorLogic
    }
    
    /**
-    * Set the limiter for the speed control to use. <br>
-    * A null value means no limiter.
+    * Add the limiter for the speed control to use. <br>
     * @param limiter
     */
-   public void setLimiter(Limiter limiter)
+   public void addLimiter(Limiter limiter)
    {
-	   this.limiter = limiter;
+	   limiters.add(limiter);
    }
    
    /**
-    * Reset the limiter's state, if it exists
+    * Reset all limiters.
     * @param limiter
     */
-   public void resetLimiter(Limiter limiter)
+   public void resetAllLimiters()
    {
-	   this.limiter.reset();
+	   for(Limiter limiter : limiters)
+	   {
+		   limiter.reset();
+	   }
+   }
+   
+   /**
+    * Remove a limiter from the list of limiters.
+    * @param limiter
+    */
+   public void removeLimiter(Limiter limiter)
+   {
+	   limiters.remove(limiter);
    }
 
    /**
@@ -119,10 +133,14 @@ public abstract class MotorLogic
 		       else
 		       {
 		    	   double newSpeed = speedControlStep(getLastRuntimeDist());
-		    	   if(limiter != null && !limiter.canMove(newSpeed))
+		    	   for(Limiter currentLimiter : limiters)
 		    	   {
-		    		   newSpeed = 0;
+			    	   if(!currentLimiter.canMove(newSpeed))
+			    	   {
+			    		   newSpeed = 0;
+			    	   }
 		    	   }
+
 		    	   controlledMotor.setInternalSpeed(newSpeed);
 		       }
 		   }
