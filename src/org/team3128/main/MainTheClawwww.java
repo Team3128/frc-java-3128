@@ -13,6 +13,7 @@ import org.team3128.drive.ArcadeDrive;
 import org.team3128.hardware.encoder.angular.AnalogPotentiometerEncoder;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
 import org.team3128.hardware.mechanisms.ClawArm;
+import org.team3128.hardware.misc.PWMLights;
 import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.listener.IListenerCallback;
 import org.team3128.listener.ListenerManager;
@@ -61,6 +62,8 @@ public class MainTheClawwww extends MainClass
 	
 	public ClawArm clawArm;
 	
+	public PWMLights lights;
+	
 	//public AxisCamera camera;
 	
 	IListenerCallback updateDriveArcade;
@@ -107,6 +110,8 @@ public class MainTheClawwww extends MainClass
 		
 		clawGrabMotor = new MotorGroup();
 		clawGrabMotor.addControlledMotor(new Talon(8));
+		
+		lights = new PWMLights(0, 9, 10);
 		
 		//camera = new AxisCamera("192.168.1.196");
 		clawArm = new ClawArm(armTurnMotor, armJointMotor, clawGrabMotor, armRotateEncoder, armJointEncoder, powerDistPanel);
@@ -161,10 +166,13 @@ public class MainTheClawwww extends MainClass
 	protected void initializeAuto()
 	{
 		clawArm.resetTargets();
+		lights.setColor8BitRGB(0xaa, 0x22, 0x22);
 	}
 	
 	protected void initializeTeleop()
 	{	
+		lights.setColor8BitRGB(0x22, 0x22, 0xaa);
+		
 		//-----------------------------------------------------------
 		// Drive code, on Logitech Extreme3D joystick
 		//-----------------------------------------------------------
