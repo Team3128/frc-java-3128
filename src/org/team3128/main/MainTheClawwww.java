@@ -12,10 +12,8 @@ import org.team3128.autonomous.programs.TestAuto;
 import org.team3128.drive.ArcadeDrive;
 import org.team3128.hardware.encoder.angular.AnalogPotentiometerEncoder;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
-import org.team3128.hardware.lights.PWMLights;
 import org.team3128.hardware.mechanisms.ClawArm;
 import org.team3128.hardware.motor.MotorGroup;
-import org.team3128.hardware.motor.logic.Color;
 import org.team3128.listener.IListenerCallback;
 import org.team3128.listener.ListenerManager;
 import org.team3128.listener.controller.ControllerAttackJoy;
@@ -63,7 +61,7 @@ public class MainTheClawwww extends MainClass
 	
 	public ClawArm clawArm;
 	
-	public PWMLights lights;
+	//public PWMLights lights;
 	
 	//public AxisCamera camera;
 	
@@ -112,7 +110,7 @@ public class MainTheClawwww extends MainClass
 		clawGrabMotor = new MotorGroup();
 		clawGrabMotor.addControlledMotor(new Talon(8));
 		
-		lights = new PWMLights(0, 9, 10);
+		//lights = new PWMLights(0, 9, 7);
 		
 		//camera = new AxisCamera("192.168.1.196");
 		clawArm = new ClawArm(armTurnMotor, armJointMotor, clawGrabMotor, armRotateEncoder, armJointEncoder, powerDistPanel);
@@ -167,12 +165,12 @@ public class MainTheClawwww extends MainClass
 	protected void initializeAuto()
 	{
 		clawArm.resetTargets();
-		lights.setColor(Color.new4Bit(0xa, 2, 2));
+		//lights.setColor(Color.new4Bit(0xa, 2, 2));
 	}
 	
 	protected void initializeTeleop()
 	{	
-		lights.setColor(Color.new4Bit(2, 2, 0xa));
+		//lights.setFader(Color.new11Bit(2000, 2000, 2000), 1, 10);
 		
 		//-----------------------------------------------------------
 		// Drive code, on Logitech Extreme3D joystick
@@ -203,13 +201,16 @@ public class MainTheClawwww extends MainClass
 				power /= 1.5;
 			}
 			
+			//lights.setColor(Color.new8Bit(0x33, 0x33, ((int)armJointEncoder.getAngle() * (0xff / 330))));
+			
+			
 			clawArm.onArmJoyInput(power);
 			
 		});
 		
-		listenerManagerJoyLeft.addListener(ControllerAttackJoy.JOYY, () ->
+		listenerManagerJoyRight.addListener(ControllerAttackJoy.JOYX, () ->
 		{
-			double power = listenerManagerJoyLeft.getRawAxis(ControllerAttackJoy.JOYY);
+			double power = listenerManagerJoyRight.getRawAxis(ControllerAttackJoy.JOYX);
 			clawArm.onJointJoyInput((elbowInverted ? Options.armSpeedMultiplier : -Options.armSpeedMultiplier) * power);
 		});
 		
@@ -227,10 +228,10 @@ public class MainTheClawwww extends MainClass
 		listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN1, () -> clawGrabMotor.setControlTarget(-0.7));
 		listenerManagerJoyLeft.addListener(ControllerAttackJoy.UP1, () -> clawGrabMotor.setControlTarget(0));
 		
-		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN4, () -> frontHookMotor.setControlTarget(0.3));
-		listenerManagerJoyRight.addListener(ControllerAttackJoy.UP4, () -> frontHookMotor.setControlTarget(0));
-		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN5, () -> frontHookMotor.setControlTarget(-0.3));
-		listenerManagerJoyRight.addListener(ControllerAttackJoy.UP5, () -> frontHookMotor.setControlTarget(0));
+		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN4, () -> clawGrabMotor.setControlTarget(0.7));
+		listenerManagerJoyRight.addListener(ControllerAttackJoy.UP4, () -> clawGrabMotor.setControlTarget(0));
+		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN5, () -> clawGrabMotor.setControlTarget(-0.7));
+		listenerManagerJoyRight.addListener(ControllerAttackJoy.UP5, () -> clawGrabMotor.setControlTarget(0));
 		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN3, () -> frontHookMotor.setControlTarget(0.3));
 		listenerManagerExtreme.addListener(ControllerExtreme3D.UP3, () -> frontHookMotor.setControlTarget(0));
 		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN4, () -> frontHookMotor.setControlTarget(-0.3));

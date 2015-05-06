@@ -105,7 +105,7 @@ public class ClawArm
 		
 		_armJointEncoder = jointEncoder;
 		
-		switchArmToAutoControl();
+		switchArmToManualControl();
 		switchJointToManualControl();
 		
 	}
@@ -285,10 +285,10 @@ public class ClawArm
 		}
 		if(!jointUsingAutoControl)
 		{
-			//if(Math.abs(joyPower) >= .1)
-			//{
+			if(Math.abs(joyPower) >= .1)
+			{
 				_armJoint.setControlTarget(joyPower);
-			//}
+			}
 			//else
 			//{
 			//	switchJointToAutoControl();
@@ -314,10 +314,10 @@ public class ClawArm
 			{
 				_armRotate.setControlTarget(joyPower);
 			}
-			else
-			{
-		    	switchArmToAutoControl();
-			}
+			//else
+			//{
+		    //	switchArmToAutoControl();
+			//}
 		}
 	}
 

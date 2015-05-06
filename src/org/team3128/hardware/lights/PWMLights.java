@@ -70,7 +70,7 @@ public class PWMLights
 	 * @param decrement how far (11 bit) to decrement each channel's brightness every cycle.
 	 * @param period how long to wait between fader adjustment cycles in milliseconds.
 	 */
-	public void setFader11Bit(Color color, int decrement, int period)
+	public void setFader(Color color, int decrement, int period)
 	{
 		shutDownFaderThread();
 		
