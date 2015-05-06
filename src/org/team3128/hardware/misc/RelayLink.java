@@ -19,7 +19,7 @@ public class RelayLink
     /**
      * Sets the relay on.
      */
-    void setOn()
+    public void setOn()
     {
     	_rel.set(Relay.Value.kForward);
     }
@@ -27,7 +27,7 @@ public class RelayLink
     /**
      * Sets the relay off.
      */
-    void setOff()
+    public void setOff()
     {
     	_rel.set(Relay.Value.kReverse);
     }
