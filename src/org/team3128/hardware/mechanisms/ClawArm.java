@@ -93,7 +93,7 @@ public class ClawArm
 		_clawGrab.startControl(0);
 		
 		
-		armRotateAngleTarget = new PIDAngleLogic(.010, .000005, .00015, 4, false, armEncoder, false);
+		armRotateAngleTarget = new PIDAngleLogic(.010, .000005, .00015, 4, false, armEncoder, true);
 		
 		armJointAngleTarget = new PIDAngleLogic(.009, 0, 0, 5, false, jointEncoder, false);
 		
@@ -105,7 +105,7 @@ public class ClawArm
 		
 		_armJointEncoder = jointEncoder;
 		
-		switchArmToManualControl();
+		switchArmToAutoControl();
 		switchJointToManualControl();
 		
 	}
@@ -289,10 +289,11 @@ public class ClawArm
 			{
 				_armJoint.setControlTarget(joyPower);
 			}
-			//else
-			//{
-			//	switchJointToAutoControl();
-			//}
+			else
+			{
+				//switchJointToAutoControl();
+				_armJoint.setControlTarget(0);
+			}
 		}
 	}
 	
@@ -314,10 +315,11 @@ public class ClawArm
 			{
 				_armRotate.setControlTarget(joyPower);
 			}
-			//else
-			//{
-		    //	switchArmToAutoControl();
-			//}
+			else
+			{
+				switchArmToAutoControl();
+				//_armRotate.setControlTarget(0);
+			}
 		}
 	}
 

@@ -96,6 +96,7 @@ public class MainTheClawwww extends MainClass
 		
 		armTurnMotor = new MotorGroup();
 		armTurnMotor.addControlledMotor(new Talon(6));
+		armTurnMotor.reverseMotor();
 		
 		armRotateEncoder = new AnalogPotentiometerEncoder(0, 0, 4.829, 300);
 		
@@ -105,7 +106,7 @@ public class MainTheClawwww extends MainClass
 		armJointEncoder = new AnalogPotentiometerEncoder(1, 0, 4.829, 300);
 		
 		frontHookMotor = new MotorGroup();
-		frontHookMotor.addControlledMotor(new Talon(7));
+		frontHookMotor.addControlledMotor(new Talon(9));
 		
 		clawGrabMotor = new MotorGroup();
 		clawGrabMotor.addControlledMotor(new Talon(8));
@@ -194,7 +195,7 @@ public class MainTheClawwww extends MainClass
 		
 		listenerManagerJoyRight.addListener(ControllerAttackJoy.JOYY, () ->
 		{
-			double power = (shoulderInverted ? Options.armSpeedMultiplier : -Options.armSpeedMultiplier) * listenerManagerJoyRight.getRawAxis(ControllerAttackJoy.JOYY);
+			double power = -1 * (shoulderInverted ? Options.armSpeedMultiplier : -Options.armSpeedMultiplier) * listenerManagerJoyRight.getRawAxis(ControllerAttackJoy.JOYY);
 			
 			if(power < 0)
 			{
@@ -208,9 +209,9 @@ public class MainTheClawwww extends MainClass
 			
 		});
 		
-		listenerManagerJoyRight.addListener(ControllerAttackJoy.JOYX, () ->
+		listenerManagerJoyLeft.addListener(ControllerAttackJoy.JOYY, () ->
 		{
-			double power = listenerManagerJoyRight.getRawAxis(ControllerAttackJoy.JOYX);
+			double power = listenerManagerJoyLeft.getRawAxis(ControllerAttackJoy.JOYY);
 			clawArm.onJointJoyInput((elbowInverted ? Options.armSpeedMultiplier : -Options.armSpeedMultiplier) * power);
 		});
 		

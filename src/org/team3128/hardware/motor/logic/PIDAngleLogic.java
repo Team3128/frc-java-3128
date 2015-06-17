@@ -71,11 +71,6 @@ public class PIDAngleLogic extends MotorLogic
     	    	
     	errorSum += error;
     	
-    	if(_log)
-    	{
-    		Log.debug("LinearAngleTarget", "error: " + error);
-    	}
-    	
 //    	if(errorSum > errorLimit)
 //    	{
 //    		Log.unusual("LinearAngleTarget", "I error sum of " + errorSum + " went over limit of " + errorLimit);
@@ -90,6 +85,11 @@ public class PIDAngleLogic extends MotorLogic
         double output = error * kP + errorSum * kI + kD * (error - prevError);
         
         prevError = error;
+        
+       	if(_log)
+    	{
+    		Log.debug("LinearAngleTarget", "output: " + output);
+    	}
         
         //Log.debug("LinearAngleTarget", "target: " + targetAngle + " current: " + angle + " error: " + error + " output: " + (pGain));
         
