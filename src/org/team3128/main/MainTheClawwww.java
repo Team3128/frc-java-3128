@@ -61,10 +61,6 @@ public class MainTheClawwww extends MainClass
 	
 	public ClawArm clawArm;
 	
-	//public PWMLights lights;
-	
-	//public AxisCamera camera;
-	
 	IListenerCallback updateDriveArcade;
 	IListenerCallback updateDriveCOD;
 	
