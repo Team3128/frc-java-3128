@@ -1,10 +1,11 @@
 package org.team3128.hardware.lights;
 
 import org.team3128.Log;
-import org.team3128.hardware.motor.logic.Color;
+import org.team3128.hardware.motor.logic.LightsColor;
 import org.team3128.util.RobotMath;
 
 import edu.wpi.first.wpilibj.PWM;
+import edu.wpi.first.wpilibj.PWM.PeriodMultiplier;
 
 /**
  * Controls a RGB light strip through three PWM outputs, one for each color.
@@ -32,6 +33,12 @@ public class PWMLights
 		redLights = new PWM(redChannel);
 		greenLights = new PWM(greenChannel);
 		blueLights = new PWM(blueChannel);
+		
+		//turn off legacy period scaling
+		//gee, thanks WPI for not documenting this ANYWHERE!
+		redLights.setPeriodMultiplier(PeriodMultiplier.k1X);
+		greenLights.setPeriodMultiplier(PeriodMultiplier.k1X);
+		blueLights.setPeriodMultiplier(PeriodMultiplier.k1X);
 	}
 	
 	/**
@@ -44,7 +51,7 @@ public class PWMLights
 	 * @param b
 	 */
 	//there are no short literals in Java, so the function takes ints for convenience.
-	public void setColor(Color color)
+	public void setColor(LightsColor color)
 	{
 		//Make sure that the fader thread is not setting these values at the same time.
 		shutDownFaderThread();
@@ -59,7 +66,7 @@ public class PWMLights
 	 */
 	public void setOff()
 	{
-		setColor(Color.new4Bit(0, 0, 0));
+		setColor(LightsColor.new4Bit(0, 0, 0));
 	}
 	
 	/**
@@ -70,7 +77,7 @@ public class PWMLights
 	 * @param decrement how far (11 bit) to decrement each channel's brightness every cycle.
 	 * @param period how long to wait between fader adjustment cycles in milliseconds.
 	 */
-	public void setFader(Color color, int decrement, int period)
+	public void setFader(LightsColor color, int decrement, int period)
 	{
 		shutDownFaderThread();
 		
@@ -107,7 +114,7 @@ public class PWMLights
 	 *
 	 * @param wavelength
 	 */
-	private void faderLoop(Color originalColor, int decrement, int period)
+	private void faderLoop(LightsColor originalColor, int decrement, int period)
 	{
 		Log.debug("PWMLights", "Fader Thread Starting");
 		

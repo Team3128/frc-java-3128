@@ -5,7 +5,7 @@ package org.team3128.hardware.motor.logic;
  * @author Jamie
  *
  */
-public class Color
+public class LightsColor
 {
 	//actual 11-bit RGB values.
 	private int r, g, b;
@@ -15,7 +15,7 @@ public class Color
 	 */
 	public static final int HIGHEST_COLOR_VALUE = 0x7ff;
 	
-	private Color(int r, int g, int b)
+	private LightsColor(int r, int g, int b)
 	{
 		this.r = r;
 		this.g = g;
@@ -29,9 +29,9 @@ public class Color
 	 * @param bChannel
 	 * @return
 	 */
-	public static Color new11Bit(int rChannel, int gChannel, int bChannel)
+	public static LightsColor new11Bit(int rChannel, int gChannel, int bChannel)
 	{
-		return new Color(rChannel, gChannel, bChannel);
+		return new LightsColor(rChannel, gChannel, bChannel);
 	}
 	
 	/**
@@ -41,9 +41,9 @@ public class Color
 	 * @param bChannel
 	 * @return
 	 */
-	public static Color new8Bit(int rChannel, int gChannel, int bChannel)
+	public static LightsColor new8Bit(int rChannel, int gChannel, int bChannel)
 	{
-		return new Color(rChannel*8, gChannel*8, bChannel*8);
+		return new LightsColor(rChannel*8, gChannel*8, bChannel*8);
 	}
 	
 	/**
@@ -55,9 +55,9 @@ public class Color
 	 * @param bChannel
 	 * @return
 	 */
-	public static Color new4Bit(int rChannel, int gChannel, int bChannel)
+	public static LightsColor new4Bit(int rChannel, int gChannel, int bChannel)
 	{
-		return new Color(rChannel*128, gChannel*128, bChannel*128);
+		return new LightsColor(rChannel*128, gChannel*128, bChannel*128);
 	}
 	
 	/**
