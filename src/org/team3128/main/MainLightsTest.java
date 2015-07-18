@@ -2,8 +2,9 @@ package org.team3128.main;
 
 import org.team3128.MainClass;
 import org.team3128.RobotTemplate;
+import org.team3128.hardware.lights.LightsColor;
+import org.team3128.hardware.lights.LightsSequence;
 import org.team3128.hardware.lights.PWMLights;
-import org.team3128.hardware.motor.logic.LightsColor;
 
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.Talon;
@@ -17,18 +18,28 @@ public class MainLightsTest extends MainClass {
 	
 	public PWM testPWM;
 	
+	LightsSequence lightsTestSequence;
+	
 	public MainLightsTest() {
 		lights = new PWMLights(0, 1, 2);
+		lightsTestSequence = new LightsSequence();
 		//testMotor = new Talon(0);
 		
 		//testPWM = new PWM(0);
 		//testPWM.setPeriodMultiplier(PeriodMultiplier.k1X);
+		
 	}
 
 	@Override
 	protected void initializeRobot(RobotTemplate robotTemplate) {
 
-
+		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new4Bit(0xf, 0, 0), 750, false));
+		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new8Bit(0xb0, 0x1, 0), 750, false));
+		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new4Bit(0xf, 0xd, 0), 750, false));
+		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new4Bit(0, 0xf, 0), 750, false));
+		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new4Bit(0, 0, 0xf), 750, false));
+		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new8Bit(0x38, 0, 0xb8), 750, false));
+		lightsTestSequence.setRepeat(true);
 	}
 
 	@Override
@@ -55,7 +66,8 @@ public class MainLightsTest extends MainClass {
 	protected void initializeTeleop()
 	{
 		//testPWM.setRaw(1011);
-		lights.setColor(LightsColor.new4Bit(9, 0, 9));
+		//lights.setFader(LightsColor.new4Bit(9, 0xf, 0), 32, 25);
+		lights.executeSequence(lightsTestSequence);
 //		testMotor.set(1);
 //		try {
 //			Field centerPwmField = testMotor.getClass().getSuperclass().getSuperclass().getDeclaredField("m_centerPwm");

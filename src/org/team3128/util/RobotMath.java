@@ -1,5 +1,6 @@
 package org.team3128.util;
 
+import org.team3128.Log;
 import org.team3128.Options;
 
 
@@ -136,6 +137,10 @@ public class RobotMath {
     */
    public static int clampInt(int value, int minimum, int maximum)
    {
+	   if(!(minimum <= maximum))
+	   {
+		   Log.debug("RobotMath", "...what?  clampInt() called with insane arguments");
+	   }
 	   return Math.min(Math.max(value, minimum), maximum); 
    }
    

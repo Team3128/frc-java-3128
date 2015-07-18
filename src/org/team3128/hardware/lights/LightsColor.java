@@ -1,4 +1,4 @@
-package org.team3128.hardware.motor.logic;
+package org.team3128.hardware.lights;
 
 /**
  * Class to represent a color that can be displayed on the robot lights.

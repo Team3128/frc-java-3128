@@ -1,7 +1,7 @@
 package org.team3128.hardware.lights;
 
 import org.team3128.Log;
-import org.team3128.hardware.motor.logic.LightsColor;
+import org.team3128.hardware.lights.LightsSequence.Step;
 import org.team3128.util.RobotMath;
 
 import edu.wpi.first.wpilibj.PWM;
@@ -20,7 +20,7 @@ public class PWMLights
 	PWM greenLights;
 	PWM blueLights;
 	
-	Thread faderThread;
+	Thread sequenceThread;
 	
 	/**
 	 * Construct a PWMLights object from the three PWM ports on the roboRIO it is attached to.
@@ -53,8 +53,8 @@ public class PWMLights
 	//there are no short literals in Java, so the function takes ints for convenience.
 	public void setColor(LightsColor color)
 	{
-		//Make sure that the fader thread is not setting these values at the same time.
-		shutDownFaderThread();
+		//Make sure that the worker thread is not setting these values at the same time.
+		shutDownSequenceThread();
 		
 		redLights.setRaw(color.getR());
 		greenLights.setRaw(color.getG());
@@ -71,18 +71,25 @@ public class PWMLights
 	
 	/**
 	 * Start the fader thread, which pulses the lights on and off.
-	 * @param r
-	 * @param g
-	 * @param b
-	 * @param decrement how far (11 bit) to decrement each channel's brightness every cycle.
-	 * @param period how long to wait between fader adjustment cycles in milliseconds.
+     * @param color
 	 */
 	public void setFader(LightsColor color, int decrement, int period)
 	{
-		shutDownFaderThread();
+		shutDownSequenceThread();
 		
-		faderThread = new Thread(() -> faderLoop(color, decrement, period), "Fader Thread");
-		faderThread.start();
+		//make a sequence which fades to black and back.
+		LightsSequence faderSequence = new LightsSequence();
+		faderSequence.setRepeat(true);
+		faderSequence.addStep(new Step(color, 0, true));
+		
+		//we need to not ever turn on channels which are zero in the starting color to avoid weirdness
+		//but if we fade all the way to zero then the lights flash off for a moment
+		//hence the ternary operators
+		LightsColor darkColor = LightsColor.new11Bit(color.getR() > 0 ? 1 : 0, color.getG() > 0 ? 1 : 0, color.getB() > 0 ? 1 : 0);
+		
+		faderSequence.addStep(new Step(darkColor, 0, true));
+		
+		executeSequence(faderSequence);
 	}
 	
 	/**
@@ -92,14 +99,14 @@ public class PWMLights
 	 * 
 	 * Called by setColor() and setOff()
 	 */
-	public void shutDownFaderThread()
+	public void shutDownSequenceThread()
 	{
-		if(faderThread != null && faderThread.isAlive())
+		if(sequenceThread != null && sequenceThread.isAlive())
 		{
-			faderThread.interrupt();
+			sequenceThread.interrupt();
 			try
 			{
-				faderThread.join();
+				sequenceThread.join();
 			}
 			catch (InterruptedException e)
 			{
@@ -109,44 +116,49 @@ public class PWMLights
 	}
 	
 	/**
-	 * Function run in its own thread to fade the lights.
-	 * It takes the base color the lights should fade from in 12 bit form as the irst three parameters. 
+	 * Function run from the worker thread to fade the lights.
+	 * It takes the base color the lights should fade from in 11 bit form as the first parameter. 
 	 *
-	 * @param wavelength
+	 * @param increment how far (11 bit) to increase or decrease each channel's brightness every cycle.
+	 * @param period how long to wait between fader adjustment cycles in milliseconds.
 	 */
-	private void faderLoop(LightsColor originalColor, int decrement, int period)
+	private void faderLoop(LightsColor originalColor, LightsColor newColor, int increment, int period)
 	{
-		Log.debug("PWMLights", "Fader Thread Starting");
-		
-		//positive or negative based on whether the lights are getting brighter or darker at the moment
-		int direction = -1;
+		Log.debug("PWMLights", "Fader Loop Starting");
 		
 		int r = originalColor.getR();
 		int g = originalColor.getG();
 		int b = originalColor.getB();
 		
-		while(true)
+		int newR = newColor.getR();
+		int newG = newColor.getG();
+		int newB = newColor.getB();
+		
+		int incrementR = increment * RobotMath.sgn(newR - r);
+		int incrementG = increment * RobotMath.sgn(newG - g);
+		int incrementB = increment * RobotMath.sgn(newB - b);
+		
+		while(!(r == newR && g == newG && b == newB))
 		{
-			r += direction * decrement;
-			g += direction * decrement;
-			b += direction * decrement;
-			
-			//check if all of the channels have gone below zero
-			if(r < 0 && g < 0 && b < 0)
-			{
-				direction = 1;
-
-			}
-			else if(r > originalColor.getR() && g > originalColor.getG() && b > originalColor.getB())
-			{
-				direction = 1;
-			}
+			r += incrementR;
+			g += incrementG;
+			b += incrementB;
 			
 			//Put channels back within limits
-			r = RobotMath.clampInt(r, 0, originalColor.getR());
-			g = RobotMath.clampInt(g, 0, originalColor.getG());
-			b = RobotMath.clampInt(b, 0, originalColor.getB());
+			if(incrementR > 0 ? r > newR : r < newR)
+			{
+				r = newR;
+			}
+			if(incrementG > 0 ? g > newG : g < newG)
+			{
+				g = newG;
+			}
+			if(incrementB > 0 ? b > newB : b < newB)
+			{
+				b = newB;
+			}
 			
+			Log.debug("PWMLights", r + " " + g + " " + b);
 			
 			//actually set the values
 			redLights.setRaw(r);
@@ -162,5 +174,56 @@ public class PWMLights
 				Log.debug("PWMLights", "Fader Thread Shutting Down");
 			}
 		}
+	}
+	
+	/**
+	 * Execute a sequence of lights changes.
+	 * @param sequence
+	 */
+	public void executeSequence(LightsSequence sequence)
+	{
+		
+		shutDownSequenceThread();
+		Log.debug("PWMLights", "Executing lights sequence.");
+		
+		sequenceThread = new Thread(() ->
+		{
+			do
+			{
+				for(int counter = 0; counter < sequence.sequenceSteps.size(); ++counter)
+				{
+					Step currentStep = sequence.sequenceSteps.get(counter);
+					
+					//avoid calling setColor() because it shuts down the thread
+					redLights.setRaw(currentStep.getColor().getR());
+					greenLights.setRaw(currentStep.getColor().getG());
+					blueLights.setRaw(currentStep.getColor().getB());
+					
+					if(currentStep.getTimeInMillis() > 0)
+					{
+						try
+						{
+							Thread.sleep(currentStep.getTimeInMillis());
+						}
+						catch(InterruptedException ex)
+						{
+							return;
+						}
+					}
+					
+					if(currentStep.fadeToNext())
+					{
+						//wrap around to the first step if this is the last step
+						LightsColor newColor = sequence.sequenceSteps.get(counter == sequence.sequenceSteps.size() - 1 ? 0 : counter + 1).getColor();
+						faderLoop(currentStep.getColor(), newColor, 32, 25);
+					}
+				}
+			}
+			while(sequence.shouldRepeat());
+		
+			Log.debug("PWMLights", "Finished lights sequence.");
+		});
+		
+		sequenceThread.start();
 	}
 }
