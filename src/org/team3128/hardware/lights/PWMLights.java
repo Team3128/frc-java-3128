@@ -119,55 +119,44 @@ public class PWMLights
 	 * Function run from the worker thread to fade the lights.
 	 * It takes the base color the lights should fade from in 11 bit form as the first parameter. 
 	 *
-	 * @param increment how far (11 bit) to increase or decrease each channel's brightness every cycle.
-	 * @param period how long to wait between fader adjustment cycles in milliseconds.
+	 * @param time how long the fade operation should take.
+	 * @param resolution how many steps per second to do the fade in.
 	 */
-	private void faderLoop(LightsColor originalColor, LightsColor newColor, int increment, int period)
+	private void faderLoop(LightsColor originalColor, LightsColor newColor, long time, int resolution)
 	{
 		Log.debug("PWMLights", "Fader Loop Starting");
 		
-		int r = originalColor.getR();
-		int g = originalColor.getG();
-		int b = originalColor.getB();
+		double currentR = originalColor.getR();
+		double currentG = originalColor.getG();
+		double currentB = originalColor.getB();
 		
-		int newR = newColor.getR();
-		int newG = newColor.getG();
-		int newB = newColor.getB();
+		int numSteps = RobotMath.ceil_double_int((time / 1000.0) * resolution);
+		int sleepTime = RobotMath.ceil_double_int(1000.0 / resolution);
 		
-		int incrementR = increment * RobotMath.sgn(newR - r);
-		int incrementG = increment * RobotMath.sgn(newG - g);
-		int incrementB = increment * RobotMath.sgn(newB - b);
+		int differenceR = newColor.getR() - originalColor.getR();
+		double incrementR = differenceR / (double)numSteps;
 		
-		while(!(r == newR && g == newG && b == newB))
+		int differenceG = newColor.getG() -  originalColor.getG();
+		double incrementG = differenceG / (double)numSteps;
+		
+		int differenceB = newColor.getB() -  originalColor.getB();
+		double incrementB = differenceB / (double)numSteps;
+		
+		
+		for(int currentStep = 0; currentStep < numSteps; ++currentStep)
 		{
-			r += incrementR;
-			g += incrementG;
-			b += incrementB;
-			
-			//Put channels back within limits
-			if(incrementR > 0 ? r > newR : r < newR)
-			{
-				r = newR;
-			}
-			if(incrementG > 0 ? g > newG : g < newG)
-			{
-				g = newG;
-			}
-			if(incrementB > 0 ? b > newB : b < newB)
-			{
-				b = newB;
-			}
-			
-			Log.debug("PWMLights", r + " " + g + " " + b);
+			currentR += incrementR;
+			currentG += incrementG;
+			currentB += incrementB;
 			
 			//actually set the values
-			redLights.setRaw(r);
-			greenLights.setRaw(g);
-			blueLights.setRaw(b);
+			redLights.setRaw((int)currentR);
+			greenLights.setRaw((int)currentG);
+			blueLights.setRaw((int)currentB);
 			
 			try
 			{
-				Thread.sleep(period);
+				Thread.sleep(sleepTime);
 			}
 			catch (InterruptedException e)
 			{

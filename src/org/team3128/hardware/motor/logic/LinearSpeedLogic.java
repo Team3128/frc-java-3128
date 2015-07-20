@@ -49,7 +49,7 @@ public class LinearSpeedLogic extends MotorLogic
     {
         double speed = _encoder.getSpeedInRPM();
 
-        return RobotMath.makeValidPower(tgtSpeed * (speed / RobotMath.getMotorExpectedRPM(tgtSpeed)));
+        return RobotMath.makeValidPower(tgtSpeed * (speed / RobotMath.getCIMExpectedRPM(tgtSpeed)));
     }
    
     @Override

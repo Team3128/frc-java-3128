@@ -158,13 +158,13 @@ public class RobotMath {
    
    public static final double SQUARE_ROOT_TWO = Math.sqrt(2.0);
    
-   public static double getMotorExpectedRPM(double power)
+   public static double getCIMExpectedRPM(double power)
    {
 	   //5310 is the max RPM of a CIM at full power
 	   return 5310 * power;
    }
    
-   public static double getEstMotorPowerForRPM(double rpm)
+   public static double getEstCIMPowerForRPM(double rpm)
    {
 	   
 	   //5310 is the max RPM of a CIM at full power
@@ -186,6 +186,23 @@ public class RobotMath {
 	   }
 	   
 	   return (int)floored;
+   }
+   
+   /**
+    * 
+    * @param toCeil
+    * @return An integer whose value is the same or less than one higher than the argument.
+    * Throws if the argument is too large to be an int.
+    */
+   public static int ceil_double_int(double toCeil)
+   {
+	   double ceilinged = Math.ceil(toCeil);
+	   if(ceilinged > Integer.MAX_VALUE)
+	   {
+		   throw new IllegalArgumentException("The provided double is too large to be an int");
+	   }
+	   
+	   return (int)ceilinged;
    }
 
    //hidden constructor

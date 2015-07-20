@@ -83,7 +83,7 @@ public class CmdArcTurn extends Command {
 			//AutoUtils.killRobot("Arc Turn Overtime", );
 		}
 		
-		otherSideMotors.setControlTarget(-1 * RobotMath.getEstMotorPowerForRPM(otherSideEncoder.getSpeedInRPM()));
+		otherSideMotors.setControlTarget(-1 * RobotMath.getEstCIMPowerForRPM(otherSideEncoder.getSpeedInRPM()));
 		
     }
 

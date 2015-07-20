@@ -85,7 +85,7 @@ public class PIDSpeedLogic extends MotorLogic
     	}
         _pidCalculator.update(speed);
         
-        double output = RobotMath.makeValidPower(RobotMath.getEstMotorPowerForRPM(_targetSpeed + _pidCalculator.getOutputAddition()));
+        double output = RobotMath.makeValidPower(RobotMath.getEstCIMPowerForRPM(_targetSpeed + _pidCalculator.getOutputAddition()));
         
         Log.debug("PIDSpeedTarget", "Current RPM: " + speed + " Output: " + output);
         
