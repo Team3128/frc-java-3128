@@ -1,5 +1,6 @@
 package org.team3128.main;
 
+import org.team3128.Log;
 import org.team3128.MainClass;
 import org.team3128.RobotTemplate;
 import org.team3128.hardware.lights.LightsColor;
@@ -33,12 +34,12 @@ public class MainLightsTest extends MainClass {
 	@Override
 	protected void initializeRobot(RobotTemplate robotTemplate) {
 
-		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new4Bit(0xf, 0, 0), 750, false));
-		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new8Bit(0xb0, 0x1, 0), 750, false));
-		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new4Bit(0xf, 0xd, 0), 750, false));
-		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new4Bit(0, 0xf, 0), 750, false));
-		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new4Bit(0, 0, 0xf), 750, false));
-		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new8Bit(0x38, 0, 0xb8), 750, false));
+		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new4Bit(0xf, 0, 0), 750, true));
+		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new8Bit(0xb0, 0x1, 0), 750, true));
+		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new4Bit(0xf, 0xd, 0), 750, true));
+		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new4Bit(0, 0xf, 0), 750, true));
+		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new4Bit(0, 0, 0xf), 750, true));
+		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new8Bit(0x38, 0, 0xb8), 750, true));
 		lightsTestSequence.setRepeat(true);
 	}
 
@@ -67,6 +68,7 @@ public class MainLightsTest extends MainClass {
 	{
 		//testPWM.setRaw(1011);
 		//lights.setFader(LightsColor.new4Bit(9, 0xf, 0), 32, 25);
+		Log.debug("MainLightsTest", "Starting lights sequence...");
 		lights.executeSequence(lightsTestSequence);
 //		testMotor.set(1);
 //		try {

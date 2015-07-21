@@ -1,5 +1,6 @@
 package org.team3128.main;
 
+import org.team3128.Log;
 import org.team3128.MainClass;
 import org.team3128.Options;
 import org.team3128.RobotTemplate;
@@ -143,6 +144,8 @@ public class MainTheClawwww extends MainClass
 		robotTemplate.addListenerManager(listenerManagerExtreme);
 		robotTemplate.addListenerManager(listenerManagerJoyLeft);
 		robotTemplate.addListenerManager(listenerManagerJoyRight);
+		
+        Log.info("MainTheClawwww", "\"The Clawwwwwww.....\"   Activated");
 	}
 
 	protected void initializeDisabled()

@@ -1,6 +1,7 @@
 bin
 /dist
 /build
+/frctest
 /sysProps.xml
 /build-emu
 /junit

@@ -154,6 +154,9 @@ public class PWMLights
 			greenLights.setRaw((int)currentG);
 			blueLights.setRaw((int)currentB);
 			
+			
+			Log.debug("PWMLights", String.format("R: %.02f, G: %.02f, B: %.02f", currentR, currentG, currentB));
+			
 			try
 			{
 				Thread.sleep(sleepTime);
@@ -204,7 +207,7 @@ public class PWMLights
 					{
 						//wrap around to the first step if this is the last step
 						LightsColor newColor = sequence.sequenceSteps.get(counter == sequence.sequenceSteps.size() - 1 ? 0 : counter + 1).getColor();
-						faderLoop(currentStep.getColor(), newColor, 32, 25);
+						faderLoop(currentStep.getColor(), newColor, 1000, 20);
 					}
 				}
 			}

@@ -51,7 +51,6 @@ public class RobotTemplate extends IterativeRobot
         dashboardUpdateThread.start();
         
         Log.info("RobotTemplate", "Initialization Done!");
-        Log.info("RobotTemplate", "\"The Clawwwwwww.....\"   Activated");
     }
 
     @Override

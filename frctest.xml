@@ -16,10 +16,12 @@
       
     -->
   
-  	<property name="jarpath" value="${build.dir}/"/>
+  	<property name="frctest-folder" value="frctest"/>
 	<property name="test-project" value="../frc-java-tests"/>  
 	
-	<property name="test-build.dir" value="build-test"/>
+	<property name="test-build.dir" value="${frctest-folder}/build"/>
+	<property name="emulator-build.dir" value="${frctest-folder}/unittest-build"/>
+  	<property name="robot-code-jar" value="${frctest-folder}/Robot Code.jar"/>
 	
 	<!-- assume that the test code is in the same workspce and cloned under the correct name  -->
 	<property name="test-src.dir" value="${test-project}/src"/>  
@@ -35,7 +37,7 @@
 	<property name="emulatorclasspath" value="${javassist-jar}:${guava-jar}:${reflections-jar}:${frctest-jar}"/>
 	
 	<!-- all of the jars needed to run test mode -->
-	<property name="testclasspath" value="${emulatorclasspath}:${dist.jar}:${junit.jar}:${ant-junit.jar}:${hamcrest.jar}"/>
+	<property name="testclasspath" value="${emulatorclasspath}:${robot-code-jar}:${junit.jar}:${ant-junit.jar}:${hamcrest.jar}"/>
 	
 	
 	<target name="test" depends="testcompile">
@@ -58,21 +60,21 @@
 			 <include name="TEST-*.xml" />
 		 </fileset>
 		 <report todir="junit" />
-	 </junitreport-->
+	 	</junitreport-->
 	</target>
 	
 	<target name="runemulator" depends="emulatorjar" description="Run the robot emulator.">
 		<java fork="true" classname="frctest.EmulatorMain">
 		  <classpath>
 		    <pathelement path="${emulatorclasspath}"/>
-		    <pathelement location="${dist.jar}"/>
+		    <pathelement location="${robot-code-jar}"/>
 		  </classpath>
 		</java>
 	</target>
 	
 	<target name="emulatorjar" depends="emulatorcompile">
-		<jar destfile="${dist.jar}" update="true">
-		  <fileset dir="${build.dir}" includes="**/*.class"/>
+		<jar destfile="${robot-code-jar}" update="true">
+		  <fileset dir="${emulator-build.dir}" includes="**/*.class"/>
 		</jar>
 	</target>
 	
@@ -93,8 +95,8 @@
 	</target>
 	
 	<target name="emulatorcompile" description="Compile the source code using the emulator jar.">
-		<mkdir dir="${build.dir}"/>
-		<echo level="info">[FRC-Test] Compiling ${src.dir} to ${build.dir} using java ${ant.java.version}</echo>
+		<mkdir dir="${emulator-build.dir}"/>
+		<echo level="info">[FRC-Test] Compiling /${src.dir} to /${emulatorbuild.dir} using java ${ant.java.version}</echo>
 		<echo level="info">[FRC-Test] Classpath: ${emulatorclasspath}</echo>
 		
 
@@ -109,7 +111,7 @@
 		</if>
 		
 		<javac srcdir="${src.dir}"
-		 destdir="${build.dir}"
+		 destdir="${emulator-build.dir}"
 		 includeAntRuntime="no"
 		 includeJavaRuntime="no"
 		 classpath="${emulatorclasspath}"
