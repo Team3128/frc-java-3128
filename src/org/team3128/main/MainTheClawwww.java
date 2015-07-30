@@ -34,7 +34,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class MainTheClawwww extends MainClass
 {
 	public ListenerManager listenerManagerExtreme;
-	public ListenerManager listenerManagerJoyLeft;
+	//public ListenerManager listenerManagerJoyLeft;
 	public ListenerManager listenerManagerJoyRight;
 	
 	public MotorGroup _pidTestMotor;
@@ -72,8 +72,8 @@ public class MainTheClawwww extends MainClass
 	public MainTheClawwww()
 	{	
 		listenerManagerExtreme = new ListenerManager(new Joystick(Options.controllerPort), ControllerExtreme3D.instance);
-		listenerManagerJoyLeft = new ListenerManager(new Joystick(1), ControllerAttackJoy.instance);
-		listenerManagerJoyRight = new ListenerManager(new Joystick(2), ControllerAttackJoy.instance);		
+		//listenerManagerJoyLeft = new ListenerManager(new Joystick(1), ControllerAttackJoy.instance);
+		listenerManagerJoyRight = new ListenerManager(new Joystick(1), ControllerAttackJoy.instance);		
 		powerDistPanel = new PowerDistributionPanel();
 		
 		leftDriveEncoder = new QuadratureEncoderLink(0,	1, 128, false);
@@ -142,7 +142,7 @@ public class MainTheClawwww extends MainClass
 	protected void initializeRobot(RobotTemplate robotTemplate)
 	{	
 		robotTemplate.addListenerManager(listenerManagerExtreme);
-		robotTemplate.addListenerManager(listenerManagerJoyLeft);
+		//robotTemplate.addListenerManager(listenerManagerJoyLeft);
 		robotTemplate.addListenerManager(listenerManagerJoyRight);
 		
         Log.info("MainTheClawwww", "\"The Clawwwwwww.....\"   Activated");
@@ -194,9 +194,9 @@ public class MainTheClawwww extends MainClass
 		
 		listenerManagerJoyRight.addListener(ControllerAttackJoy.JOYY, () ->
 		{
-			double power = -1 * (shoulderInverted ? Options.armSpeedMultiplier : -Options.armSpeedMultiplier) * listenerManagerJoyRight.getRawAxis(ControllerAttackJoy.JOYY);
+			double power = (shoulderInverted ? Options.armSpeedMultiplier : -Options.armSpeedMultiplier) * listenerManagerJoyRight.getRawAxis(ControllerAttackJoy.JOYY);
 			
-			if(power < 0)
+			if(power > 0)
 			{
 				power /= 1.5;
 			}
@@ -208,9 +208,9 @@ public class MainTheClawwww extends MainClass
 			
 		});
 		
-		listenerManagerJoyLeft.addListener(ControllerAttackJoy.JOYY, () ->
+		listenerManagerJoyRight.addListener(ControllerAttackJoy.JOYX, () ->
 		{
-			double power = listenerManagerJoyLeft.getRawAxis(ControllerAttackJoy.JOYY);
+			double power = listenerManagerJoyRight.getRawAxis(ControllerAttackJoy.JOYX);
 			clawArm.onJointJoyInput((elbowInverted ? Options.armSpeedMultiplier : -Options.armSpeedMultiplier) * power);
 		});
 		
@@ -218,15 +218,9 @@ public class MainTheClawwww extends MainClass
 		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN3, () -> shoulderInverted = true);
 		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN6, () -> shoulderInverted = true);
 		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN7, () -> shoulderInverted = false);
-		listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN2, () -> elbowInverted = false);
-		listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN3, () -> elbowInverted = true);
-		listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN6, () -> elbowInverted = true);
-		listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN7, () -> elbowInverted = false);
 		
 		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN1, () -> clawGrabMotor.setControlTarget(0.7));
 		listenerManagerJoyRight.addListener(ControllerAttackJoy.UP1, () -> clawGrabMotor.setControlTarget(0));
-		listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN1, () -> clawGrabMotor.setControlTarget(-0.7));
-		listenerManagerJoyLeft.addListener(ControllerAttackJoy.UP1, () -> clawGrabMotor.setControlTarget(0));
 		
 		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN4, () -> clawGrabMotor.setControlTarget(0.7));
 		listenerManagerJoyRight.addListener(ControllerAttackJoy.UP4, () -> clawGrabMotor.setControlTarget(0));
