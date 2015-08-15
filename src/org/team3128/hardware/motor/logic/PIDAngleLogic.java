@@ -1,6 +1,5 @@
 package org.team3128.hardware.motor.logic;
 
-import org.team3128.Log;
 import org.team3128.hardware.encoder.angular.IAngularEncoder;
 import org.team3128.hardware.motor.MotorLogic;
 import org.team3128.util.RobotMath;
@@ -73,12 +72,12 @@ public class PIDAngleLogic extends MotorLogic
     	
 //    	if(errorSum > errorLimit)
 //    	{
-//    		Log.unusual("LinearAngleTarget", "I error sum of " + errorSum + " went over limit of " + errorLimit);
+//    		Log.unusual("PIDAngleTarget", "I error sum of " + errorSum + " went over limit of " + errorLimit);
 //    		errorSum = errorLimit;
 //    	}
 //    	else if(errorSum < -errorLimit)
 //    	{
-//    		Log.unusual("LinearAngleTarget", "I error sum of " + errorSum + " went under limit of " + -errorLimit);
+//    		Log.unusual("PIDAngleTarget", "I error sum of " + errorSum + " went under limit of " + -errorLimit);
 //    		errorSum = -errorLimit;
 //    	}
     	
@@ -88,10 +87,10 @@ public class PIDAngleLogic extends MotorLogic
         
        	if(_log)
     	{
-    		Log.debug("LinearAngleTarget", "output: " + output);
+    		//Log.debug("PIDAngleTarget", "output: " + output);
     	}
         
-        //Log.debug("LinearAngleTarget", "target: " + targetAngle + " current: " + angle + " error: " + error + " output: " + (pGain));
+        //Log.debug("PIDAngleTarget", "target: " + targetAngle + " current: " + angle + " error: " + error + " output: " + (pGain));
         
         //if(Math.abs(pGain) <= this.minSpeed)
         //{

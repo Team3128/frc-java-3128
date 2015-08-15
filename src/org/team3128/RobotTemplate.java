@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /*
  * THIS FILE SHOULD NOT BE MODIFIED
@@ -45,7 +46,9 @@ public class RobotTemplate extends IterativeRobot
         
         Log.info("RobotTemplate", "Setting Up Autonomous Chooser...");
 		autoChooser = new SendableChooser();
-        main.addAutoPrograms(autoChooser);        
+        main.addAutoPrograms(autoChooser);
+        SmartDashboard.putData("autoChooser", autoChooser);
+        
         Log.info("RobotTemplate", "Starting Dashboard Update Thread...");
         dashboardUpdateThread = new Thread(this::updateDashboardLoop, "Dashboard Update Thread");
         dashboardUpdateThread.start();

@@ -17,8 +17,12 @@ import org.team3128.hardware.mechanisms.ClawArm;
 import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.listener.IListenerCallback;
 import org.team3128.listener.ListenerManager;
+import org.team3128.listener.control.Always;
 import org.team3128.listener.controller.ControllerAttackJoy;
 import org.team3128.listener.controller.ControllerExtreme3D;
+import org.team3128.util.RoboVision;
+
+import com.ni.vision.NIVision;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -69,6 +73,9 @@ public class MainTheClawwww extends MainClass
 	boolean shoulderInverted = true;
 	boolean elbowInverted = true;
 	
+	int cameraHandle;
+	RoboVision visionProcessor; 
+	
 	public MainTheClawwww()
 	{	
 		listenerManagerExtreme = new ListenerManager(new Joystick(Options.controllerPort), ControllerExtreme3D.instance);
@@ -109,8 +116,7 @@ public class MainTheClawwww extends MainClass
 		clawGrabMotor.addControlledMotor(new Talon(8));
 		
 		//lights = new PWMLights(0, 9, 7);
-		
-		//camera = new AxisCamera("192.168.1.196");
+
 		clawArm = new ClawArm(armTurnMotor, armJointMotor, clawGrabMotor, armRotateEncoder, armJointEncoder, powerDistPanel);
 
 		drive = new ArcadeDrive(leftMotors, rightMotors, listenerManagerExtreme);
@@ -123,6 +129,8 @@ public class MainTheClawwww extends MainClass
 			
 			drive.steer(joyX, joyY, throttle, listenerManagerExtreme.getRawBool(ControllerExtreme3D.DOWN2));
 		};
+		
+		visionProcessor = new RoboVision();
 		
 		//--------------------------------------------------------------------------
 		// Auto Init
@@ -144,6 +152,10 @@ public class MainTheClawwww extends MainClass
 		robotTemplate.addListenerManager(listenerManagerExtreme);
 		//robotTemplate.addListenerManager(listenerManagerJoyLeft);
 		robotTemplate.addListenerManager(listenerManagerJoyRight);
+		
+        cameraHandle = NIVision.IMAQdxOpenCamera("cam0",
+                NIVision.IMAQdxCameraControlMode.CameraControlModeController);
+        NIVision.IMAQdxConfigureGrab(cameraHandle);
 		
         Log.info("MainTheClawwww", "\"The Clawwwwwww.....\"   Activated");
 	}
@@ -171,6 +183,7 @@ public class MainTheClawwww extends MainClass
 	protected void initializeTeleop()
 	{	
 		//lights.setFader(Color.new11Bit(2000, 2000, 2000), 1, 10);
+        NIVision.IMAQdxStartAcquisition(cameraHandle);
 		
 		//-----------------------------------------------------------
 		// Drive code, on Logitech Extreme3D joystick
@@ -236,6 +249,8 @@ public class MainTheClawwww extends MainClass
 		listenerManagerExtreme.addListener(ControllerExtreme3D.UP6, () -> frontHookMotor.setControlTarget(0));
 
 		listenerManagerExtreme.addListener(ControllerExtreme3D.UP8, () -> frontHookMotor.setControlTarget(0));
+
+		listenerManagerExtreme.addListener(Always.instance, () -> visionProcessor.targetRecognition(cameraHandle));
 		
 		//clawArm.startClawLimitThread();
 	}
