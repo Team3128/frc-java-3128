@@ -73,7 +73,7 @@ public class PWMLights
 	 * Start the fader thread, which pulses the lights on and off.
      * @param color
 	 */
-	public void setFader(LightsColor color, int decrement, int period)
+	public void setFader(LightsColor color)
 	{
 		shutDownSequenceThread();
 		
@@ -142,6 +142,8 @@ public class PWMLights
 		int differenceB = newColor.getB() -  originalColor.getB();
 		double incrementB = differenceB / (double)numSteps;
 		
+		Log.debug("PWMLights", "numSteps: " + numSteps + " incrementR: " + incrementR + " incrementG: " + incrementG + " incrementB: " + incrementB);
+		
 		
 		for(int currentStep = 0; currentStep < numSteps; ++currentStep)
 		{
@@ -207,7 +209,7 @@ public class PWMLights
 					{
 						//wrap around to the first step if this is the last step
 						LightsColor newColor = sequence.sequenceSteps.get(counter == sequence.sequenceSteps.size() - 1 ? 0 : counter + 1).getColor();
-						faderLoop(currentStep.getColor(), newColor, 1000, 20);
+						faderLoop(currentStep.getColor(), newColor, 2000, 30);
 					}
 				}
 			}

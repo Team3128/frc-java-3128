@@ -22,7 +22,7 @@ public class MainLightsTest extends MainClass {
 	LightsSequence lightsTestSequence;
 	
 	public MainLightsTest() {
-		lights = new PWMLights(0, 1, 2);
+		lights = new PWMLights(10, 11, 12);
 		lightsTestSequence = new LightsSequence();
 		//testMotor = new Talon(0);
 		
@@ -34,12 +34,12 @@ public class MainLightsTest extends MainClass {
 	@Override
 	protected void initializeRobot(RobotTemplate robotTemplate) {
 
-		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new4Bit(0xf, 0, 0), 750, true));
-		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new8Bit(0xb0, 0x1, 0), 750, true));
-		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new4Bit(0xf, 0xd, 0), 750, true));
-		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new4Bit(0, 0xf, 0), 750, true));
-		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new4Bit(0, 0, 0xf), 750, true));
-		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new8Bit(0x38, 0, 0xb8), 750, true));
+		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new4Bit(0xf, 0, 0), 750, false));
+		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new8Bit(0xb0, 0x1, 0), 750, false));
+		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new4Bit(0xf, 0xd, 0), 750, false));
+		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new4Bit(0, 0xf, 0), 750, false));
+		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new4Bit(0, 0, 0xf), 750, false));
+		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new8Bit(0x38, 0, 0xb8), 750, false));
 		lightsTestSequence.setRepeat(true);
 	}
 
