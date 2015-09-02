@@ -2,7 +2,7 @@ package org.team3128.main;
 
 import org.team3128.Log;
 import org.team3128.MainClass;
-import org.team3128.Options;
+import org.team3128.RobotProperties;
 import org.team3128.RobotTemplate;
 import org.team3128.autonomous.AutoHardware;
 import org.team3128.autonomous.programs.DoNothingAuto;
@@ -21,6 +21,7 @@ import org.team3128.listener.control.Always;
 import org.team3128.listener.controller.ControllerAttackJoy;
 import org.team3128.listener.controller.ControllerExtreme3D;
 import org.team3128.util.RoboVision;
+import org.team3128.util.Units;
 
 import com.ni.vision.NIVision;
 
@@ -37,6 +38,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class MainTheClawwww extends MainClass
 {
+	
+	/**
+	 * Multiplier for teleop arm speed
+	 */
+	public static double armSpeedMultiplier = .8;
+	
 	public ListenerManager listenerManagerExtreme;
 	//public ListenerManager listenerManagerJoyLeft;
 	public ListenerManager listenerManagerJoyRight;
@@ -78,7 +85,7 @@ public class MainTheClawwww extends MainClass
 	
 	public MainTheClawwww()
 	{	
-		listenerManagerExtreme = new ListenerManager(new Joystick(Options.controllerPort), ControllerExtreme3D.instance);
+		listenerManagerExtreme = new ListenerManager(new Joystick(RobotProperties.controllerPort), ControllerExtreme3D.instance);
 		//listenerManagerJoyLeft = new ListenerManager(new Joystick(1), ControllerAttackJoy.instance);
 		listenerManagerJoyRight = new ListenerManager(new Joystick(1), ControllerAttackJoy.instance);		
 		powerDistPanel = new PowerDistributionPanel();
@@ -156,6 +163,10 @@ public class MainTheClawwww extends MainClass
         cameraHandle = NIVision.IMAQdxOpenCamera("cam0",
                 NIVision.IMAQdxCameraControlMode.CameraControlModeController);
         NIVision.IMAQdxConfigureGrab(cameraHandle);
+        
+        //Set options class
+        RobotProperties.wheelCircumfrence = 6 * Units.INCH * Math.PI;
+        RobotProperties.wheelBase = 24.5 * Units.INCH;
 		
         Log.info("MainTheClawwww", "\"The Clawwwwwww.....\"   Activated");
 	}
@@ -207,7 +218,7 @@ public class MainTheClawwww extends MainClass
 		
 		listenerManagerJoyRight.addListener(ControllerAttackJoy.JOYY, () ->
 		{
-			double power = (shoulderInverted ? Options.armSpeedMultiplier : -Options.armSpeedMultiplier) * listenerManagerJoyRight.getRawAxis(ControllerAttackJoy.JOYY);
+			double power = (shoulderInverted ? armSpeedMultiplier : -armSpeedMultiplier) * listenerManagerJoyRight.getRawAxis(ControllerAttackJoy.JOYY);
 			
 			if(power > 0)
 			{
@@ -224,7 +235,7 @@ public class MainTheClawwww extends MainClass
 		listenerManagerJoyRight.addListener(ControllerAttackJoy.JOYX, () ->
 		{
 			double power = listenerManagerJoyRight.getRawAxis(ControllerAttackJoy.JOYX);
-			clawArm.onJointJoyInput((elbowInverted ? Options.armSpeedMultiplier : -Options.armSpeedMultiplier) * power);
+			clawArm.onJointJoyInput((elbowInverted ? armSpeedMultiplier : -armSpeedMultiplier) * power);
 		});
 		
 		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN2, () -> shoulderInverted = false);

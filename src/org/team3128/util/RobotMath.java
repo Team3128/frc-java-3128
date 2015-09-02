@@ -1,7 +1,7 @@
 package org.team3128.util;
 
 import org.team3128.Log;
-import org.team3128.Options;
+import org.team3128.RobotProperties;
 
 
 /**
@@ -215,7 +215,7 @@ public class RobotMath {
 	 */
 	public static double cmToDegrees(double cm)
 	{
-		return Options.degreesPercm * cm;
+		return (360 / RobotProperties.wheelCircumfrence) * cm;
 	}
 	
 	/**
@@ -225,6 +225,6 @@ public class RobotMath {
 	 */
 	public static double cmToRotations(double cm)
 	{
-		return cm / Options.wheelCircumfrence;
+		return cm / RobotProperties.wheelCircumfrence;
 	}
 }

@@ -1,6 +1,6 @@
 package org.team3128.drive;
 
-import org.team3128.Options;
+import org.team3128.RobotProperties;
 import org.team3128.hardware.encoder.angular.IAngularEncoder;
 import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.util.RobotMath;
@@ -57,7 +57,7 @@ public class SwerveDrive
         rot = maxRot * x2 * 0.3;
 
         if (Math.abs(vel) > 0.1)
-            theta = RobotMath.rTD(Math.atan2(y1, x1)) + _gyr.getAngle() + Options.gyrBias;
+            theta = RobotMath.rTD(Math.atan2(y1, x1)) + _gyr.getAngle() + RobotProperties.gyrBias;
         else 
             vel = 0;
 

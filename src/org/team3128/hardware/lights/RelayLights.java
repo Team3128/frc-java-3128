@@ -1,6 +1,6 @@
 package org.team3128.hardware.lights;
 
-import org.team3128.Options;
+import org.team3128.RobotProperties;
 import org.team3128.hardware.misc.RelayLink;
 
 /**
@@ -24,14 +24,14 @@ public class RelayLights
 	 * Change the light color.  A null argument will turn off the lights.
 	 * @param alliance
 	 */
-	public void lightChange(Options.Alliance alliance)
+	public void lightChange(RobotProperties.Alliance alliance)
 	{
 		if(alliance == null)
 		{
 			_redLights.setOff();
 			_redLights.setOff();
 		}
-		else if(Options.alliance == Options.Alliance.BLUE)
+		else if(RobotProperties.alliance == RobotProperties.Alliance.BLUE)
 	    {
 	    	_redLights.setOff();
 	    	_blueLights.setOn();
@@ -45,7 +45,7 @@ public class RelayLights
 
 	void lightChangeToCurrentAlliance()
 	{
-		lightChange(Options.alliance);
+		lightChange(RobotProperties.alliance);
 	}
 	
 }

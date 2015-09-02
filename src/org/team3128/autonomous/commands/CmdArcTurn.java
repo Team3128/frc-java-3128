@@ -2,7 +2,7 @@ package org.team3128.autonomous.commands;
 
 import static java.lang.Math.abs;
 
-import org.team3128.Options;
+import org.team3128.RobotProperties;
 import org.team3128.autonomous.AutoHardware;
 import org.team3128.autonomous.AutoUtils;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
@@ -68,7 +68,7 @@ public class CmdArcTurn extends Command {
 
     protected void initialize()
     {
-		enc = RobotMath.cmToRotations((2.0*Math.PI*Options.wheelBase)*(abs(_degs)/360.0));
+		enc = RobotMath.cmToRotations((2.0*Math.PI*RobotProperties.wheelBase)*(abs(_degs)/360.0));
 		AutoUtils.clearEncoders();
 		
 		sideMotors.setControlTarget(AutoUtils.speedMultiplier * RobotMath.sgn(_degs) * .25);

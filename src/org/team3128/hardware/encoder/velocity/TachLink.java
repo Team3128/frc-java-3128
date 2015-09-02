@@ -2,7 +2,7 @@ package org.team3128.hardware.encoder.velocity;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.team3128.Options;
+import org.team3128.RobotProperties;
 
 import edu.wpi.first.wpilibj.I2C;
 
@@ -52,7 +52,7 @@ public class TachLink implements IVelocityEncoder
 		//init static variables if this is the first use of the class
 		if(_tachConnection == null)
 		{
-			_tachConnection = new I2C(I2C.Port.kOnboard, Options.tachI2CAddress);
+			_tachConnection = new I2C(I2C.Port.kOnboard, RobotProperties.tachI2CAddress);
 			
 			_tachConnMutex = new ReentrantLock();
 		}

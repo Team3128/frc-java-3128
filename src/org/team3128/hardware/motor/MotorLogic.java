@@ -2,7 +2,7 @@
 
 import java.util.HashSet;
 
-import org.team3128.Options;
+import org.team3128.RobotProperties;
 
 /**
 * MotorLogic is an abstract superclass for classes that define the behavior of a motor.  
@@ -20,7 +20,7 @@ public abstract class MotorLogic
 	
 	private HashSet<Limiter> limiters;
 	
-	protected int _refreshTime = Options.motorControlUpdateFrequency;
+	protected int _refreshTime = RobotProperties.motorControlUpdateFrequency;
 		
 	public MotorLogic()
 	{

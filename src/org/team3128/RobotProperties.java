@@ -1,13 +1,13 @@
 package org.team3128;
 
-import org.team3128.util.Units;
 
 /**
- * Singleton class that stores runtime options
+ * Class that stores runtime options.
+ * Some are set at initialization time in the main classes.
  * @author Jamie
  *
  */
-public class Options
+public class RobotProperties
 {
     public enum Alliance
     {
@@ -47,30 +47,16 @@ public class Options
     /**
      * circumfrence of wheels in cm
      */
-    public static double wheelCircumfrence = 6 * Units.INCH * Math.PI;
-    
-    /**
-     * centimeters moved per wheel degree
-     */
-    public static double cmMovedPerDegree = wheelCircumfrence / 360;
-    
-    /**
-     * degrees moved per linear centimeter
-     */
-    public static double degreesPercm = 360 / wheelCircumfrence;
+    public static double wheelCircumfrence;
     
     /**
      * horizontal distance between wheels in cm
      */
-    public static double wheelBase = 24.5 * Units.INCH;;
+    public static double wheelBase;
 
     /**
      * Gyro offset for swerve drive code
      */
 	public static double gyrBias = 0;
-	
-	/**
-	 * Multiplier for teleop arm speed
-	 */
-	public static double armSpeedMultiplier = .8;
+
 }

@@ -2,7 +2,7 @@ package org.team3128.autonomous.commands;
 
 import static java.lang.Math.abs;
 
-import org.team3128.Options;
+import org.team3128.RobotProperties;
 import org.team3128.autonomous.AutoHardware;
 import org.team3128.autonomous.AutoUtils;
 import org.team3128.hardware.encoder.distance.IDistanceEncoder;
@@ -62,7 +62,7 @@ public class CmdInPlaceTurn extends Command {
 
     protected void initialize()
     {
-		enc = RobotMath.floor_double_int(RobotMath.cmToRotations((Math.PI*Options.wheelBase)*(abs(_degs)/360.0)));
+		enc = RobotMath.floor_double_int(RobotMath.cmToRotations((Math.PI*RobotProperties.wheelBase)*(abs(_degs)/360.0)));
 		AutoUtils.clearEncoders();
 		forwardMotors.setControlTarget(AutoUtils.speedMultiplier * RobotMath.sgn(_degs) * .5);
 		backwardMotors.setControlTarget(AutoUtils.speedMultiplier * -1 * RobotMath.sgn(_degs)* .5);

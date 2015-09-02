@@ -1,6 +1,6 @@
 package org.team3128.hardware.mechanisms;
 
-import org.team3128.Options;
+import org.team3128.RobotProperties;
 import org.team3128.hardware.motor.MotorGroup;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -33,7 +33,7 @@ public class CockArm
     	while(true)
     	{
 
-        	if(!_cockArmActive || !Options.armEnabled)
+        	if(!_cockArmActive || !RobotProperties.armEnabled)
         	{
         		return;
         	}
