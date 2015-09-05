@@ -265,10 +265,10 @@ public class ClawArm
 		armAngle -= shoulderTravelMiddle;
 		jointAngle -= elbowTravelMiddle;
 		
-		double result = (34 * Units.INCH) +
-				(Math.cos(Math.toRadians(armAngle)) * 36 * Units.INCH) +
-				(Math.cos(Math.toRadians(jointAngle)) * 52 * Units.INCH);
-		return result > 76 * Units.INCH;
+		double result = (34 * Units.in) +
+				(Math.cos(Math.toRadians(armAngle)) * 36 * Units.in) +
+				(Math.cos(Math.toRadians(jointAngle)) * 52 * Units.in);
+		return result > 76 * Units.in;
 	}
 	
 	/**

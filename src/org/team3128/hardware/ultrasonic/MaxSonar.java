@@ -72,7 +72,7 @@ public class MaxSonar extends IUltrasonic
 	@Override
 	public double getDistance()
 	{
-		return distanceMM.get() * Units.MM;
+		return distanceMM.get() * Units.mm;
 	}
 
 	@Override

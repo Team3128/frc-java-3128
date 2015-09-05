@@ -33,7 +33,7 @@ public class DigitalUltrasonic extends IUltrasonic
 	@Override
 	public double getDistance()
 	{
-		return ultrasonic.getRangeMM() * Units.MM;
+		return ultrasonic.getRangeMM() * Units.mm;
 	}
 
 	@Override

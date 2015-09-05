@@ -11,15 +11,15 @@ package org.team3128.util;
 public class Units
 {
 	//metric
-	public static final double CM = 1;
-	public static final double MM = .1;
-	public static final double DM = 10;
-	public static final double M = 100;
+	public static final double cm = 1;
+	public static final double mm = .1;
+	public static final double dm = 10;
+	public static final double m = 100;
 	
 	//english
-	public static final double INCH = 2.54;
-	public static final double FOOT = 30.48;
-	public static final double MILE = 160934.4;
-	public static final double YARD = 91.44;
+	public static final double in = 2.54;
+	public static final double ft = 30.48;
+	public static final double mi = 160934.4;
+	public static final double yd = 91.44;
 	
 }
