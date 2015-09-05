@@ -13,6 +13,8 @@ import org.team3128.autonomous.programs.TestAuto;
 import org.team3128.drive.ArcadeDrive;
 import org.team3128.hardware.encoder.angular.AnalogPotentiometerEncoder;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
+import org.team3128.hardware.lights.LightsColor;
+import org.team3128.hardware.lights.PWMLights;
 import org.team3128.hardware.mechanisms.ClawArm;
 import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.listener.IListenerCallback;
@@ -21,9 +23,8 @@ import org.team3128.listener.control.Always;
 import org.team3128.listener.controller.ControllerAttackJoy;
 import org.team3128.listener.controller.ControllerExtreme3D;
 import org.team3128.util.RoboVision;
+import org.team3128.util.RobotMath;
 import org.team3128.util.Units;
-
-import com.ni.vision.NIVision;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -82,6 +83,7 @@ public class MainTheClawwww extends MainClass
 	
 	int cameraHandle;
 	RoboVision visionProcessor; 
+	PWMLights lights;
 	
 	public MainTheClawwww()
 	{	
@@ -139,6 +141,9 @@ public class MainTheClawwww extends MainClass
 		
 		visionProcessor = new RoboVision();
 		
+		lights = new PWMLights(10, 11, 12);
+
+		
 		//--------------------------------------------------------------------------
 		// Auto Init
 		//--------------------------------------------------------------------------
@@ -160,9 +165,9 @@ public class MainTheClawwww extends MainClass
 		//robotTemplate.addListenerManager(listenerManagerJoyLeft);
 		robotTemplate.addListenerManager(listenerManagerJoyRight);
 		
-        cameraHandle = NIVision.IMAQdxOpenCamera("cam0",
-                NIVision.IMAQdxCameraControlMode.CameraControlModeController);
-        NIVision.IMAQdxConfigureGrab(cameraHandle);
+        //cameraHandle = NIVision.IMAQdxOpenCamera("cam0",
+        //        NIVision.IMAQdxCameraControlMode.CameraControlModeController);
+        //NIVision.IMAQdxConfigureGrab(cameraHandle);
         
         //Set options class
         RobotProperties.wheelCircumfrence = 6 * Units.INCH * Math.PI;
@@ -194,7 +199,7 @@ public class MainTheClawwww extends MainClass
 	protected void initializeTeleop()
 	{	
 		//lights.setFader(Color.new11Bit(2000, 2000, 2000), 1, 10);
-        NIVision.IMAQdxStartAcquisition(cameraHandle);
+        //NIVision.IMAQdxStartAcquisition(cameraHandle);
 		
 		//-----------------------------------------------------------
 		// Drive code, on Logitech Extreme3D joystick
@@ -261,7 +266,13 @@ public class MainTheClawwww extends MainClass
 
 		listenerManagerExtreme.addListener(ControllerExtreme3D.UP8, () -> frontHookMotor.setControlTarget(0));
 
-		listenerManagerExtreme.addListener(Always.instance, () -> visionProcessor.targetRecognition(cameraHandle));
+		listenerManagerExtreme.addListener(Always.instance, () -> {
+			int red = RobotMath.clampInt(RobotMath.floor_double_int(255 * (powerDistPanel.getTotalCurrent() / 30.0)), 0, 255);
+			int green = 255 - red;
+			
+			LightsColor color = LightsColor.new8Bit(red, green, 0);
+			lights.setColor(color);
+		});
 		
 		//clawArm.startClawLimitThread();
 	}
