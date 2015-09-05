@@ -3,10 +3,10 @@ package org.team3128.autonomous;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
 import org.team3128.hardware.mechanisms.ClawArm;
 import org.team3128.hardware.motor.MotorGroup;
+import org.team3128.hardware.ultrasonic.IUltrasonic;
 import org.team3128.main.MainTheClawwww;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import edu.wpi.first.wpilibj.Ultrasonic;
 
 /**
  * This class holds motor and encoder variables used in the auto programs.
@@ -26,7 +26,7 @@ public class AutoHardware
 	
 	public static PowerDistributionPanel _distPanel;
 	
-	public static Ultrasonic ultrasonic;
+	public static IUltrasonic ultrasonic;
 	
 	public static ClawArm clawArm;
 	
