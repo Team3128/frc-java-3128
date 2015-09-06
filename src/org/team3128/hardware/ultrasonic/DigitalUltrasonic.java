@@ -16,6 +16,8 @@ public class DigitalUltrasonic extends IUltrasonic
 	private Ultrasonic ultrasonic;
 	
 	private double maxDistance;
+
+	private boolean autoPing = true;
 	
 	/**
 	 * Construct a DigitalUltrasonic.
@@ -33,6 +35,21 @@ public class DigitalUltrasonic extends IUltrasonic
 	@Override
 	public double getDistance()
 	{
+		if(!autoPing)
+		{
+			ultrasonic.ping();
+			
+			//wait for ping to be received
+			try
+			{
+				Thread.sleep(2);
+			}
+			catch(InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
+			
 		return ultrasonic.getRangeMM() * Units.mm;
 	}
 
@@ -46,5 +63,13 @@ public class DigitalUltrasonic extends IUltrasonic
 	public boolean canSeeAnything()
 	{
 		return ultrasonic.isRangeValid() && super.canSeeAnything();
+	}
+
+	@Override
+	public void setAutoPing(boolean autoPing)
+	{
+		this.autoPing = autoPing;
+		
+		ultrasonic.setAutomaticMode(autoPing);
 	}
 }
