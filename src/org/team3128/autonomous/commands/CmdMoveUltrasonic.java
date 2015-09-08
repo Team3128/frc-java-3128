@@ -67,7 +67,7 @@ public class CmdMoveUltrasonic extends Command {
 			AutoUtils.killRobot("Move Overtime");
 		}
 		
-		int norm = (int) RobotMath.sgn((AutoHardware.ultrasonic.getRangeMM() * Units.MM) - _cm);
+		int norm = (int) RobotMath.sgn((AutoHardware.ultrasonic.getDistance()) - _cm);
 		
 		AutoHardware.leftMotors.setControlTarget(AutoUtils.speedMultiplier * .25 * norm);
 		AutoHardware.rightMotors.setControlTarget(AutoUtils.speedMultiplier * .25 * norm);
@@ -76,7 +76,7 @@ public class CmdMoveUltrasonic extends Command {
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished()
     {
-        return ((AutoHardware.ultrasonic.getRangeMM() * Units.MM) - _cm) < _threshold;
+        return ((AutoHardware.ultrasonic.getDistance() * Units.mm) - _cm) < _threshold;
     }
 
     // Called once after isFinished returns true

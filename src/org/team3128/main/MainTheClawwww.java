@@ -170,8 +170,8 @@ public class MainTheClawwww extends MainClass
         //NIVision.IMAQdxConfigureGrab(cameraHandle);
         
         //Set options class
-        RobotProperties.wheelCircumfrence = 6 * Units.INCH * Math.PI;
-        RobotProperties.wheelBase = 24.5 * Units.INCH;
+        RobotProperties.wheelCircumfrence = 6 * Units.in * Math.PI;
+        RobotProperties.wheelBase = 24.5 * Units.in;
 		
         Log.info("MainTheClawwww", "\"The Clawwwwwww.....\"   Activated");
 	}
