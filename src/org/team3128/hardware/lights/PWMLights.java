@@ -85,7 +85,7 @@ public class PWMLights
 		//we need to not ever turn on channels which are zero in the starting color to avoid weirdness
 		//but if we fade all the way to zero then the lights flash off for a moment
 		//hence the ternary operators
-		LightsColor darkColor = LightsColor.new11Bit(color.getR() > 0 ? 1 : 0, color.getG() > 0 ? 1 : 0, color.getB() > 0 ? 1 : 0);
+		LightsColor darkColor = LightsColor.new11Bit(color.getR() > 0 ? 2 : 0, color.getG() > 0 ? 2 : 0, color.getB() > 0 ? 2 : 0);
 		
 		faderSequence.addStep(new Step(darkColor, 0, true));
 		
@@ -136,10 +136,10 @@ public class PWMLights
 		int differenceR = newColor.getR() - originalColor.getR();
 		double incrementR = differenceR / (double)numSteps;
 		
-		int differenceG = newColor.getG() -  originalColor.getG();
+		int differenceG = newColor.getG() - originalColor.getG();
 		double incrementG = differenceG / (double)numSteps;
 		
-		int differenceB = newColor.getB() -  originalColor.getB();
+		int differenceB = newColor.getB() - originalColor.getB();
 		double incrementB = differenceB / (double)numSteps;
 		
 		Log.debug("PWMLights", "numSteps: " + numSteps + " incrementR: " + incrementR + " incrementG: " + incrementG + " incrementB: " + incrementB);

@@ -65,19 +65,20 @@ public class MaxSonar extends IUltrasonic
 			Log.recoverable("MaxSonar", "Got bad response from sensor!");
 			return new Pair<Boolean, Integer>(Boolean.FALSE, 0);
 		}
+		//Log.debug("MaxSonar", response);
+		String numberPart = response.substring(1, response.length() - 1); //remove R character and carriage return
 		
-		String numberPart = response.substring(1, response.length());
 		
 		try
 		{
-			Log.debug("MaxSonar", "Measured distance as " + distanceMM.get() + " mm");
+			Log.debug("MaxSonar", "Measured distance as " + (distanceMM.get() / 10) + " cm");
 
-			return new Pair<Boolean, Integer>(Boolean.TRUE, Integer.parseInt(numberPart));
+			return new Pair<Boolean, Integer>(Boolean.TRUE, Integer.parseInt(numberPart, 10));
 		}
 		catch(NumberFormatException ex)
 		{
 			ex.printStackTrace();
-			Log.recoverable("MaxSonar", "Got bad response from sensor, coudn't convert to an integer!");
+			Log.recoverable("MaxSonar", "Got bad response from sensor, coudn't convert to an integer: " + numberPart + "!");
 			return new Pair<Boolean, Integer>(Boolean.FALSE, 0);
 		}
 		
@@ -87,11 +88,33 @@ public class MaxSonar extends IUltrasonic
 	{
 		while(true)
 		{
-			String response = ultrasonicPort.readString();
+			//Log.debug("MaxSonar", "Waiting for response");
+			ultrasonicPort.reset();
 			
-			if(readerThread.isInterrupted())
+			while(ultrasonicPort.getBytesReceived() < 2)
 			{
-				return;
+			
+				try 
+				{
+					Thread.sleep(50);
+					
+				} 
+				catch (InterruptedException e) 
+				{
+					return;
+				}
+			}
+
+			String response;
+			try
+			{
+				//sometimes throws exception
+				response = ultrasonicPort.readString();				
+			}
+			catch(StringIndexOutOfBoundsException ex)
+			{
+				ex.printStackTrace();
+				continue;
 			}
 			
 			Pair<Boolean, Integer> result = getDistanceFromResponse(response);

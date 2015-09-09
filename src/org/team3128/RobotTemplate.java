@@ -3,7 +3,7 @@ package org.team3128;
 import java.util.ArrayList;
 
 import org.team3128.listener.ListenerManager;
-import org.team3128.main.MainLightsTest;
+import org.team3128.main.MainUltrasonicTest;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -40,7 +40,7 @@ public class RobotTemplate extends IterativeRobot
     {
         Log.info("RobotTemplate", "Welcome to the FRC Team 3128 No-Longer-Event System version 4!");
         Log.info("RobotTemplate", "Initializing Robot...");
-        main = new MainLightsTest();
+        main = new MainUltrasonicTest();
         
         main.initializeRobot(this);
         
