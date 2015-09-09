@@ -30,25 +30,47 @@ public class MaxSonar extends IUltrasonic
 	
 	Thread readerThread;
 	
-	AtomicInteger distanceMM;
+	//in whatever unit the sensor sends back
+	AtomicInteger distance;
 	
-	double units;
+	public static enum Resolution
+	{
+		//inch-resolution sensors, such as the MB1010
+		INCH(Units.in, 3, 255),
+		CM(Units.cm, 3, 765), //cm-resolution sensors
+		MM(Units.mm, 4, 5000); //mm-resolution sensors, such as the MB1013
+		
+		double conversionFactor;
+		int bytesPerResponse; //including the carriage return
+		int maxDistance; //distance the sensor reports when it can't see anything (in sensor units)
+		
+		private Resolution(double conversionFactor, int digitsPerResponse, int maxDistance)
+		{
+			this.conversionFactor = conversionFactor;
+			bytesPerResponse = digitsPerResponse + 2;
+			this.maxDistance = maxDistance;
+		}
+	}
+	
+	Resolution sensorResolution;
 	
 	boolean autoPing = true;
 	
 	/**
 	 * 
 	 * @param rangingPinDIONumber The DIO pin that the ranging pin on the ultrasonic is connected to.
-	 * @param resolution The resolution from the Units class of the sensor as described by the MaxBotix website.  The MB1013 is mm, and the MB1010 is inch.
-	 * @param portToUse which serial port to use.
+	 * @param resolution The resolution from the of the sensor as described by the MaxBotix website.  The MB1013 is mm, and the MB1010 is inch.
+	 * @param portToUse which serial port to use.  Note that if using onboard, you will need to disable the console out in the webpage.
 	 */
-	public MaxSonar(int rangingPinDIONumber, double resolution, Port portToUse)
+	public MaxSonar(int rangingPinDIONumber, Resolution res, Port portToUse)
 	{
-		distanceMM = new AtomicInteger();
+		distance = new AtomicInteger();
+		
+		sensorResolution = res; 
 		
 		ultrasonicPort = new SerialPort(9600, portToUse, 8, Parity.kNone, StopBits.kOne);
-		ultrasonicPort.enableTermination('\r');
 		ultrasonicPort.setTimeout(2);
+		ultrasonicPort.setReadBufferSize(sensorResolution.bytesPerResponse);
 		
 		rangingPin = new DigitalOutput(rangingPinDIONumber);
 		rangingPin.set(true);
@@ -65,15 +87,16 @@ public class MaxSonar extends IUltrasonic
 			Log.recoverable("MaxSonar", "Got bad response from sensor!");
 			return new Pair<Boolean, Integer>(Boolean.FALSE, 0);
 		}
-		//Log.debug("MaxSonar", response);
+		Log.debug("MaxSonar", response);
 		String numberPart = response.substring(1, response.length() - 1); //remove R character and carriage return
 		
 		
 		try
 		{
-			Log.debug("MaxSonar", "Measured distance as " + (distanceMM.get() / 10) + " cm");
+			int distance = Integer.parseInt(numberPart, 10);
+			Log.debug("MaxSonar", "Measured distance as " + (distance * sensorResolution.conversionFactor) + " cm");
 
-			return new Pair<Boolean, Integer>(Boolean.TRUE, Integer.parseInt(numberPart, 10));
+			return new Pair<Boolean, Integer>(Boolean.TRUE, distance);
 		}
 		catch(NumberFormatException ex)
 		{
@@ -88,28 +111,14 @@ public class MaxSonar extends IUltrasonic
 	{
 		while(true)
 		{
-			//Log.debug("MaxSonar", "Waiting for response");
-			ultrasonicPort.reset();
-			
-			while(ultrasonicPort.getBytesReceived() < 2)
-			{
-			
-				try 
-				{
-					Thread.sleep(50);
-					
-				} 
-				catch (InterruptedException e) 
-				{
-					return;
-				}
-			}
+			Log.debug("MaxSonar", "Waiting for response");			
 
 			String response;
+			
 			try
 			{
-				//sometimes throws exception
-				response = ultrasonicPort.readString();				
+				response = ultrasonicPort.readString(sensorResolution.bytesPerResponse);
+	
 			}
 			catch(StringIndexOutOfBoundsException ex)
 			{
@@ -117,11 +126,20 @@ public class MaxSonar extends IUltrasonic
 				continue;
 			}
 			
+			if(readerThread.isInterrupted())
+			{
+				return;
+			}
+			
 			Pair<Boolean, Integer> result = getDistanceFromResponse(response);
 			
 			if(result.left == true)
 			{
-				distanceMM.set(result.right);
+				distance.set(result.right);
+			}
+			else
+			{
+				ultrasonicPort.reset();
 			}
 
 		}
@@ -136,7 +154,7 @@ public class MaxSonar extends IUltrasonic
 	{
 		if(autoPing)
 		{
-			return distanceMM.get() * Units.mm;
+			return distance.get() * sensorResolution.conversionFactor;
 		}
 		else
 		{
@@ -163,10 +181,13 @@ public class MaxSonar extends IUltrasonic
 	@Override
 	public double getMaxDistance()
 	{
-		return 500.0;
+		return sensorResolution.maxDistance * sensorResolution.conversionFactor;
 	}
 
 	@Override
+	/**
+	 * According to the datasheet, pinging the sensor this way 
+	 */
 	public void setAutoPing(boolean autoPing)
 	{
 		this.autoPing = autoPing;

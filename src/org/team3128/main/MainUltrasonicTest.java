@@ -4,10 +4,12 @@ import org.team3128.MainClass;
 import org.team3128.RobotTemplate;
 import org.team3128.hardware.ultrasonic.IUltrasonic;
 import org.team3128.hardware.ultrasonic.MaxSonar;
+import org.team3128.hardware.ultrasonic.MaxSonar.Resolution;
 import org.team3128.listener.ListenerManager;
 import org.team3128.listener.controller.ControllerXbox;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 public class MainUltrasonicTest extends MainClass {
@@ -20,7 +22,7 @@ public class MainUltrasonicTest extends MainClass {
 	{
 		lm = new ListenerManager(new Joystick(4), ControllerXbox.instance);
 
-		testUltrasonic = new MaxSonar(2);
+		testUltrasonic = new MaxSonar(2, Resolution.MM, Port.kOnboard);
 	}
 
 	@Override
