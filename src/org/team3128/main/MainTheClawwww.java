@@ -11,7 +11,9 @@ import org.team3128.autonomous.programs.DualFarCanGrabAuto;
 import org.team3128.autonomous.programs.FarCanGrabAuto;
 import org.team3128.autonomous.programs.TestAuto;
 import org.team3128.drive.ArcadeDrive;
+import org.team3128.hardware.encoder.CANJaguarEncoder;
 import org.team3128.hardware.encoder.angular.AnalogPotentiometerEncoder;
+import org.team3128.hardware.encoder.angular.IAngularEncoder;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
 import org.team3128.hardware.lights.LightsColor;
 import org.team3128.hardware.lights.PWMLights;
@@ -65,7 +67,7 @@ public class MainTheClawwww extends MainClass
 	
 	public MotorGroup clawGrabMotor;
 
-	public AnalogPotentiometerEncoder armRotateEncoder;
+	public IAngularEncoder armRotateEncoder;
 	
 	public AnalogPotentiometerEncoder armJointEncoder;
 	
@@ -110,7 +112,7 @@ public class MainTheClawwww extends MainClass
 		
 		armTurnMotor = new CANJaguar(1);
 		
-		armRotateEncoder = new AnalogPotentiometerEncoder(0, 0, 4.829, 300);
+		armRotateEncoder = new CANJaguarEncoder(armTurnMotor, false);
 		
 		armJointMotor = new MotorGroup();
 		armJointMotor.addControlledMotor(new Talon(5));
@@ -289,7 +291,7 @@ public class MainTheClawwww extends MainClass
 	@Override
 	protected void updateDashboard()
 	{
-		SmartDashboard.putData("armRotateEncoder", armRotateEncoder);
+		SmartDashboard.putNumber("armRotateEncoder", armRotateEncoder.getAngle());
 		SmartDashboard.putNumber("Total Current: ", powerDistPanel.getTotalCurrent());
 	}
 }
