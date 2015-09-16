@@ -8,6 +8,7 @@ import org.team3128.hardware.motor.logic.BlankSpeedLogic;
 import org.team3128.hardware.motor.logic.PIDAngleLogic;
 import org.team3128.util.Units;
 
+import edu.wpi.first.wpilibj.CANJaguar;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
@@ -18,10 +19,10 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
  */
 public class ClawArm
 {
-	public MotorGroup _armRotate, _armJoint, _clawGrab;
+	public MotorGroup  _armJoint, _clawGrab;
 	
-	PIDAngleLogic armRotateAngleTarget;
-	
+	CANJaguar armRotate;
+		
 	PIDAngleLogic armJointAngleTarget;
 	
 	AngleLimiter armRotateEndstopTarget;
@@ -79,9 +80,9 @@ public class ClawArm
 	 * @param armJoint
 	 * @param clawGrab
 	 */
-	public ClawArm(MotorGroup armRotate, MotorGroup armJoint, MotorGroup clawGrab, IAngularEncoder armEncoder, IAngularEncoder jointEncoder, PowerDistributionPanel panel)
+	public ClawArm(CANJaguar armRotate, MotorGroup armJoint, MotorGroup clawGrab, IAngularEncoder armEncoder, IAngularEncoder jointEncoder, PowerDistributionPanel panel)
 	{
-		_armRotate = armRotate;
+		this.armRotate = armRotate;
 		_armJoint = armJoint;
 		_clawGrab = clawGrab;
 		
@@ -91,10 +92,7 @@ public class ClawArm
 		clawControl.addLimiter(new SwitchLimiter(clawMinLimitSwitch, clawMaxLimitSwitch, false));
 		_clawGrab.setSpeedController(clawControl);
 		_clawGrab.startControl(0);
-		
-		
-		armRotateAngleTarget = new PIDAngleLogic(.010, .000005, .00015, 4, false, armEncoder, true);
-		
+						
 		armJointAngleTarget = new PIDAngleLogic(.009, 0, 0, 5, false, jointEncoder, false);
 		
 		armRotateEndstopTarget = new AngleLimiter(22, 295, 2, armEncoder);
@@ -157,7 +155,7 @@ public class ClawArm
 				if(armUsingAutoControl && !jointUsingAutoControl)
 				{
 					double newAngle = Math.toDegrees(Math.acos((-1.444 * Math.cos(Math.toRadians(_armJointEncoder.getAngle() - elbowTravelMiddle)) + 1.1667)));
-					_armRotate.setControlTarget(newAngle);
+					setArmAngle(newAngle);
 				}
 				else if(!armUsingAutoControl && jointUsingAutoControl)
 				{
@@ -198,9 +196,8 @@ public class ClawArm
 	{
 		armUsingAutoControl = true;
 		
-		_armRotate.stopSpeedControl();
-		_armRotate.setSpeedController(armRotateAngleTarget);
-		_armRotate.startControl(_armRotateEncoder.getAngle());
+		armRotate.setPositionMode(CANJaguar.kPotentiometer, .01, .000005, .0015);
+		armRotate.configPotentiometerTurns(1);
 	}
 	
 	/**
@@ -222,8 +219,7 @@ public class ClawArm
 	{
 		armUsingAutoControl = false;
 
-		_armRotate.stopSpeedControl();
-		_armRotate.setSpeedController(null);
+		armRotate.setPercentMode(CANJaguar.kPotentiometer);
 		//_armRotate.startControl(0);
 	}
 	
@@ -242,7 +238,7 @@ public class ClawArm
 			switchArmToAutoControl();
 		}
 		
-		_armRotate.startControl(degreesToSet);
+		armRotate.set(degreesToSet / 360.0);
 	}
 	
 	/**
@@ -298,7 +294,7 @@ public class ClawArm
 	}
 	
 	/**
-	 * Use joystick input to rotate arm
+	 * Use joystick input to rotate arm.
 	 */
 	public void onArmJoyInput(double joyPower)
 	{	
@@ -309,11 +305,11 @@ public class ClawArm
 				switchArmToManualControl();
 			}
 		}
-		if(!armUsingAutoControl)
+		else
 		{
 			if(Math.abs(joyPower) >= .1)
 			{
-				_armRotate.setControlTarget(joyPower);
+				armRotate.set(joyPower);
 			}
 			else
 			{
@@ -324,18 +320,21 @@ public class ClawArm
 	}
 
 	/**
-	 * reset control targets so that the robot will not shift once the motors are enabled
+	 * Reset the control targets to the current position.
+	 * 
+	 * This is so that the robot will not shift once the motors are enabled if the mechanism has been moved manually.
 	 */
 	public void resetTargets()
 	{
 		if(armUsingAutoControl)
 		{
-			_armRotate.setControlTarget(_armRotateEncoder.getAngle());
+			armRotate.set(armRotate.getPosition());
 		}
 		else
 		{
-			_armRotate.setControlTarget(0);
+			armRotate.set(0);
 		}
+		
 		
 		if(jointUsingAutoControl)
 		{

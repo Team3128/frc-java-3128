@@ -11,7 +11,9 @@ import org.team3128.autonomous.programs.DualFarCanGrabAuto;
 import org.team3128.autonomous.programs.FarCanGrabAuto;
 import org.team3128.autonomous.programs.TestAuto;
 import org.team3128.drive.ArcadeDrive;
+import org.team3128.hardware.encoder.CANJaguarEncoder;
 import org.team3128.hardware.encoder.angular.AnalogPotentiometerEncoder;
+import org.team3128.hardware.encoder.angular.IAngularEncoder;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
 import org.team3128.hardware.lights.LightsColor;
 import org.team3128.hardware.lights.PWMLights;
@@ -26,6 +28,7 @@ import org.team3128.util.RoboVision;
 import org.team3128.util.RobotMath;
 import org.team3128.util.Units;
 
+import edu.wpi.first.wpilibj.CANJaguar;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Talon;
@@ -56,7 +59,7 @@ public class MainTheClawwww extends MainClass
 	public QuadratureEncoderLink leftDriveEncoder;
 	public QuadratureEncoderLink rightDriveEncoder;
 	
-	public MotorGroup armTurnMotor;
+	public CANJaguar armTurnMotor;
 	
 	public MotorGroup armJointMotor;
 	
@@ -64,7 +67,7 @@ public class MainTheClawwww extends MainClass
 	
 	public MotorGroup clawGrabMotor;
 
-	public AnalogPotentiometerEncoder armRotateEncoder;
+	public IAngularEncoder armRotateEncoder;
 	
 	public AnalogPotentiometerEncoder armJointEncoder;
 	
@@ -107,11 +110,9 @@ public class MainTheClawwww extends MainClass
 		rightMotors.reverseMotor();
 		//rightMotors.startControl(0);
 		
-		armTurnMotor = new MotorGroup();
-		armTurnMotor.addControlledMotor(new Talon(6));
-		armTurnMotor.reverseMotor();
+		armTurnMotor = new CANJaguar(1);
 		
-		armRotateEncoder = new AnalogPotentiometerEncoder(0, 0, 4.829, 300);
+		armRotateEncoder = new CANJaguarEncoder(armTurnMotor, false);
 		
 		armJointMotor = new MotorGroup();
 		armJointMotor.addControlledMotor(new Talon(5));
@@ -180,7 +181,7 @@ public class MainTheClawwww extends MainClass
 	{
 		clawArm.resetTargets();
 		
-		armTurnMotor.clearSpeedControlRun();
+		armTurnMotor.disableControl();
 		armJointMotor.clearSpeedControlRun();
 		clawArm.switchJointToManualControl();
 		
@@ -290,7 +291,7 @@ public class MainTheClawwww extends MainClass
 	@Override
 	protected void updateDashboard()
 	{
-		SmartDashboard.putData("armRotateEncoder", armRotateEncoder);
+		SmartDashboard.putNumber("armRotateEncoder", armRotateEncoder.getAngle());
 		SmartDashboard.putNumber("Total Current: ", powerDistPanel.getTotalCurrent());
 	}
 }

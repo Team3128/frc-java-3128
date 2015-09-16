@@ -36,11 +36,6 @@ public class CmdArmAngles extends Command
     {
     	AutoHardware.clawArm.setArmAngle(_shoulderAngle);
     	AutoHardware.clawArm.setJointAngle(_elbowAngle);
-    	
-    	if(!(AutoHardware.clawArm.isArmUsingAutoControl() && AutoHardware.clawArm.isJointUsingAutoControl()))
-    	{
-    		
-    	}
     }
 
     // Called repeatedly when this Command is scheduled to run
