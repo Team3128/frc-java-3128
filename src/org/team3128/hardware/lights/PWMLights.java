@@ -142,8 +142,7 @@ public class PWMLights
 		int differenceB = newColor.getB() - originalColor.getB();
 		double incrementB = differenceB / (double)numSteps;
 		
-		Log.debug("PWMLights", "numSteps: " + numSteps + " incrementR: " + incrementR + " incrementG: " + incrementG + " incrementB: " + incrementB);
-		
+		//Log.debug("PWMLights", "numSteps: " + numSteps + " incrementR: " + incrementR + " incrementG: " + incrementG + " incrementB: " + incrementB);
 		
 		for(int currentStep = 0; currentStep < numSteps; ++currentStep)
 		{
@@ -155,7 +154,6 @@ public class PWMLights
 			redLights.setRaw((int)currentR);
 			greenLights.setRaw((int)currentG);
 			blueLights.setRaw((int)currentB);
-			
 			
 			Log.debug("PWMLights", String.format("R: %.02f, G: %.02f, B: %.02f", currentR, currentG, currentB));
 			
