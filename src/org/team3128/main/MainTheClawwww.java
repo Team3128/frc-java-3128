@@ -28,7 +28,6 @@ import org.team3128.util.RoboVision;
 import org.team3128.util.RobotMath;
 import org.team3128.util.Units;
 
-import edu.wpi.first.wpilibj.CANJaguar;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Talon;
@@ -59,7 +58,7 @@ public class MainTheClawwww extends MainClass
 	public QuadratureEncoderLink leftDriveEncoder;
 	public QuadratureEncoderLink rightDriveEncoder;
 	
-	public CANJaguar armTurnMotor;
+	public MotorGroup armTurnMotor;
 	
 	public MotorGroup armJointMotor;
 	
@@ -110,7 +109,9 @@ public class MainTheClawwww extends MainClass
 		rightMotors.reverseMotor();
 		//rightMotors.startControl(0);
 		
-		armTurnMotor = new CANJaguar(1);
+		armTurnMotor = new MotorGroup();
+		armTurnMotor.addControlledMotor(new Talon(6));
+		armTurnMotor.reverseMotor();
 		
 		armRotateEncoder = new CANJaguarEncoder(armTurnMotor, false);
 		
@@ -181,7 +182,7 @@ public class MainTheClawwww extends MainClass
 	{
 		clawArm.resetTargets();
 		
-		armTurnMotor.disableControl();
+		armTurnMotor.clearSpeedControlRun();
 		armJointMotor.clearSpeedControlRun();
 		clawArm.switchJointToManualControl();
 		
