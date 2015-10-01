@@ -11,18 +11,6 @@ public class Log
 	public static void fatal(String category, String message)
 	{
 		log("Fatal", category, message);
-		
-		try
-		{
-			Thread.sleep(100);
-		}
-		catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
-		
-		System.exit(1);
-		
 	}
 	
 	/**

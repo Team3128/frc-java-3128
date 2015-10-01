@@ -18,11 +18,6 @@ public class RobotProperties
     public static Alliance alliance = Alliance.BLUE;
     
     public static boolean armEnabled = false;
-
-    /**
-     * port the xbox controller connected to the drivers' console is on
-     */
-    public static short controllerPort = 0;
     
     /**
      * update frequency of the motor control code
@@ -43,16 +38,7 @@ public class RobotProperties
      * constant for holonomic gliding speed
      */
     public static double glidingSpeedConstant = .5/Math.sqrt(2);
-    
-    /**
-     * circumfrence of wheels in cm
-     */
-    public static double wheelCircumfrence;
-    
-    /**
-     * horizontal distance between wheels in cm
-     */
-    public static double wheelBase;
+
 
     /**
      * Gyro offset for swerve drive code

@@ -1,7 +1,8 @@
 package org.team3128.autonomous.commands;
 
-import org.team3128.autonomous.AutoHardware;
 import org.team3128.autonomous.AutoUtils;
+import org.team3128.drive.TankDrive;
+import org.team3128.hardware.ultrasonic.IUltrasonic;
 import org.team3128.util.RobotMath;
 import org.team3128.util.Units;
 
@@ -36,12 +37,16 @@ public class CmdMoveUltrasonic extends Command {
 	
 	long startTime;
 	
+	IUltrasonic ultrasonic;
+	
+	TankDrive drivetrain;
+	
 	/**
 	 * @param cm how far on the ultrasonic to move.
 	 * @param threshold acceptible threshold from desired distance in cm
 	 * @param msec How long the move should take. If set to 0, do not time the move
 	 */
-    public CmdMoveUltrasonic(double cm, double threshold, int msec)
+    public CmdMoveUltrasonic(IUltrasonic ultrasonic, double cm, double threshold, int msec)
     {
     	_cm = cm;
     	
@@ -51,11 +56,13 @@ public class CmdMoveUltrasonic extends Command {
     	}
     	
     	_msec = msec;
+    	
+    	this.ultrasonic = ultrasonic;
     }
 
     protected void initialize()
     {
-		AutoUtils.clearEncoders();
+		drivetrain.clearEncoders();
 		startTime = System.currentTimeMillis();
     }
 
@@ -64,25 +71,25 @@ public class CmdMoveUltrasonic extends Command {
     {
 		if(_msec != 0 && System.currentTimeMillis() - startTime >_msec)
 		{
+			drivetrain.stopMovement();
 			AutoUtils.killRobot("Move Overtime");
 		}
 		
-		int norm = (int) RobotMath.sgn((AutoHardware.ultrasonic.getDistance()) - _cm);
+		int norm = (int) RobotMath.sgn(ultrasonic.getDistance() - _cm);
 		
-		AutoHardware.leftMotors.setControlTarget(AutoUtils.speedMultiplier * .25 * norm);
-		AutoHardware.rightMotors.setControlTarget(AutoUtils.speedMultiplier * .25 * norm);
+		drivetrain.tankDrive(AutoUtils.speedMultiplier * .25 * norm, AutoUtils.speedMultiplier * .25 * norm);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished()
     {
-        return ((AutoHardware.ultrasonic.getDistance() * Units.mm) - _cm) < _threshold;
+        return ((ultrasonic.getDistance() * Units.mm) - _cm) < _threshold;
     }
 
     // Called once after isFinished returns true
     protected void end()
     {
-		AutoUtils.stopMovement();
+		drivetrain.stopMovement();
     }
 
     // Called when another command which requires one or more of the same
