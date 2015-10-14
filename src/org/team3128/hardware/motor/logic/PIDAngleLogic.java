@@ -59,6 +59,9 @@ public class PIDAngleLogic extends MotorLogic
     public synchronized void setControlTarget(double val)
     {
         this.targetAngle = val;
+        
+        //reset error
+        errorSum = 0;
     }
 
     @Override

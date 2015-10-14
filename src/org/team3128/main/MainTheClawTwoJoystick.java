@@ -14,6 +14,7 @@ import org.team3128.drive.ArcadeDrive;
 import org.team3128.hardware.encoder.angular.AnalogPotentiometerEncoder;
 import org.team3128.hardware.encoder.angular.IAngularEncoder;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
+import org.team3128.hardware.lights.LightsColor;
 import org.team3128.hardware.lights.PWMLights;
 import org.team3128.hardware.mechanisms.ClawArm;
 import org.team3128.hardware.motor.MotorGroup;
@@ -23,6 +24,7 @@ import org.team3128.listener.control.Always;
 import org.team3128.listener.controller.ControllerAttackJoy;
 import org.team3128.listener.controller.ControllerExtreme3D;
 import org.team3128.util.RoboVision;
+import org.team3128.util.RobotMath;
 import org.team3128.util.Units;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -36,7 +38,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * @author Jamie
  *
  */
-public class MainTheClawwww extends MainClass
+public class MainTheClawTwoJoystick extends MainClass
 {
 	
 	/**
@@ -45,7 +47,7 @@ public class MainTheClawwww extends MainClass
 	public static double armSpeedMultiplier = .8;
 	
 	public ListenerManager listenerManagerExtreme;
-	public ListenerManager listenerManagerJoyLeft;
+	//public ListenerManager listenerManagerJoyLeft;
 	public ListenerManager listenerManagerJoyRight;
 	
 	public MotorGroup _pidTestMotor;
@@ -84,10 +86,10 @@ public class MainTheClawwww extends MainClass
 	RoboVision visionProcessor; 
 	PWMLights lights;
 	
-	public MainTheClawwww()
+	public MainTheClawTwoJoystick()
 	{	
 		listenerManagerExtreme = new ListenerManager(new Joystick(RobotProperties.controllerPort), ControllerExtreme3D.instance);
-		listenerManagerJoyLeft = new ListenerManager(new Joystick(2), ControllerAttackJoy.instance);
+		//listenerManagerJoyLeft = new ListenerManager(new Joystick(1), ControllerAttackJoy.instance);
 		listenerManagerJoyRight = new ListenerManager(new Joystick(1), ControllerAttackJoy.instance);		
 		powerDistPanel = new PowerDistributionPanel();
 		
@@ -161,7 +163,7 @@ public class MainTheClawwww extends MainClass
 	protected void initializeRobot(RobotTemplate robotTemplate)
 	{	
 		robotTemplate.addListenerManager(listenerManagerExtreme);
-		robotTemplate.addListenerManager(listenerManagerJoyLeft);
+		//robotTemplate.addListenerManager(listenerManagerJoyLeft);
 		robotTemplate.addListenerManager(listenerManagerJoyRight);
 		
         //cameraHandle = NIVision.IMAQdxOpenCamera("cam0",
@@ -193,15 +195,10 @@ public class MainTheClawwww extends MainClass
 	{
 		clawArm.resetTargets();
 		//lights.setColor(Color.new4Bit(0xa, 2, 2));
-		
-		//reset PID error
-		armTurnMotor.clearSpeedControlRun();
 	}
 	
 	protected void initializeTeleop()
 	{	
-		clawArm.resetTargets();
-
 		//lights.setFader(Color.new11Bit(2000, 2000, 2000), 1, 10);
         //NIVision.IMAQdxStartAcquisition(cameraHandle);
 		
@@ -239,12 +236,11 @@ public class MainTheClawwww extends MainClass
 			
 			clawArm.onArmJoyInput(power);
 			
-			
 		});
 		
-		listenerManagerJoyLeft.addListener(ControllerAttackJoy.JOYY, () ->
+		listenerManagerJoyRight.addListener(ControllerAttackJoy.JOYX, () ->
 		{
-			double power = listenerManagerJoyLeft.getRawAxis(ControllerAttackJoy.JOYY);
+			double power = listenerManagerJoyRight.getRawAxis(ControllerAttackJoy.JOYX);
 			clawArm.onJointJoyInput((elbowInverted ? armSpeedMultiplier : -armSpeedMultiplier) * power);
 		});
 		
@@ -252,19 +248,13 @@ public class MainTheClawwww extends MainClass
 		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN3, () -> shoulderInverted = true);
 		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN6, () -> shoulderInverted = true);
 		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN7, () -> shoulderInverted = false);
-		listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN2, () -> elbowInverted = false);
-		listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN3, () -> elbowInverted = true);
-		listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN6, () -> elbowInverted = true);
-		listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN7, () -> elbowInverted = false);
 		
-		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN1, () -> clawGrabMotor.setControlTarget(0.8));
+		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN1, () -> clawGrabMotor.setControlTarget(0.7));
 		listenerManagerJoyRight.addListener(ControllerAttackJoy.UP1, () -> clawGrabMotor.setControlTarget(0));
-		listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN1, () -> clawGrabMotor.setControlTarget(-0.8));
-		listenerManagerJoyLeft.addListener(ControllerAttackJoy.UP1, () -> clawGrabMotor.setControlTarget(0));
 		
-		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN4, () -> clawGrabMotor.setControlTarget(0.8));
+		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN4, () -> clawGrabMotor.setControlTarget(0.7));
 		listenerManagerJoyRight.addListener(ControllerAttackJoy.UP4, () -> clawGrabMotor.setControlTarget(0));
-		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN5, () -> clawGrabMotor.setControlTarget(-0.8));
+		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN5, () -> clawGrabMotor.setControlTarget(-0.7));
 		listenerManagerJoyRight.addListener(ControllerAttackJoy.UP5, () -> clawGrabMotor.setControlTarget(0));
 		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN3, () -> frontHookMotor.setControlTarget(0.3));
 		listenerManagerExtreme.addListener(ControllerExtreme3D.UP3, () -> frontHookMotor.setControlTarget(0));
@@ -278,13 +268,11 @@ public class MainTheClawwww extends MainClass
 		listenerManagerExtreme.addListener(ControllerExtreme3D.UP8, () -> frontHookMotor.setControlTarget(0));
 
 		listenerManagerExtreme.addListener(Always.instance, () -> {
-//			int red = RobotMath.clampInt(RobotMath.floor_double_int(255 * (powerDistPanel.getTotalCurrent() / 30.0)), 0, 255);
-//			int green = 255 - red;
-//			
-//			LightsColor color = LightsColor.new8Bit(red, green, 0);
-//			lights.setColor(color);
+			int red = RobotMath.clampInt(RobotMath.floor_double_int(255 * (powerDistPanel.getTotalCurrent() / 30.0)), 0, 255);
+			int green = 255 - red;
 			
-			Log.debug("ArmAngle", armRotateEncoder.getAngle() + " degrees");
+			LightsColor color = LightsColor.new8Bit(red, green, 0);
+			lights.setColor(color);
 		});
 		
 		//clawArm.startClawLimitThread();
