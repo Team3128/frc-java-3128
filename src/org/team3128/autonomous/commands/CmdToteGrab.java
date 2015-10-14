@@ -1,17 +1,23 @@
 package org.team3128.autonomous.commands;
 
-import org.team3128.autonomous.AutoHardware;
+import org.team3128.hardware.motor.MotorGroup;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class CmdToteGrab extends Command{
-	long timeout;
+public class CmdToteGrab extends Command
+{
+	long time;
 	long startTime;
 	double speed;
-	public CmdToteGrab(double spd, long timeout){
-		this.timeout = timeout;
+	
+	MotorGroup frontHookMotor;
+	
+	public CmdToteGrab(MotorGroup frontHookMotor, double spd, long time)
+	{
+		this.time = time;
 		speed = spd;
 	}
+	
 	@Override
 	protected void initialize() {
 		startTime = System.currentTimeMillis();
@@ -19,24 +25,24 @@ public class CmdToteGrab extends Command{
 
 	@Override
 	protected void execute() {
-		AutoHardware._frontHookMotor.setControlTarget(speed);
+		frontHookMotor.setControlTarget(speed);
 		
 	}
 
 	@Override
 	protected boolean isFinished() {
-		return (System.currentTimeMillis() - startTime) > timeout;
+		return (System.currentTimeMillis() - startTime) > time;
 	}
 
 	@Override
 	protected void end() {
-		AutoHardware._frontHookMotor.setControlTarget(0);
+		frontHookMotor.setControlTarget(0);
 		
 	}
 
 	@Override
 	protected void interrupted() {
-		AutoHardware._frontHookMotor.setControlTarget(0);
+		frontHookMotor.setControlTarget(0);
 		
 	}
 	

@@ -1,7 +1,6 @@
 package org.team3128.util;
 
 import org.team3128.Log;
-import org.team3128.RobotProperties;
 
 
 /**
@@ -211,20 +210,22 @@ public class RobotMath {
 	/**
 	 * Convert cm of robot movement to degrees of wheel movement
 	 * @param cm
+	 * @param wheelCircumference the circumference of the wheels
 	 * @return
 	 */
-	public static double cmToDegrees(double cm)
+	public static double cmToDegrees(double cm, double wheelCircumference)
 	{
-		return (360 / RobotProperties.wheelCircumfrence) * cm;
+		return (360 / wheelCircumference) * cm;
 	}
 	
 	/**
 	 * Convert cm of robot movement to wheel rotations
 	 * @param cm
+	 * @param wheelCircumference the circumference of the wheels
 	 * @return
 	 */
-	public static double cmToRotations(double cm)
+	public static double cmToRotations(double cm, double wheelCircumference)
 	{
-		return cm / RobotProperties.wheelCircumfrence;
+		return cm / wheelCircumference;
 	}
 }

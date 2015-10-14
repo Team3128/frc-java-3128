@@ -12,29 +12,18 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 public class AutoUtils
 {
 
-	public static void clearEncoders()
-	{
-		AutoHardware.encLeft.clear();
-		AutoHardware.encRight.clear();
-	}
 
-	public static void stopMovement()
-	{
-		AutoHardware.leftMotors.setControlTarget(0);
-		AutoHardware.rightMotors.setControlTarget(0);
-	}
-
+	/**
+	 * Things that call this should stop any motors that were running first!
+	 * @param cause
+	 */
 	public static void killRobot(String cause)
 	{
-		Log.recoverable("AutoUtils", "Robot killed by autonomous error: " + cause);
-
-		AutoHardware.leftMotors.setControlTarget(0);
-		AutoHardware.rightMotors.setControlTarget(0);
-		AutoHardware.clawArm.switchArmToManualControl();
-		AutoHardware.clawArm.switchJointToManualControl();
-		AutoHardware.clawArm.resetTargets();
+		Log.fatal("AutoUtils", "Robot killed by autonomous error: " + cause);
 		
+		//stop more commands from being run
 		Scheduler.getInstance().disable();
+	
 		
 		//BAD, KILLS ROBOT
 		//throw new RuntimeException("Error in automatic movement - " + cause + "\nRobot shut down!");
