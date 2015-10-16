@@ -2,15 +2,13 @@ package org.team3128.main;
 
 import org.team3128.Log;
 import org.team3128.MainClass;
-import org.team3128.RobotProperties;
 import org.team3128.RobotTemplate;
-import org.team3128.autonomous.AutoHardware;
 import org.team3128.autonomous.programs.DoNothingAuto;
 import org.team3128.autonomous.programs.DriveIntoAutoZoneAuto;
 import org.team3128.autonomous.programs.DualFarCanGrabAuto;
 import org.team3128.autonomous.programs.FarCanGrabAuto;
 import org.team3128.autonomous.programs.TestAuto;
-import org.team3128.drive.ArcadeDrive;
+import org.team3128.drive.TankDrive;
 import org.team3128.hardware.encoder.angular.AnalogPotentiometerEncoder;
 import org.team3128.hardware.encoder.angular.IAngularEncoder;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
@@ -71,7 +69,7 @@ public class MainTheClawTwoJoystick extends MainClass
 	
 	public PowerDistributionPanel powerDistPanel;
 	
-	public ArcadeDrive drive;
+	public TankDrive drive;
 	
 	public ClawArm clawArm;
 	
@@ -88,7 +86,7 @@ public class MainTheClawTwoJoystick extends MainClass
 	
 	public MainTheClawTwoJoystick()
 	{	
-		listenerManagerExtreme = new ListenerManager(new Joystick(RobotProperties.controllerPort), ControllerExtreme3D.instance);
+		listenerManagerExtreme = new ListenerManager(new Joystick(0), ControllerExtreme3D.instance);
 		//listenerManagerJoyLeft = new ListenerManager(new Joystick(1), ControllerAttackJoy.instance);
 		listenerManagerJoyRight = new ListenerManager(new Joystick(1), ControllerAttackJoy.instance);		
 		powerDistPanel = new PowerDistributionPanel();
@@ -129,7 +127,7 @@ public class MainTheClawTwoJoystick extends MainClass
 
 		clawArm = new ClawArm(armTurnMotor, armJointMotor, clawGrabMotor, armRotateEncoder, armJointEncoder, powerDistPanel);
 
-		drive = new ArcadeDrive(leftMotors, rightMotors, listenerManagerExtreme);
+		drive = new TankDrive(leftMotors, rightMotors, leftDriveEncoder, rightDriveEncoder, 6 * Units.in * Math.PI, 24.5 * Units.in);
 		
 		updateDriveCOD = () ->
 		{
@@ -137,27 +135,12 @@ public class MainTheClawTwoJoystick extends MainClass
 			double joyY = listenerManagerExtreme.getRawAxis(ControllerExtreme3D.JOYY);
 			double throttle = -listenerManagerExtreme.getRawAxis(ControllerExtreme3D.THROTTLE);
 			
-			drive.steer(joyX, joyY, throttle, listenerManagerExtreme.getRawBool(ControllerExtreme3D.DOWN2));
+			drive.arcadeDrive(joyX, joyY, throttle, listenerManagerExtreme.getRawBool(ControllerExtreme3D.DOWN2));
 		};
 		
 		visionProcessor = new RoboVision();
 		
 		lights = new PWMLights(10, 11, 12);
-
-		
-		//--------------------------------------------------------------------------
-		// Auto Init
-		//--------------------------------------------------------------------------
-
-		AutoHardware.encLeft = leftDriveEncoder;
-		AutoHardware.encRight = rightDriveEncoder;
-		
-		AutoHardware.leftMotors = leftMotors;
-		AutoHardware.rightMotors = rightMotors;
-		
-		AutoHardware.clawArm = clawArm;
-		
-
 	}
 
 	protected void initializeRobot(RobotTemplate robotTemplate)
@@ -165,14 +148,6 @@ public class MainTheClawTwoJoystick extends MainClass
 		robotTemplate.addListenerManager(listenerManagerExtreme);
 		//robotTemplate.addListenerManager(listenerManagerJoyLeft);
 		robotTemplate.addListenerManager(listenerManagerJoyRight);
-		
-        //cameraHandle = NIVision.IMAQdxOpenCamera("cam0",
-        //        NIVision.IMAQdxCameraControlMode.CameraControlModeController);
-        //NIVision.IMAQdxConfigureGrab(cameraHandle);
-        
-        //Set options class
-        RobotProperties.wheelCircumfrence = 6 * Units.in * Math.PI;
-        RobotProperties.wheelBase = 24.5 * Units.in;
 		
         Log.info("MainTheClawwww", "\"The Clawwwwwww.....\"   Activated");
 	}
@@ -199,6 +174,9 @@ public class MainTheClawTwoJoystick extends MainClass
 	
 	protected void initializeTeleop()
 	{	
+		
+		clawArm.resetTargets();
+
 		//lights.setFader(Color.new11Bit(2000, 2000, 2000), 1, 10);
         //NIVision.IMAQdxStartAcquisition(cameraHandle);
 		
@@ -281,9 +259,10 @@ public class MainTheClawTwoJoystick extends MainClass
 	@Override
 	protected void addAutoPrograms(SendableChooser autoChooser)
 	{
-		autoChooser.addDefault("Far Can Grab", new FarCanGrabAuto());
-		autoChooser.addObject("DualFar Can Grab", new DualFarCanGrabAuto());
-		autoChooser.addObject("Drive Into Auto Zone", new DriveIntoAutoZoneAuto());
+		autoChooser.addDefault("Can Grab", new FarCanGrabAuto(drive, clawArm, frontHookMotor, false));
+		autoChooser.addDefault("Can Grab w/ Tote Pickup", new FarCanGrabAuto(drive, clawArm, frontHookMotor, true));
+		autoChooser.addObject("Dual Can Grab", new DualFarCanGrabAuto(drive, clawArm));
+		autoChooser.addObject("Drive Into Auto Zone", new DriveIntoAutoZoneAuto(drive));
 		autoChooser.addObject("Do Nothing", new DoNothingAuto());
 		autoChooser.addObject("Dev Test Auto", new TestAuto());
 	}
