@@ -7,6 +7,7 @@ import org.team3128.autonomous.programs.DoNothingAuto;
 import org.team3128.autonomous.programs.DriveIntoAutoZoneAuto;
 import org.team3128.autonomous.programs.DualFarCanGrabAuto;
 import org.team3128.autonomous.programs.FarCanGrabAuto;
+import org.team3128.autonomous.programs.TakeToteIntoZoneAuto;
 import org.team3128.autonomous.programs.TestAuto;
 import org.team3128.drive.TankDrive;
 import org.team3128.hardware.encoder.angular.AnalogPotentiometerEncoder;
@@ -276,8 +277,9 @@ public class MainTheClawwww extends MainClass
 	@Override
 	protected void addAutoPrograms(SendableChooser autoChooser)
 	{
-		autoChooser.addDefault("Can Grab", new FarCanGrabAuto(drive, clawArm, frontHookMotor, false));
-		autoChooser.addDefault("Can Grab w/ Tote Pickup", new FarCanGrabAuto(drive, clawArm, frontHookMotor, true));
+		autoChooser.addDefault("Take Tote into Auto Zone", new TakeToteIntoZoneAuto(drive, frontHookMotor));
+		autoChooser.addObject("Can Grab", new FarCanGrabAuto(drive, clawArm, frontHookMotor, false));
+		autoChooser.addObject("Can Grab w/ Tote Pickup", new FarCanGrabAuto(drive, clawArm, frontHookMotor, true));
 		autoChooser.addObject("Dual Can Grab", new DualFarCanGrabAuto(drive, clawArm));
 		autoChooser.addObject("Drive Into Auto Zone", new DriveIntoAutoZoneAuto(drive));
 		autoChooser.addObject("Do Nothing", new DoNothingAuto());

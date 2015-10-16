@@ -149,6 +149,10 @@ public class MainTheClawTwoJoystick extends MainClass
 		//robotTemplate.addListenerManager(listenerManagerJoyLeft);
 		robotTemplate.addListenerManager(listenerManagerJoyRight);
 		
+        //cameraHandle = NIVision.IMAQdxOpenCamera("cam0",
+        //        NIVision.IMAQdxCameraControlMode.CameraControlModeController);
+        //NIVision.IMAQdxConfigureGrab(cameraHandle);
+		
         Log.info("MainTheClawwww", "\"The Clawwwwwww.....\"   Activated");
 	}
 
@@ -260,7 +264,7 @@ public class MainTheClawTwoJoystick extends MainClass
 	protected void addAutoPrograms(SendableChooser autoChooser)
 	{
 		autoChooser.addDefault("Can Grab", new FarCanGrabAuto(drive, clawArm, frontHookMotor, false));
-		autoChooser.addDefault("Can Grab w/ Tote Pickup", new FarCanGrabAuto(drive, clawArm, frontHookMotor, true));
+		autoChooser.addObject("Can Grab w/ Tote Pickup", new FarCanGrabAuto(drive, clawArm, frontHookMotor, true));
 		autoChooser.addObject("Dual Can Grab", new DualFarCanGrabAuto(drive, clawArm));
 		autoChooser.addObject("Drive Into Auto Zone", new DriveIntoAutoZoneAuto(drive));
 		autoChooser.addObject("Do Nothing", new DoNothingAuto());

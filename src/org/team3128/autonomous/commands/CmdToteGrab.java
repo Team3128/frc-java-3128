@@ -12,10 +12,9 @@ public class CmdToteGrab extends Command
 	
 	MotorGroup frontHookMotor;
 	
-	public CmdToteGrab(MotorGroup frontHookMotor, double spd, long time)
+	public CmdToteGrab(MotorGroup frontHookMotor, long time)
 	{
 		this.time = time;
-		speed = spd;
 	}
 	
 	@Override
@@ -25,7 +24,7 @@ public class CmdToteGrab extends Command
 
 	@Override
 	protected void execute() {
-		frontHookMotor.setControlTarget(speed);
+		frontHookMotor.setControlTarget(.3);
 		
 	}
 
