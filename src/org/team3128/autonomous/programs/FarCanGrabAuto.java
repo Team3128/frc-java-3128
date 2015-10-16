@@ -28,7 +28,7 @@ public class FarCanGrabAuto extends CommandGroup
         if(grabTote)
         {
         	addSequential(new CmdLog("Grabbing Tote"));
-        	addSequential(new CmdToteGrab(frontHook, 0.25, 750));
+        	addSequential(new CmdToteGrab(frontHook, 750));
         }
     	addSequential(arm.new CmdArmAngles(46, 230, 5, 2500));//85
     	addSequential(new CmdDelay(2000));
