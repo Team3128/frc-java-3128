@@ -7,11 +7,13 @@ import org.team3128.autonomous.programs.DoNothingAuto;
 import org.team3128.autonomous.programs.DriveIntoAutoZoneAuto;
 import org.team3128.autonomous.programs.DualFarCanGrabAuto;
 import org.team3128.autonomous.programs.FarCanGrabAuto;
+import org.team3128.autonomous.programs.TakeToteIntoZoneAuto;
 import org.team3128.autonomous.programs.TestAuto;
 import org.team3128.drive.TankDrive;
 import org.team3128.hardware.encoder.angular.AnalogPotentiometerEncoder;
 import org.team3128.hardware.encoder.angular.IAngularEncoder;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
+import org.team3128.hardware.lights.LightsColor;
 import org.team3128.hardware.lights.PWMLights;
 import org.team3128.hardware.mechanisms.ClawArm;
 import org.team3128.hardware.motor.MotorGroup;
@@ -21,6 +23,7 @@ import org.team3128.listener.control.Always;
 import org.team3128.listener.controller.ControllerAttackJoy;
 import org.team3128.listener.controller.ControllerExtreme3D;
 import org.team3128.util.RoboVision;
+import org.team3128.util.RobotMath;
 import org.team3128.util.Units;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -259,11 +262,11 @@ public class MainTheClawwww extends MainClass
 		listenerManagerExtreme.addListener(ControllerExtreme3D.UP8, () -> frontHookMotor.setControlTarget(0));
 
 		listenerManagerExtreme.addListener(Always.instance, () -> {
-//			int red = RobotMath.clampInt(RobotMath.floor_double_int(255 * (powerDistPanel.getTotalCurrent() / 30.0)), 0, 255);
-//			int green = 255 - red;
-//			
-//			LightsColor color = LightsColor.new8Bit(red, green, 0);
-//			lights.setColor(color);
+			int red = RobotMath.clampInt(RobotMath.floor_double_int(255 * (powerDistPanel.getTotalCurrent() / 30.0)), 0, 255);
+			int green = 255 - red;
+			
+			LightsColor color = LightsColor.new8Bit(red, green, 0);
+			lights.setColor(color);
 			
 			Log.debug("ArmAngle", armRotateEncoder.getAngle() + " degrees");
 		});
@@ -274,8 +277,9 @@ public class MainTheClawwww extends MainClass
 	@Override
 	protected void addAutoPrograms(SendableChooser autoChooser)
 	{
-		autoChooser.addDefault("Can Grab", new FarCanGrabAuto(drive, clawArm, frontHookMotor, false));
-		autoChooser.addDefault("Can Grab w/ Tote Pickup", new FarCanGrabAuto(drive, clawArm, frontHookMotor, true));
+		autoChooser.addDefault("Take Tote into Auto Zone", new TakeToteIntoZoneAuto(drive, frontHookMotor));
+		autoChooser.addObject("Can Grab", new FarCanGrabAuto(drive, clawArm, frontHookMotor, false));
+		autoChooser.addObject("Can Grab w/ Tote Pickup", new FarCanGrabAuto(drive, clawArm, frontHookMotor, true));
 		autoChooser.addObject("Dual Can Grab", new DualFarCanGrabAuto(drive, clawArm));
 		autoChooser.addObject("Drive Into Auto Zone", new DriveIntoAutoZoneAuto(drive));
 		autoChooser.addObject("Do Nothing", new DoNothingAuto());
