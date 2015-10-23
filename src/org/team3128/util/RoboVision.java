@@ -10,9 +10,10 @@ import com.ni.vision.NIVision.ImageType;
 import com.ni.vision.NIVision.MeasurementType;
 import com.ni.vision.NIVision.Range;
 import com.ni.vision.NIVision.ShapeMode;
+import com.ni.vision.VisionException;
 
 import edu.wpi.first.wpilibj.CameraServer;
-import edu.wpi.first.wpilibj.image.NIVisionException;
+
 
 
 
@@ -164,7 +165,7 @@ public class RoboVision
 //            filteredImage.free();
 //            thresholdImage.free();
 //            image.free();
-        } catch (NIVisionException ex) {
+        } catch (VisionException ex) {
             Log.recoverable("RoboVision", ex.getMessage());
             ex.printStackTrace();
         }
@@ -184,7 +185,7 @@ public class RoboVision
      * compared to the ratio for the inner target or the outer
      * @return The aspect ratio score (0-100)
      */
-    public static double scoreAspectRatio(Image image, ParticleReport report, int particleNumber, boolean vertical) throws NIVisionException
+    public static double scoreAspectRatio(Image image, ParticleReport report, int particleNumber, boolean vertical)
     {
         double rectLong, rectShort, aspectRatio, idealAspectRatio;
 

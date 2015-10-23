@@ -140,7 +140,7 @@ public class MainTheClawwww extends MainClass
 			drive.arcadeDrive(joyX, joyY, throttle, listenerManagerExtreme.getRawBool(ControllerExtreme3D.DOWN2));
 		};
 		
-		visionProcessor = new RoboVision();
+		//visionProcessor = new RoboVision();
 		
 		lights = new PWMLights(10, 11, 12);
 
