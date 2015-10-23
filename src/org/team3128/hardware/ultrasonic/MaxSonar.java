@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.SerialPort.StopBits;
 
 /**
- * Class to read the Maxbotics MaxSonar sensors plugged into the RoboRIO RS232 port.
+ * Class to read the Maxbotics MaxSonar sensor plugged into the RoboRIO RS232 port.
  * It is accurate to a few millimeters and has a max range of 500 cm.
  * 
  * The distance is updated asynchronously every half-second in auto-ping mode.
