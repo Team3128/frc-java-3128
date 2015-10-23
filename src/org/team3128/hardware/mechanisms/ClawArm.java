@@ -448,8 +448,9 @@ public class ClawArm
 
 	    // Make this return true when this Command no longer needs to run execute()
 	    protected boolean isFinished()
-	    {    	
-	    	return clawMinLimitSwitch.get() || endTime <= System.currentTimeMillis();
+	    {    
+	    	return false;
+	    	//return clawMinLimitSwitch.get() || endTime <= System.currentTimeMillis();
 	    }
 
 	    // Called once after isFinished returns true
@@ -496,8 +497,9 @@ public class ClawArm
 
 	    // Make this return true when this Command no longer needs to run execute()
 	    protected boolean isFinished()
-	    {    	
-	    	return clawMaxLimitSwitch.get() || endTime <= System.currentTimeMillis();
+	    {    
+	    	return false;
+	    	//return clawMaxLimitSwitch.get() || endTime <= System.currentTimeMillis();
 	    }
 
 	    // Called once after isFinished returns true

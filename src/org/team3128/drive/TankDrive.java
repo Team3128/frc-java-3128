@@ -500,11 +500,11 @@ public class TankDrive
         {
     		stopMovement();
         	
-        	if(leftDone)
+        	if(leftDone && encRight.getDistanceInDegrees() > 0)
         	{
         		Log.debug("CmdMoveForward", "The right side went at " + ((encRight.getDistanceInDegrees() * 100.0) / encRight.getDistanceInDegrees()) + "% of the left side");
         	}
-        	else
+        	else if(encLeft.getDistanceInDegrees() > 0)
         	{
         		Log.debug("CmdMoveForward", "The left side went at " + ((encLeft.getDistanceInDegrees() * 100.0) / encLeft.getDistanceInDegrees()) + "% of the right side");
         	}

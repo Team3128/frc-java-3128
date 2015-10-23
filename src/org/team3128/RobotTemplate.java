@@ -3,7 +3,7 @@ package org.team3128;
 import java.util.ArrayList;
 
 import org.team3128.listener.ListenerManager;
-import org.team3128.main.MainTheClawwww;
+import org.team3128.main.MainDriveCold;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -43,7 +43,7 @@ public class RobotTemplate extends IterativeRobot
        
         //  |||||||||||||||||||||||||||||||||||
         //  vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-        /*->*/main = new MainTheClawwww(); // <-
+        /*->*/main = new MainDriveCold(); // <-
         //  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         //  |||||||||||||||||||||||||||||||||||
         

@@ -277,12 +277,12 @@ public class MainTheClawwww extends MainClass
 	@Override
 	protected void addAutoPrograms(SendableChooser autoChooser)
 	{
-		autoChooser.addDefault("Take Tote into Auto Zone", new TakeToteIntoZoneAuto(drive, frontHookMotor));
+		autoChooser.addDefault("Take Tote into Auto Zone", new TakeToteIntoZoneAuto(drive, frontHookMotor, lights));
 		autoChooser.addObject("Can Grab", new FarCanGrabAuto(drive, clawArm, frontHookMotor, false));
 		autoChooser.addObject("Can Grab w/ Tote Pickup", new FarCanGrabAuto(drive, clawArm, frontHookMotor, true));
 		autoChooser.addObject("Dual Can Grab", new DualFarCanGrabAuto(drive, clawArm));
-		autoChooser.addObject("Drive Into Auto Zone", new DriveIntoAutoZoneAuto(drive));
-		autoChooser.addObject("Do Nothing", new DoNothingAuto());
+		autoChooser.addObject("Drive Into Auto Zone", new DriveIntoAutoZoneAuto(drive, lights));
+		autoChooser.addObject("Do Nothing", new DoNothingAuto(lights));
 		autoChooser.addObject("Dev Test Auto", new TestAuto());
 	}
 

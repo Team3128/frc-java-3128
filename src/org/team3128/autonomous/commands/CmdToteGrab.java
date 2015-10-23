@@ -15,6 +15,8 @@ public class CmdToteGrab extends Command
 	public CmdToteGrab(MotorGroup frontHookMotor, long time)
 	{
 		this.time = time;
+		
+		this.frontHookMotor = frontHookMotor;
 	}
 	
 	@Override
