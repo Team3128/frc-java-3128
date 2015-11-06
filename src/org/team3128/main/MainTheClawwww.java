@@ -104,12 +104,12 @@ public class MainTheClawwww extends MainClass
 		rightMotors = new MotorGroup(/*new PIDSpeedTarget(0, rightDriveEncoder, new VelocityPID(.1, 0, 0))*/);
 		rightMotors.addControlledMotor(new Talon(3));
 		rightMotors.addControlledMotor(new Talon(4));
-		rightMotors.reverseMotor();
+		rightMotors.invert();
 		//rightMotors.startControl(0);
 		
 		armTurnMotor = new MotorGroup();
 		armTurnMotor.addControlledMotor(new Talon(6));
-		armTurnMotor.reverseMotor();
+		armTurnMotor.invert();
 		
 
 		armRotateEncoder = new AnalogPotentiometerEncoder(0, 0, 4.829, 300);

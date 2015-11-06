@@ -67,7 +67,7 @@ public class MotorGroup
     /**
      * Make the motor go the other direction.
      */
-    public void reverseMotor()
+    public void invert()
     {
     	motorReversed = !motorReversed;
     }
