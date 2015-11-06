@@ -4,7 +4,6 @@ public class Log
 {
 	/**
 	 * Log a FATAL error, after which the robot cannot (properly) function. <br>
-	 * Calling this ACTUALLY STOPS THE ROBOT, so if it is bad but not <b>THAT</b> bad, call Log.recoverable() instead.
 	 * @param category
 	 * @param message
 	 */
