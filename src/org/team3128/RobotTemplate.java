@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import org.team3128.listener.ListenerManager;
@@ -18,8 +19,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /*
  * THIS FILE SHOULD NOT BE MODIFIED
  * --------------------------------
- * It serves as a link to the main class
- * Events triggered here will be forwarded to the main class
+ * It serves as a link to the main class.
+ * Events triggered here will be forwarded there.
  *
  * Do not call these functions under any circumstances. Do not modify this
  * class under any circumstances.
@@ -45,45 +46,9 @@ public class RobotTemplate extends IterativeRobot
         Log.info("RobotTemplate", "Welcome to the FRC Team 3128 No-Longer-Event System version 3.1!");
         Log.info("RobotTemplate", "Initializing Robot...");
         
-        String mainClassName = null;
-        
-        try
+        if(!constructMainClass())
         {
-        	File mainClassFile = new File("AlumNarMainClass.txt");
-        	
-        	if(!mainClassFile.exists())
-        	{
-        		Log.fatal("RobotTemplate", "No main class indicator file present!  A blank one has been created.");
-        		mainClassFile.createNewFile();
-        	}
-        	
-        	//sheesh, all of this to read one line of text
-        	BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(mainClassFile)));
-        	mainClassName = reader.readLine();
-        }
-        catch(IOException ex)
-        {
-        	Log.fatal("RobotTemplate", "Unable to read main class file!");
-        	ex.printStackTrace();
-        	return;
-        }
-        
-        try
-		{
-			Class<? extends MainClass> mainClassClass = Class.forName("org.team3128.main." + mainClassName).asSubclass(MainClass.class);
-			main = mainClassClass.newInstance();
-		}
-        catch (ClassNotFoundException | InstantiationException | IllegalAccessException e)
-		{
-			Log.fatal("RobotTemplate", "Error instantiating main class: " + e.getMessage());
-			e.printStackTrace();
-			return;
-		}
-        catch(ClassCastException ex)
-        {
-        	Log.fatal("RobotTemplate", "Main class provided was not a subclass of MainClass!");
-        	ex.printStackTrace();
-        	return;
+        	throw new RuntimeException("Could not construct main class!");
         }
         
         main.initializeRobot(this);
@@ -99,6 +64,8 @@ public class RobotTemplate extends IterativeRobot
         
         Log.info("RobotTemplate", "Initialization Done!");
     }
+	
+    // ARE YOU CHANGING THINGS?
 
     @Override
     public void disabledInit()
@@ -129,6 +96,9 @@ public class RobotTemplate extends IterativeRobot
     	
     }
     
+    // TURN BACK NOW.
+    // YOUR CHANGES ARE NOT WANTED HERE.
+    
     /**
      * Add a listener manager to the list of ones to be ticked in teleopPeriodic().
      * @param manager
@@ -147,6 +117,7 @@ public class RobotTemplate extends IterativeRobot
     	dashboardUpdateWavelength = millis;
     }
     
+    // YOU'D BETTER NOT CHANGE ANYTHING
     /**
      * Remove all listeners from every ListenerManager.
      */
@@ -158,7 +129,6 @@ public class RobotTemplate extends IterativeRobot
     	}
     }
 
-    // ARE YOU CHANGING THINGS?
     @Override
     public void autonomousInit()
     {
@@ -171,8 +141,6 @@ public class RobotTemplate extends IterativeRobot
         Log.info("RobotTemplate", "Auto Initialization Done!");
     }
    
-    // TURN BACK NOW.
-    // YOUR CHANGES ARE NOT WANTED HERE.
     @Override
     public void teleopInit()
     {
@@ -188,7 +156,6 @@ public class RobotTemplate extends IterativeRobot
 		Thread.yield();
     }
 
-    // YOU'D BETTER NOT CHANGE ANYTHING
     @Override
     public void autonomousPeriodic()
     {   
@@ -212,6 +179,60 @@ public class RobotTemplate extends IterativeRobot
 		{
 			return;
 		}
+    }
+    
+    
+    /**
+     * Try to do fancy reflectiony things to construct the main class.  Returns false if they fail.
+     * @return
+     */
+    boolean constructMainClass()
+    {
+        String mainClassName = null;
+
+        try
+        {
+        	File mainClassFile = Paths.get(System.getProperty("user.home"), "AlumNarMainClass.txt").toFile();
+        	
+        	if(!mainClassFile.exists())
+        	{
+        		Log.fatal("RobotTemplate", "No main class indicator file present!  A blank one has been created.");
+        		mainClassFile.createNewFile();
+        		return false;
+        	}
+        	
+        	//sheesh, all of this to read one line of text
+        	BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(mainClassFile)));
+        	mainClassName = reader.readLine();
+        	reader.close();
+        }
+        catch(IOException ex)
+        {
+        	Log.fatal("RobotTemplate", "Unable to read main class file!");
+        	ex.printStackTrace();
+        	return false;
+        }
+        
+        try
+		{
+			Class<? extends MainClass> mainClassClass = Class.forName("org.team3128.main." + mainClassName).asSubclass(MainClass.class);
+			main = mainClassClass.newInstance();
+		}
+        catch (ClassNotFoundException | InstantiationException | IllegalAccessException e)
+		{
+			Log.fatal("RobotTemplate", "Error instantiating main class: " + e.getMessage());
+			e.printStackTrace();
+			return false;
+		}
+        catch(ClassCastException ex)
+        {
+        	Log.fatal("RobotTemplate", "Main class provided was not a subclass of MainClass!");
+        	ex.printStackTrace();
+        	return false;
+        }
+        
+        return true;
+        
     }
 }
 
