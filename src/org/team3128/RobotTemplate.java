@@ -49,17 +49,18 @@ public class RobotTemplate extends IterativeRobot
         
         try
         {
-        	File mainClassFile = new File("AlumNarMainClass.txt");
+        	File mainClassFile = new File("/home/lvuser/AlumNarMainClass.txt");
         	
         	if(!mainClassFile.exists())
         	{
-        		Log.fatal("RobotTemplate", "No main class indicator file present!  A blank one has been created.");
+        		Log.fatal("RobotTemplate", "No main class indicator file present!  A blank one has been created at " + mainClassFile.getAbsolutePath());
         		mainClassFile.createNewFile();
         	}
         	
         	//sheesh, all of this to read one line of text
         	BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(mainClassFile)));
         	mainClassName = reader.readLine();
+        	reader.close();
         }
         catch(IOException ex)
         {

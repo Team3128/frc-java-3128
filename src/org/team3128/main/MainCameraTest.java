@@ -4,14 +4,13 @@ import org.team3128.MainClass;
 import org.team3128.RobotTemplate;
 import org.team3128.util.RoboVision;
 
-import com.ni.vision.NIVision;
-
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.vision.AxisCamera;
 
 public class MainCameraTest extends MainClass
 {
 
-	int cameraHandle;
+	AxisCamera camera;
 	
 	RoboVision visionProcessor;
 	
@@ -24,15 +23,12 @@ public class MainCameraTest extends MainClass
 	@Override
 	protected void initializeRobot(RobotTemplate robotTemplate)
 	{
-        cameraHandle = NIVision.IMAQdxOpenCamera("cam0",
-                NIVision.IMAQdxCameraControlMode.CameraControlModeController);
-        NIVision.IMAQdxConfigureGrab(cameraHandle);
+		camera = new AxisCamera("10.31.28.11");
 	}
 
 	@Override
 	protected void addAutoPrograms(SendableChooser autoChooser)
 	{
-        NIVision.IMAQdxStartAcquisition(cameraHandle);
 		
 	}
 
@@ -57,7 +53,7 @@ public class MainCameraTest extends MainClass
 	@Override
 	protected void initializeTeleop()
 	{
-		visionProcessor.targetRecognition(cameraHandle);
+		visionProcessor.targetRecognition(camera);
 	}
 
 }

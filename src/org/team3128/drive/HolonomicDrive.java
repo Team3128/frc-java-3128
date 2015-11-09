@@ -1,5 +1,6 @@
 package org.team3128.drive;
 
+import org.team3128.Log;
 import org.team3128.RobotProperties;
 import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.listener.ListenerManager;
@@ -47,6 +48,8 @@ public class HolonomicDrive
     	
     	_spdLF = (joyY + joyX) + 1.2*joyTurn;
     	_spdRB = (joyY + joyX) - joyTurn;
+    	
+    	Log.debug("HolonomicDrive", String.format("joyY: %f, joyTurn: %f, spdLB: %f, spdRF: %f, spdLF %f, spdRB: %f", joyY, joyTurn, _spdLB, _spdRF, _spdLF, _spdRB));
 
     	_driveLeftFront.setControlTarget(_spdLF);
     	_driveLeftBack.setControlTarget(_spdLB);

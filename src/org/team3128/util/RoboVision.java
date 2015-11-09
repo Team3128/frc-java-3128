@@ -13,6 +13,7 @@ import com.ni.vision.NIVision.ShapeMode;
 import com.ni.vision.VisionException;
 
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.vision.AxisCamera;
 
 
 
@@ -62,7 +63,7 @@ public class RoboVision
     }
    
     
-    public void targetRecognition(int cameraNum) 
+    public void targetRecognition(AxisCamera camera) 
     {
        
         try {
@@ -70,7 +71,7 @@ public class RoboVision
              * Do the image capture with the camera and apply the algorithm
              * described above.
              */
-            NIVision.IMAQdxGrab(cameraNum, rawImage, 1);
+            camera.getImage(rawImage);
             //DO NOT CHANGE THESE VALUES BELOW.
             NIVision.imaqColorThreshold(thresholdedImage, rawImage, 255, ColorMode.HSV, new Range(105, 137), new Range(230, 255), new Range(73, 183)); // keep only green objects
            

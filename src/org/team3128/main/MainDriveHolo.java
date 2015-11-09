@@ -58,12 +58,28 @@ public class MainDriveHolo extends MainClass
 			
 			holo.steer(joyX, joyY, twist, throttle);
 		};
+		
+		leftFrontMotors = new MotorGroup();
+		leftBackMotors = new MotorGroup();
+		rightFrontMotors = new MotorGroup();
+		rightBackMotors = new MotorGroup();
 
 		leftFrontMotors.addControlledMotor(new Victor(0));
 		leftBackMotors.addControlledMotor(new Victor(1));
 		rightFrontMotors.addControlledMotor(new Victor(2));
 		rightBackMotors.addControlledMotor(new Victor(3));
 		
+		holo = new HolonomicDrive(leftFrontMotors, leftBackMotors, rightFrontMotors, rightBackMotors, listenerManagerExtreme);
+		
+		updateDriveHolo = () ->
+		{
+			double joyX = -1 * listenerManagerExtreme.getRawAxis(ControllerExtreme3D.JOYX);
+			double joyY = listenerManagerExtreme.getRawAxis(ControllerExtreme3D.JOYY);
+			double twist = listenerManagerExtreme.getRawAxis(ControllerExtreme3D.TWIST);
+			double throttle = listenerManagerExtreme.getRawAxis(ControllerExtreme3D.THROTTLE);
+			
+			holo.steer(joyX, twist, joyY, throttle);
+		};
 	}
 
 	protected void initializeRobot(RobotTemplate robotTemplate)
