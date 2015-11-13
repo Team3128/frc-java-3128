@@ -11,7 +11,7 @@ import org.team3128.hardware.lights.PWMLights;
 import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.listener.IListenerCallback;
 import org.team3128.listener.ListenerManager;
-import org.team3128.listener.controller.ControllerExtreme3D;
+import org.team3128.listener.controller.ControllerXbox;
 import org.team3128.util.Units;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -55,7 +55,7 @@ public class MainDriveCold extends MainClass
 	
 	public MainDriveCold()
 	{	
-		listenerManagerExtreme = new ListenerManager(new Joystick(0), ControllerExtreme3D.instance);	
+		listenerManagerExtreme = new ListenerManager(new Joystick(0), ControllerXbox.instance);	
 		powerDistPanel = new PowerDistributionPanel();
 		
 		leftDriveEncoder = new QuadratureEncoderLink(0,	1, 128, false);
@@ -75,11 +75,11 @@ public class MainDriveCold extends MainClass
 		
 		updateDriveCOD = () ->
 		{
-			double joyX = listenerManagerExtreme.getRawAxis(ControllerExtreme3D.TWIST);
-			double joyY = listenerManagerExtreme.getRawAxis(ControllerExtreme3D.JOYY);
-			double throttle = -listenerManagerExtreme.getRawAxis(ControllerExtreme3D.THROTTLE);
+			double joyX = listenerManagerExtreme.getRawAxis(ControllerXbox.JOY2Y);
+			double joyY = listenerManagerExtreme.getRawAxis(ControllerXbox.JOY1Y);
+			double throttle = -listenerManagerExtreme.getRawAxis(ControllerXbox.TRIGGERR);
 			
-			drive.arcadeDrive(joyX, joyY, throttle, listenerManagerExtreme.getRawBool(ControllerExtreme3D.DOWN2));
+			drive.arcadeDrive(joyX, joyY, throttle, listenerManagerExtreme.getRawBool(ControllerXbox.LBDOWN));
 		};
 				
 		lights = new PWMLights(10, 11, 12);
@@ -122,14 +122,14 @@ public class MainDriveCold extends MainClass
 		//-----------------------------------------------------------
 		// Drive code, on Logitech Extreme3D joystick
 		//-----------------------------------------------------------
-		listenerManagerExtreme.addListener(ControllerExtreme3D.TWIST, updateDriveCOD);
-		listenerManagerExtreme.addListener(ControllerExtreme3D.JOYY, updateDriveCOD);
-		listenerManagerExtreme.addListener(ControllerExtreme3D.THROTTLE, updateDriveCOD);
-		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN2, updateDriveCOD);
-		listenerManagerExtreme.addListener(ControllerExtreme3D.UP2, updateDriveCOD);
+		listenerManagerExtreme.addListener(ControllerXbox.JOY1Y, updateDriveCOD);
+		listenerManagerExtreme.addListener(ControllerXbox.JOY2X, updateDriveCOD);
+		listenerManagerExtreme.addListener(ControllerXbox.TRIGGERR, updateDriveCOD);
+		listenerManagerExtreme.addListener(ControllerXbox.LBDOWN, updateDriveCOD);
+		listenerManagerExtreme.addListener(ControllerXbox.LBUP, updateDriveCOD);
 
 		
-		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN12, () ->
+		listenerManagerExtreme.addListener(ControllerXbox.STARTDOWN, () ->
 		{
 			powerDistPanel.clearStickyFaults();
 		});
