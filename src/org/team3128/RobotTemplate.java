@@ -49,7 +49,6 @@ public class RobotTemplate extends IterativeRobot
         if(!constructMainClass())
         {
         	throw new RuntimeException("Could not construct main class!");
-        	reader.close();
         }
         
         main.initializeRobot(this);

@@ -15,7 +15,7 @@ if %errorlevel%==0 (
 	set /P mainclass="Enter the name of the main class you want to use: "
 	echo.
 	
-	tools\plink.exe lvuser@roborio-3128.local echo %mainclass% > ~/AlumNarMainClass.txt
+	tools\plink.exe lvuser@roborio-3128.local "echo %mainclass% > ~/AlumNarMainClass.txt"
 	
 	echo. 
 	if %errorlevel%==0 (
