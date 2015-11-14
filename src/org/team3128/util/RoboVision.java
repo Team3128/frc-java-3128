@@ -36,12 +36,12 @@ import edu.wpi.first.wpilibj.vision.AxisCamera;
 public class RoboVision
 {
 	//Minimum area of particles to be considered
-    static final int AREA_MINIMUM = 150;
+    static final double AREA_MINIMUM = .5;
     //Maximum number of particles to process
-    static final int MAX_PARTICLES = 10;
+    static final int MAX_PARTICLES = 400;
 
     Image rawImage;
-    Image thresholdedImage;
+    Image thresheldImage;
     Image filteredImage;
     
     NIVision.ParticleFilterCriteria2[] filterCriteria;
@@ -55,7 +55,7 @@ public class RoboVision
     public RoboVision()
     {
     	rawImage = NIVision.imaqCreateImage(ImageType.IMAGE_RGB, 0);
-    	thresholdedImage = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
+    	thresheldImage = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
     	filteredImage = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
     	
     	filterCriteria = new NIVision.ParticleFilterCriteria2[1];
@@ -66,21 +66,23 @@ public class RoboVision
     public void targetRecognition(AxisCamera camera) 
     {
        
-        try {
+        try 
+        {
             /**
              * Do the image capture with the camera and apply the algorithm
              * described above.
              */
             camera.getImage(rawImage);
             //DO NOT CHANGE THESE VALUES BELOW.
-            NIVision.imaqColorThreshold(thresholdedImage, rawImage, 255, ColorMode.HSV, new Range(105, 137), new Range(230, 255), new Range(73, 183)); // keep only green objects
+            NIVision.imaqColorThreshold(thresheldImage, rawImage, 255, ColorMode.HSV, new Range(105, 137), new Range(5, 50), new Range(0, 255)); // keep only green objects
            
-            Log.debug("RoboVision", "Just finished thresholding");
+            Log.debug("RoboVision", "Just finished thresholding.  Particles: " + NIVision.imaqCountParticles(thresheldImage, 1));
+
             //thresholdImage.write("/threshold.bmp");
             //NIVision.imaqWriteBMPFile(thresholdedImage, "/home/lvuser/RoboVision/thresholdedImage.bmp", 0, new RGBValue(255, 255, 255, 1));
 
             //find particles
-            NIVision.imaqParticleFilter4(filteredImage, thresholdedImage, filterCriteria, new NIVision.ParticleFilterOptions2(0,0,1,1), null);
+            NIVision.imaqParticleFilter4(filteredImage, thresheldImage, filterCriteria, new NIVision.ParticleFilterOptions2(0,0,1,1), null);
             
             //iterate through each particle and score to see if it is a target
             int numParticles = NIVision.imaqCountParticles(filteredImage, 1);
@@ -91,35 +93,46 @@ public class RoboVision
             int verticalTargets[] = new int[MAX_PARTICLES];
             int horizontalTargets[] = new int[MAX_PARTICLES];
             
-            if(NIVision.imaqCountParticles(filteredImage, 1) > 0) {
-                for (int i = 0; i <= MAX_PARTICLES && i < NIVision.imaqCountParticles(filteredImage, 1); i++) {
+            if(numParticles > 0)
+            {
+                for (int i = 0; i <= MAX_PARTICLES && i < numParticles; i++)
+                {
+                    scores[i] = new Scores();
+
                     ParticleReport report = new ParticleReport(filteredImage, i);
 
                     //Score each particle on rectangularity and aspect ratio
-                    double rectangularity = scoreRectangularity(report);
-                    double aspectRatioVertical = scoreAspectRatio(thresholdedImage, report, i, true);
-                    double aspectRatioHorizontal = scoreAspectRatio(thresholdedImage, report, i, false);
+                    scores[i].rectangularity = scoreRectangularity(report);
+                    scores[i].aspectRatioVertical = scoreAspectRatio(filteredImage, report, i, true);
+                    scores[i].aspectRatioHorizontal = scoreAspectRatio(filteredImage, report, i, false);
+                    
 
                     //Check if the particle is a horizontal target, if not, check if it's a vertical target
-                    if (isTarget(scores[i], false)) {
+                    if (isTarget(scores[i], false))
+                    {
                         System.out.println("particle: " + i + "is a Horizontal Target centerX: " + report.center_of_mass_x + "centerY: " + report.center_of_mass_y);
                         horizontalTargets[horizontalTargetCount++] = i; //Add particle to target array and increment count
+                        NIVision.Rect rect = new NIVision.Rect(report.boundingRectTop, report.boundingRectLeft, report.boundingRectHeight, report.boundingRectWidth);
+                        NIVision.imaqDrawShapeOnImage(rawImage, rawImage, rect, DrawMode.PAINT_INVERT, ShapeMode.SHAPE_RECT, 0.0f);
                     }
-                    else if (isTarget(scores[i], true)) {
+                    else if (isTarget(scores[i], true))
+                    {
                         System.out.println("particle: " + i + "is a Vertical Target centerX: " + report.center_of_mass_x + "centerY: " + report.center_of_mass_x);
                         verticalTargets[verticalTargetCount++] = i;  //Add particle to target array and increment count
                         //draw on image
                         NIVision.Rect rect = new NIVision.Rect(report.boundingRectTop, report.boundingRectLeft, report.boundingRectHeight, report.boundingRectWidth);
-                        NIVision.imaqDrawShapeOnImage(rawImage, rawImage, rect, DrawMode.DRAW_VALUE, ShapeMode.SHAPE_RECT, 0.0f);
+                        NIVision.imaqDrawShapeOnImage(rawImage, rawImage, rect, DrawMode.PAINT_INVERT, ShapeMode.SHAPE_RECT, 0.0f);
                         
-                    } else {
+                    } 
+                    else
+                    {
                         System.out.println("particle: " + i + "is not a Target centerX: " + report.center_of_mass_x + "centerY: " + report.center_of_mass_x);
                     }
-                    System.out.println("rect: " + rectangularity + " ARHoriz: " + aspectRatioHorizontal + " ARVert: " + aspectRatioVertical);
+                    System.out.println("rect: " + scores[i].rectangularity + " ARHoriz: " + scores[i].aspectRatioHorizontal + " ARVert: " + scores[i].aspectRatioVertical);
                     System.out.println();
-                    
-                   
                 }
+                   
+            }
                 
                 CameraServer.getInstance().setImage(rawImage);
 
@@ -162,11 +175,13 @@ public class RoboVision
 //                    //Determine if the best target is a Hot target
 //                    target.Hot = isHot(target);
 //                }
-              }
+              
 //            filteredImage.free();
 //            thresholdImage.free();
 //            image.free();
-        } catch (VisionException ex) {
+        } 
+        catch (VisionException ex)
+        {
             Log.recoverable("RoboVision", ex.getMessage());
             ex.printStackTrace();
         }

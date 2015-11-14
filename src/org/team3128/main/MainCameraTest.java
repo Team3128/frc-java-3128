@@ -23,7 +23,7 @@ public class MainCameraTest extends MainClass
 	@Override
 	protected void initializeRobot(RobotTemplate robotTemplate)
 	{
-		camera = new AxisCamera("10.31.28.11");
+		camera = new AxisCamera("10.31.31.23");
 	}
 
 	@Override
