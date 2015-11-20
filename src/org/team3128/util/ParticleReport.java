@@ -1,7 +1,5 @@
 package org.team3128.util;
 
-import java.util.Comparator;
-
 import com.ni.vision.NIVision;
 import com.ni.vision.NIVision.Image;
 
@@ -10,7 +8,7 @@ import com.ni.vision.NIVision.Image;
  * @author Jamie
  *
  */
-public class ParticleReport implements Comparator<ParticleReport>, Comparable<ParticleReport>{
+public class ParticleReport implements Comparable<ParticleReport>{
 	public double percentAreaToImageArea;
 	public double area;
 	public int boundingRectLeft;
@@ -22,10 +20,19 @@ public class ParticleReport implements Comparator<ParticleReport>, Comparable<Pa
 	
 	public int center_of_mass_x, center_of_mass_y;
 	
+    /**
+     * A score (0-100) estimating how rectangular the particle is by
+     * comparing the area of the particle to the area of the bounding box
+     * surrounding it. A perfect rectangle would cover the entire bounding box.
+     */
+	public double rectangularity;
+	
 	private Image sourceImage;
 	
+	private double score;
+	
 	//TODO: make this a config value
-	double VIEW_ANGLE = 49.4; //View angle fo camera, set to Axis m1011 by default, 64 for m1013, 51.7 for 206, 52 for HD3000 square, 60 for HD3000 640x480
+	double VIEW_ANGLE = 64; //View angle for camera, 49.4 Axis m1011 camera, 64 for m1013, 51.7 for 206, 52 for HD3000 square, 60 for HD3000 640x480
 
 	
 	/**
@@ -48,16 +55,18 @@ public class ParticleReport implements Comparator<ParticleReport>, Comparable<Pa
 		
         center_of_mass_x = (int) NIVision.imaqMeasureParticle(image, particleIndex, 0, NIVision.MeasurementType.MT_CENTER_OF_MASS_X);
         center_of_mass_y = (int) NIVision.imaqMeasureParticle(image, particleIndex, 0, NIVision.MeasurementType.MT_CENTER_OF_MASS_Y);
+        
+        if (boundingRectWidth * boundingRectHeight != 0) {
+            rectangularity = 100 * area / (boundingRectWidth * boundingRectHeight);
+        } else {
+            rectangularity = 0;
+        }
 	}
 	
+	@Override
 	public int compareTo(ParticleReport r)
 	{
-		return (int)(r.area - this.area);
-	}
-	
-	public int compare(ParticleReport r1, ParticleReport r2)
-	{
-		return (int)(r1.area - r2.area);
+		return this.score < r.score ? -1 : this.score > r.score ? 1 : 0;
 	}
 	
 	/**
@@ -68,7 +77,7 @@ public class ParticleReport implements Comparator<ParticleReport>, Comparable<Pa
 	
      * @return The estimated distance to the target in cm.
 	 */
-	double computeDistance() {
+	public double computeDistance() {
 		double normalizedWidth, targetWidth;
 		NIVision.GetImageSizeResult size;
 
@@ -78,4 +87,20 @@ public class ParticleReport implements Comparator<ParticleReport>, Comparable<Pa
 
 		return  targetWidth/(normalizedWidth*12*Math.tan(VIEW_ANGLE*Math.PI/(180*2)));
 	}
-};
+	
+	/**
+	 * Set the score of the particle, which is its suitability according to whatever processing algorithm you're using.
+	 * This value will be used to sort ParticleReports in a list
+	 * @param score
+	 */
+	void setScore(double score)
+	{
+		this.score = score;
+	}
+	
+	double getScore()
+	{
+		return score;
+	}
+	
+}
