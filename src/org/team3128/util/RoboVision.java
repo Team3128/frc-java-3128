@@ -7,6 +7,7 @@ import org.team3128.Log;
 import com.ni.vision.NIVision;
 import com.ni.vision.NIVision.ColorMode;
 import com.ni.vision.NIVision.DrawMode;
+import com.ni.vision.NIVision.GetImageSizeResult;
 import com.ni.vision.NIVision.Image;
 import com.ni.vision.NIVision.ImageType;
 import com.ni.vision.NIVision.Range;
@@ -103,6 +104,9 @@ public class RoboVision
             //find particles
             NIVision.imaqParticleFilter4(filteredImage, thresheldImage, filterCriteria, new NIVision.ParticleFilterOptions2(0,0,1,1), null);
             
+            //calculate this ahead of time, it's needed by each particle report
+            GetImageSizeResult filteredImageSize = NIVision.imaqGetImageSize(filteredImage);
+            
             //iterate through each particle and score to see if it is a target
             int numParticles = NIVision.imaqCountParticles(filteredImage, 1);
                                     
@@ -111,7 +115,7 @@ public class RoboVision
                 for (int i = 0; i < numParticles; i++)
                 {
 
-                    ParticleReport report = new ParticleReport(filteredImage, i);
+                    ParticleReport report = new ParticleReport(filteredImage, i, filteredImageSize);
 
                     //Score each particle on rectangularity and aspect ratio
                     double aspectRatioScore = scoreAspectRatio(report, aspectRatio);               
