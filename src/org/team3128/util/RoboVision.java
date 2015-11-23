@@ -154,51 +154,6 @@ public class RoboVision
             
             targets.sort(null);
             
-
-//                //Zero out scores and set verticalIndex to first target in case there are no horizontal targets
-//                target.totalScore = target.leftScore = target.rightScore = target.tapeWidthScore = target.verticalScore = 0;
-//                target.verticalIndex = verticalTargets[0];
-//                for (int i = 0; i < verticalTargetCount; i++) {
-//                    ParticleAnalysisReport verticalReport = filteredImage.getParticleAnalysisReport(verticalTargets[i]);
-//                    for (int j = 0; j < horizontalTargetCount; j++) {
-//                        ParticleAnalysisReport horizontalReport = filteredImage.getParticleAnalysisReport(horizontalTargets[j]);
-//                        double horizWidth, horizHeight, vertWidth, leftScore, rightScore, tapeWidthScore, verticalScore, total;
-//
-//                        //Measure equivalent rectangle sides for use in score calculation
-//                        horizWidth = NIVision.MeasureParticle(filteredImage.image, horizontalTargets[j], false, MeasurementType.IMAQ_MT_EQUIVALENT_RECT_LONG_SIDE);
-//                        vertWidth = NIVision.MeasureParticle(filteredImage.image, verticalTargets[i], false, MeasurementType.IMAQ_MT_EQUIVALENT_RECT_SHORT_SIDE);
-//                        horizHeight = NIVision.MeasureParticle(filteredImage.image, horizontalTargets[j], false, MeasurementType.IMAQ_MT_EQUIVALENT_RECT_SHORT_SIDE);
-//
-//                        //Determine if the horizontal target is in the expected location to the left of the vertical target
-//                        leftScore = ratioToScore(1.2 * (verticalReport.boundingRectLeft - horizontalReport.center_mass_x) / horizWidth);
-//                        //Determine if the horizontal target is in the expected location to the right of the  vertical target
-//                        rightScore = ratioToScore(1.2 * (horizontalReport.center_mass_x - verticalReport.boundingRectLeft - verticalReport.boundingRectWidth) / horizWidth);
-//                        //Determine if the width of the tape on the two targets appears to be the same
-//                        tapeWidthScore = ratioToScore(vertWidth / horizHeight);
-//                        //Determine if the vertical location of the horizontal target appears to be correct
-//                        verticalScore = ratioToScore(1 - (verticalReport.boundingRectTop - horizontalReport.center_mass_y) / (4 * horizHeight));
-//                        total = leftScore > rightScore ? leftScore : rightScore;
-//                        total += tapeWidthScore + verticalScore;
-//
-//                        //If the target is the best detected so far store the information about it
-//                        if (total > target.totalScore) {
-//                            target.horizontalIndex = horizontalTargets[j];
-//                            target.verticalIndex = verticalTargets[i];
-//                            target.totalScore = total;
-//                            target.leftScore = leftScore;
-//                            target.rightScore = rightScore;
-//                            target.tapeWidthScore = tapeWidthScore;
-//                            target.verticalScore = verticalScore;
-//                        }
-//                    }
-//                    //Determine if the best target is a Hot target
-//                    target.Hot = isHot(target);
-//                }
-              
-//            filteredImage.free();
-//            thresholdImage.free();
-//            image.free();
-            
         } 
         catch (VisionException ex)
         {

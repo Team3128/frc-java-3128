@@ -6,7 +6,7 @@ import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.hardware.motor.limiter.AngleLimiter;
 import org.team3128.hardware.motor.limiter.SwitchLimiter;
 import org.team3128.hardware.motor.logic.BlankSpeedLogic;
-import org.team3128.hardware.motor.logic.PIDAngleLogic;
+import org.team3128.hardware.motor.logic.AbsolutePIDAngleLogic;
 import org.team3128.util.Units;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -22,9 +22,9 @@ public class ClawArm
 {
 	public MotorGroup _armRotate, _armJoint, _clawGrab;
 	
-	PIDAngleLogic armRotateAngleTarget;
+	AbsolutePIDAngleLogic armRotateAngleTarget;
 	
-	PIDAngleLogic armJointAngleTarget;
+	AbsolutePIDAngleLogic armJointAngleTarget;
 	
 	AngleLimiter armRotateEndstopTarget;
 	
@@ -95,9 +95,9 @@ public class ClawArm
 		_clawGrab.startControl(0);
 		
 		
-		armRotateAngleTarget = new PIDAngleLogic(.010, .000005, .00015, 4, false, armEncoder, true);
+		armRotateAngleTarget = new AbsolutePIDAngleLogic(.010, .000005, .00015, 4, false, armEncoder, true);
 		
-		armJointAngleTarget = new PIDAngleLogic(.009, 0, 0, 5, false, jointEncoder, false);
+		armJointAngleTarget = new AbsolutePIDAngleLogic(.009, 0, 0, 5, false, jointEncoder, false);
 		
 		armRotateEndstopTarget = new AngleLimiter(22, 295, 2, armEncoder);
 		

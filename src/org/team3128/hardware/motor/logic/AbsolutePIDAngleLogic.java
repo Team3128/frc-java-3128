@@ -1,5 +1,6 @@
 package org.team3128.hardware.motor.logic;
 
+import org.team3128.Log;
 import org.team3128.hardware.encoder.angular.IAngularEncoder;
 import org.team3128.hardware.motor.MotorLogic;
 import org.team3128.util.RobotMath;
@@ -10,7 +11,7 @@ import org.team3128.util.RobotMath;
  * @author Jamie
  */
 
-public class PIDAngleLogic extends MotorLogic
+public class AbsolutePIDAngleLogic extends MotorLogic
 {
     private double targetAngle, threshold;
     private IAngularEncoder _encoder;
@@ -36,7 +37,7 @@ public class PIDAngleLogic extends MotorLogic
      * @param stopWhenDone whether to stop controlling the motor when it's reached its target
      * @param encoder
      */
-    public PIDAngleLogic(double kP, double kI, double kD, double threshold, boolean stopWhenDone, IAngularEncoder encoder, boolean log)
+    public AbsolutePIDAngleLogic(double kP, double kI, double kD, double threshold, boolean stopWhenDone, IAngularEncoder encoder, boolean log)
     {
     	_refreshTime = 10;
         
@@ -73,16 +74,16 @@ public class PIDAngleLogic extends MotorLogic
     	    	
     	errorSum += error;
     	
-//    	if(errorSum > errorLimit)
-//    	{
-//    		Log.unusual("PIDAngleTarget", "I error sum of " + errorSum + " went over limit of " + errorLimit);
-//    		errorSum = errorLimit;
-//    	}
-//    	else if(errorSum < -errorLimit)
-//    	{
-//    		Log.unusual("PIDAngleTarget", "I error sum of " + errorSum + " went under limit of " + -errorLimit);
-//    		errorSum = -errorLimit;
-//    	}
+    	if(errorSum > errorLimit)
+    	{
+    		Log.unusual("PIDAngleTarget", "I error sum of " + errorSum + " went over limit of " + errorLimit);
+    		//errorSum = errorLimit;
+    	}
+    	else if(errorSum < -errorLimit)
+    	{
+    		Log.unusual("PIDAngleTarget", "I error sum of " + errorSum + " went under limit of " + -errorLimit);
+    		//errorSum = -errorLimit;
+    	}
     	
         double output = error * kP + errorSum * kI + kD * (error - prevError);
         
@@ -90,15 +91,8 @@ public class PIDAngleLogic extends MotorLogic
         
        	if(_log)
     	{
-    		//Log.debug("PIDAngleTarget", "output: " + output);
+            Log.debug("PIDAngleTarget", "target: " + targetAngle + " current: " + angle + " error: " + error + " output: " + output);
     	}
-        
-        //Log.debug("PIDAngleTarget", "target: " + targetAngle + " current: " + angle + " error: " + error + " output: " + (pGain));
-        
-        //if(Math.abs(pGain) <= this.minSpeed)
-        //{
-        //	pGain = RobotMath.getMotorDirToTarget(angle, this.targetAngle, _encoder.canRevolveMultipleTimes()).getIntDir() * this.minSpeed;
-        //}
 
         if(Math.abs(error) < threshold)
         {
