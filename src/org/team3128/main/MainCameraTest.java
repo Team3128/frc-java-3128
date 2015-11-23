@@ -32,7 +32,7 @@ public class MainCameraTest extends MainClass
 	@Override
 	protected void initializeRobot(RobotTemplate robotTemplate)
 	{
-		camera = new AxisCamera("10.31.31.23");
+		camera = new AxisCamera("10.31.31.21");
 		visionProcessor = new RoboVision(camera, .5, true);
 	}
 
@@ -51,7 +51,19 @@ public class MainCameraTest extends MainClass
 	@Override
 	protected void updateDashboard()
 	{
-		
+		LinkedList<ParticleReport> targets = visionProcessor.findSingleTarget(
+				new Range(SmartDashboard.getInt("minH", 105), SmartDashboard.getInt("maxH", 137)), 
+        		new Range(SmartDashboard.getInt("minS", 5), SmartDashboard.getInt("maxS", 50)),
+        		new Range(SmartDashboard.getInt("minV", 0), SmartDashboard.getInt("maxV", 255)),
+        		SmartDashboard.getNumber("aspectRatio",(21.9 * Units.in)/(28.8 * Units.in)),
+        		SmartDashboard.getNumber("rectangularityScore", 100));
+		if(!targets.isEmpty())
+		{
+			
+			ParticleReport targetReport = targets.get(0);
+			
+	        Log.debug("RoboVision", "Target distance: " + targetReport.computeDistance() + " cm target heading angle");
+		}
 	}
 
 	@Override
@@ -64,16 +76,6 @@ public class MainCameraTest extends MainClass
 	@Override
 	protected void initializeTeleop()
 	{
-		LinkedList<ParticleReport> targets = visionProcessor.findSingleTarget(
-				new Range(SmartDashboard.getInt("minH", 105), SmartDashboard.getInt("maxH", 137)), 
-        		new Range(SmartDashboard.getInt("minS", 5), SmartDashboard.getInt("maxS", 50)),
-        		new Range(SmartDashboard.getInt("minV", 0), SmartDashboard.getInt("maxV", 255)),
-        		SmartDashboard.getNumber("aspectRatio",(21.9 * Units.in)/(28.8 * Units.in)),
-        		SmartDashboard.getNumber("rectangularityScore", 100));
-		
-		ParticleReport targetReport = targets.get(0);
-		
-        Log.debug("RoboVision", "Target distance: " + targetReport.computeDistance() + " cm target heading angle");
 
 	}
 
