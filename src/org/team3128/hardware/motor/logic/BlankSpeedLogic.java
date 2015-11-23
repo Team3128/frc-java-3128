@@ -34,7 +34,7 @@ public class BlankSpeedLogic extends MotorLogic
     }
    
     @Override
-    public synchronized void clearControlRun()
+    public synchronized void reset()
     {
     	this.tgtSpeed = 0;
     }

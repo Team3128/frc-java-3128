@@ -1,12 +1,18 @@
 package org.team3128.hardware.motor.logic;
 
 import org.team3128.Log;
-import org.team3128.hardware.encoder.angular.IAngularEncoder;
+import org.team3128.hardware.encoder.distance.IDistanceEncoder;
 import org.team3128.hardware.motor.MotorLogic;
 import org.team3128.util.RobotMath;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+
 /**
- * Motor control which steers the motor to an angle using an encoder.
+ * Motor control which steers the motor to an angle using an encoder. 
+ * 
+ * This class uses a relative encoder, like an optical or magnetic one that counts revolutions,
+ *  as opposed to an absolute one like a potentiometer.
+ *  
  * @author Yousuf Soliman
  * @author Jamie
  */
@@ -14,11 +20,28 @@ import org.team3128.util.RobotMath;
 public class RelativePIDAngleLogic extends MotorLogic
 {
     private double targetAngle, threshold;
-    private IAngularEncoder _encoder;
+    private IDistanceEncoder _encoder;
     
     private int consecutiveCorrectPositions = 0;
     
     boolean _stopWhenDone;
+    
+    boolean _log;
+    
+    final private static String TAG = "RelativePIDAngleLogic";
+    
+    // Auto Reset variables
+    //--------------------------------------
+    
+    boolean isAutoResetting = true;
+    double autoResetDirection; // used for remembering which way to go during a reset
+    
+    private DigitalInput stopSwitch;
+    
+    final private static double homingMotorPower = .25;
+    
+    // PID Calculation variables
+    //--------------------------------------
     double kP;
     double kI;
     double kD;
@@ -26,9 +49,8 @@ public class RelativePIDAngleLogic extends MotorLogic
     double errorSum = 0;
     double prevError = 0;
     
-    boolean _log;
+    final private static double errorLimit = 100000;
     
-    final static double errorLimit = 100000;
     
     /**
      * 
@@ -36,8 +58,12 @@ public class RelativePIDAngleLogic extends MotorLogic
      * @param threshold acceptable error in degrees
      * @param stopWhenDone whether to stop controlling the motor when it's reached its target
      * @param encoder
+     * @param stopSwitch a switch that, when <strong>low</strong>, signifies that the motor has reached its stop point.  If it 
+     *  is provided, calling clearSpeedControlRun() will automatically, asynchronously run the motor until it hits this point.
+     *  If it is null, calling clearSpeedControlRun() will just set the current position of the motor to the zero point.
      */
-    public RelativePIDAngleLogic(double kP, double kI, double kD, double threshold, boolean stopWhenDone, IAngularEncoder encoder, boolean log)
+    public RelativePIDAngleLogic(double kP, double kI, double kD, double threshold, boolean stopWhenDone,
+    		IDistanceEncoder encoder, DigitalInput stopSwitch, boolean log)
     {
     	_refreshTime = 10;
         
@@ -51,6 +77,8 @@ public class RelativePIDAngleLogic extends MotorLogic
         _encoder = encoder;
         
         _stopWhenDone = stopWhenDone;
+        
+        this.stopSwitch = stopSwitch; //TODO replace with limit switch class
     }
 
     /**
@@ -68,47 +96,79 @@ public class RelativePIDAngleLogic extends MotorLogic
     @Override
     public double speedControlStep(double dt)
     {
-    	double angle = _encoder.getAngle();
     	
-    	double error = RobotMath.angleDistance(angle, this.targetAngle, _encoder.canRevolveMultipleTimes());
-    	    	
-    	errorSum += error;
+    	double power = 0;
     	
-    	if(errorSum > errorLimit)
+    	//if we're auto resetting, do that instead of the normal algorithm
+    	if(isAutoResetting)
     	{
-    		Log.unusual("PIDAngleTarget", "I error sum of " + errorSum + " went over limit of " + errorLimit);
-    		//errorSum = errorLimit;
+    		if(!stopSwitch.get())
+    		{
+    			//Done resetting!
+    			isAutoResetting = false;
+    			
+    			power = 0;
+    		}
+    		
+    		power = homingMotorPower * autoResetDirection;
     	}
-    	else if(errorSum < -errorLimit)
+    	else
     	{
-    		Log.unusual("PIDAngleTarget", "I error sum of " + errorSum + " went under limit of " + -errorLimit);
-    		//errorSum = -errorLimit;
+	    	double angle = _encoder.getDistanceInDegrees();
+	    	
+	    	double error = RobotMath.angleDistance(angle, this.targetAngle, true);
+	    	    	
+	    	errorSum += error;
+	    	
+	    	if(errorSum > errorLimit)
+	    	{
+	    		Log.unusual(TAG, "I error sum of " + errorSum + " went over limit of " + errorLimit);
+	    		//errorSum = errorLimit;
+	    	}
+	    	else if(errorSum < -errorLimit)
+	    	{
+	    		Log.unusual(TAG, "I error sum of " + errorSum + " went under limit of " + -errorLimit);
+	    		//errorSum = -errorLimit;
+	    	}
+	    	
+	        double output = error * kP + errorSum * kI + kD * (error - prevError);
+	        
+	        prevError = error;
+	        
+	       	if(_log)
+	    	{
+	            Log.debug(TAG, "target: " + targetAngle + " current: " + angle + " error: " + error + " output: " + output);
+	    	}
+	
+	        if(Math.abs(error) < threshold)
+	        {
+	        	++consecutiveCorrectPositions;
+	        	return 0;
+	        }
+	        consecutiveCorrectPositions = 0;
+	        
+	        power = RobotMath.makeValidPower(output);
     	}
     	
-        double output = error * kP + errorSum * kI + kD * (error - prevError);
-        
-        prevError = error;
-        
-       	if(_log)
-    	{
-            Log.debug("PIDAngleTarget", "target: " + targetAngle + " current: " + angle + " error: " + error + " output: " + output);
-    	}
-
-        if(Math.abs(error) < threshold)
-        {
-        	++consecutiveCorrectPositions;
-        	return 0;
-        }
-        consecutiveCorrectPositions = 0;
-        
-        return RobotMath.makeValidPower(output);
+    	return power;
     }
 
     @Override
-    public synchronized void clearControlRun()
+    public synchronized void reset()
     {
     	errorSum = 0;
     	consecutiveCorrectPositions = 0;
+    	
+    	targetAngle = 0;
+    	
+    	if(stopSwitch != null)
+    	{
+    		isAutoResetting = true;
+    		
+    		//which way do we go?
+    		autoResetDirection = RobotMath.sgn(RobotMath.angleDistance(_encoder.getDistanceInDegrees(), this.targetAngle, true));
+    		
+    	}
     }
 
     /**

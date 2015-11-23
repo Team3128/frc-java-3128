@@ -94,7 +94,7 @@ public class PIDSpeedLogic extends MotorLogic
     }
    
     @Override
-    public synchronized void clearControlRun()
+    public synchronized void reset()
     {
         setControlTarget(0);
         _pidCalculator.resetIntegral();

@@ -105,10 +105,12 @@ public class AbsolutePIDAngleLogic extends MotorLogic
     }
 
     @Override
-    public synchronized void clearControlRun()
+    public synchronized void reset()
     {
     	errorSum = 0;
     	consecutiveCorrectPositions = 0;
+    	
+    	targetAngle = 0;
     }
 
     /**

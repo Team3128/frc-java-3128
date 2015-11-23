@@ -56,11 +56,11 @@ public class MotorGroup
     /**
      * Reset the speed control.  This may or may not do anything, depending on which speed control is used.
      */
-    public void clearSpeedControlRun()
+    public void reset()
     {
     	if(motorLogic != null)
     	{
-    		motorLogic.clearControlRun();
+    		motorLogic.reset();
     	}
     }
 
@@ -172,7 +172,7 @@ public class MotorGroup
     		Log.unusual("MotorGroup", "startControl() was called on a motor link with no speed controller.");
     		return;
     	}
-        this.motorLogic.clearControlRun();
+        this.motorLogic.reset();
         this.motorLogic.setControlTarget(target);
         this.motorLogic.setControlledMotor(this);
         if(!motorLogic.isRunning())
