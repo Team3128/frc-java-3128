@@ -26,6 +26,8 @@ public class RelativePIDAngleLogic extends MotorLogic
     
     boolean _stopWhenDone;
     
+    double angleOffset;
+    
     boolean _log;
     
     final private static String TAG = "RelativePIDAngleLogic";
@@ -35,6 +37,7 @@ public class RelativePIDAngleLogic extends MotorLogic
     
     boolean isAutoResetting = true;
     double autoResetDirection; // used for remembering which way to go during a reset
+    double autoResetLocation;  ///angle where the reset switch is
     
     private DigitalInput stopSwitch;
     
@@ -63,7 +66,7 @@ public class RelativePIDAngleLogic extends MotorLogic
      *  If it is null, calling clearSpeedControlRun() will just set the current position of the motor to the zero point.
      */
     public RelativePIDAngleLogic(double kP, double kI, double kD, double threshold, boolean stopWhenDone,
-    		IDistanceEncoder encoder, DigitalInput stopSwitch, boolean log)
+    		IDistanceEncoder encoder, DigitalInput stopSwitch, double stopSwitchLocation, boolean log)
     {
     	_refreshTime = 10;
         
@@ -79,6 +82,10 @@ public class RelativePIDAngleLogic extends MotorLogic
         _stopWhenDone = stopWhenDone;
         
         this.stopSwitch = stopSwitch; //TODO replace with limit switch class
+        
+        this.autoResetLocation = stopSwitchLocation;
+        
+        angleOffset = 0;
     }
 
     /**
@@ -104,17 +111,19 @@ public class RelativePIDAngleLogic extends MotorLogic
     	{
     		if(!stopSwitch.get())
     		{
-    			//Done resetting!
+    			//Done resetting!  We are now at the auto reset location
     			isAutoResetting = false;
     			
     			power = 0;
+    			
+    			angleOffset = autoResetLocation; //we may not actually be at 0, so set the power accordingly
     		}
     		
     		power = homingMotorPower * autoResetDirection;
     	}
     	else
     	{
-	    	double angle = _encoder.getDistanceInDegrees();
+	    	double angle = getAngle();
 	    	
 	    	double error = RobotMath.angleDistance(angle, this.targetAngle, true);
 	    	    	
@@ -179,5 +188,15 @@ public class RelativePIDAngleLogic extends MotorLogic
         return _stopWhenDone && consecutiveCorrectPositions >= 5;
     }
     
+    /**
+     * Gets the angle of the motor in degrees.
+     * 
+     * This controller maintains an internal angle offset, so getting this info from the encoder may not work.
+     * @return
+     */
+    public double getAngle()
+    {
+    	 return _encoder.getDistanceInDegrees() + angleOffset;
+    }
 }
 

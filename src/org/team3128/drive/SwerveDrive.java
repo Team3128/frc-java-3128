@@ -33,7 +33,7 @@ public class SwerveDrive
     {
     	
     	//hopefully all encoders are all using the same type of encoders
-    	//otherwise the canRevolveMultipleTimes() will be wrong.
+    	//otherwise the canRevolveMultipleTimes() will be wrong. -Jamie
         double a = RobotMath.angleDistance(ang2, ang1, _encFL.canRevolveMultipleTimes());
         double o[] = new double[2];
         if (Math.abs(a) > 90) {

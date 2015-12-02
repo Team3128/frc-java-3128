@@ -174,14 +174,15 @@ public class RobotMath {
     * 
     * @param toFloor
     * @return An integer whose value is the same as or less than one lower than the argument.
-    * Throws if the argument is too large to be an int.
+    * Throws if the argument is too large to be an int, is NaN, or posiive or negative infinity.
     */
    public static int floor_double_int(double toFloor)
    {
 	   double floored = Math.floor(toFloor);
-	   if(toFloor > Integer.MAX_VALUE)
+	   
+	   if(Double.isFinite(floored) && toFloor > Integer.MAX_VALUE)
 	   {
-		   throw new IllegalArgumentException("The provided double is too large to be an int");
+		   throw new IllegalArgumentException("The provided double cannot be represented by an int");
 	   }
 	   
 	   return (int)floored;
@@ -191,14 +192,14 @@ public class RobotMath {
     * 
     * @param toCeil
     * @return An integer whose value is the same or less than one higher than the argument.
-    * Throws if the argument is too large to be an int.
+    * Throws if the argument is too large to be an int, is NaN, or posiive or negative infinity.
     */
    public static int ceil_double_int(double toCeil)
    {
 	   double ceilinged = Math.ceil(toCeil);
-	   if(ceilinged > Integer.MAX_VALUE)
+	   if(Double.isFinite(ceilinged) && ceilinged > Integer.MAX_VALUE)
 	   {
-		   throw new IllegalArgumentException("The provided double is too large to be an int");
+		   throw new IllegalArgumentException("The provided double cannot be represented by an int");
 	   }
 	   
 	   return (int)ceilinged;
@@ -227,5 +228,15 @@ public class RobotMath {
 	public static double cmToRotations(double cm, double wheelCircumference)
 	{
 		return cm / wheelCircumference;
+	}
+	
+	/**
+	 * Squares the argument.  Easier than Math.pow(number, 2).
+	 * @param number
+	 * @return
+	 */
+	public static double square(double number)
+	{
+		return number * number;
 	}
 }

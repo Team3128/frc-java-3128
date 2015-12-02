@@ -32,9 +32,12 @@ public class MotorGroup
     	
     }
     
-    public MotorGroup(double powscl)
+    public MotorGroup(SpeedController... controllers)
     {
-    	this.speedScalar = powscl;
+    	for(SpeedController controller : controllers)
+    	{
+        	addControlledMotor(controller);
+    	}
     }
     
     public MotorGroup(MotorLogic spd)
@@ -43,20 +46,24 @@ public class MotorGroup
     }
     
     /**
-     * Construct MotorGroup with a motor control and speed scalar.
+     * Construct MotorGroup with a motor control and some motor controllers.
      * @param spd
-     * @param powscl
+     * @param controllers
      */
-    public MotorGroup(MotorLogic spd, double powscl)
+    public MotorGroup(MotorLogic spd, SpeedController... controllers)
     {
-    	this.speedScalar = powscl;
     	this.motorLogic = spd;
+    	
+    	for(SpeedController controller : controllers)
+    	{
+        	addControlledMotor(controller);
+    	}
     }
     
     /**
      * Reset the speed control.  This may or may not do anything, depending on which speed control is used.
      */
-    public void reset()
+    public void resetSpeedControl()
     {
     	if(motorLogic != null)
     	{
