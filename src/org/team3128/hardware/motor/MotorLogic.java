@@ -43,7 +43,7 @@ public abstract class MotorLogic
    /**
     * Reset any permanent state of the speed controller as well as the speed target.
     */
-   public abstract void clearControlRun();
+   public abstract void reset();
    
    /**
     * Update the speed control.
@@ -127,7 +127,7 @@ public abstract class MotorLogic
 		       if(this.isComplete())
 		       {
 		           this.controlledMotor.setInternalSpeed(0);
-		           clearControlRun();
+		           reset();
 		           return;
 		       }
 		       else

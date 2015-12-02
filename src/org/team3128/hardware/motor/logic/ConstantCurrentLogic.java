@@ -59,7 +59,7 @@ public class ConstantCurrentLogic extends MotorLogic
     }
    
     @Override
-    public synchronized void clearControlRun()
+    public synchronized void reset()
     {
     	pidCalc.setDesiredVelocity(0);
     	estimatedOutput = 0;

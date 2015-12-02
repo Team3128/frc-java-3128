@@ -153,25 +153,26 @@ public class MainTheClawwww extends MainClass
 
 	protected void initializeDisabled()
 	{
-		clawArm.resetTargets();
 		
-		armTurnMotor.clearSpeedControlRun();
-		armJointMotor.clearSpeedControlRun();
+		armTurnMotor.reset();
+		armJointMotor.reset();
 		clawArm.switchJointToManualControl();
 		
 		clawArm.stopClawLimitThread();
 				
-		leftMotors.clearSpeedControlRun();
-		rightMotors.clearSpeedControlRun();
+		leftMotors.reset();
+		rightMotors.reset();
+		
+		clawArm.resetTargets();
 	}
 
 	protected void initializeAuto()
 	{
-		clawArm.resetTargets();
 		//lights.setColor(Color.new4Bit(0xa, 2, 2));
 		
 		//reset PID error
-		armTurnMotor.clearSpeedControlRun();
+		armTurnMotor.reset();
+		clawArm.resetTargets();
 	}
 	
 	protected void initializeTeleop()

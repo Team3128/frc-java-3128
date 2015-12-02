@@ -1,13 +1,15 @@
 package org.team3128.util;
 
+import java.util.LinkedList;
+
 import org.team3128.Log;
 
 import com.ni.vision.NIVision;
 import com.ni.vision.NIVision.ColorMode;
 import com.ni.vision.NIVision.DrawMode;
+import com.ni.vision.NIVision.GetImageSizeResult;
 import com.ni.vision.NIVision.Image;
 import com.ni.vision.NIVision.ImageType;
-import com.ni.vision.NIVision.MeasurementType;
 import com.ni.vision.NIVision.Range;
 import com.ni.vision.NIVision.ShapeMode;
 import com.ni.vision.VisionException;
@@ -35,10 +37,6 @@ import edu.wpi.first.wpilibj.vision.AxisCamera;
  * -----------------------------------------------------*/
 public class RoboVision
 {
-	//Minimum area of particles to be considered
-    static final double AREA_MINIMUM = .5;
-    //Maximum number of particles to process
-    static final int MAX_PARTICLES = 400;
 
     Image rawImage;
     Image thresheldImage;
@@ -46,26 +44,45 @@ public class RoboVision
     
     NIVision.ParticleFilterCriteria2[] filterCriteria;
     
-    public static class Scores {
-        double rectangularity;
-        double aspectRatioVertical;
-        double aspectRatioHorizontal;
-    }
+    Range hRange, sRange, vRange;
     
-    public RoboVision()
+    AxisCamera camera;
+    
+    boolean debug;
+            
+    //How close the rectangularity score has to be for something to be considered a target
+    final static int RECTANGULARITY_MATCH_LIMIT = 20;
+    
+    final static int MINIMUM_ASPECT_RATIO_SCORE = 70;
+
+    /**
+     * 
+     * @param camera
+     * @param minimumArea
+     */
+    public RoboVision(AxisCamera camera, double minimumArea, boolean debug)
     {
     	rawImage = NIVision.imaqCreateImage(ImageType.IMAGE_RGB, 0);
     	thresheldImage = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
     	filteredImage = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
     	
+    	this.camera = camera;
+    	
+    	this.debug = debug;
+    	
     	filterCriteria = new NIVision.ParticleFilterCriteria2[1];
-    	filterCriteria[0] = new NIVision.ParticleFilterCriteria2(NIVision.MeasurementType.MT_AREA_BY_IMAGE_AREA, AREA_MINIMUM, Short.MAX_VALUE, 0, 0);
+    	filterCriteria[0] = new NIVision.ParticleFilterCriteria2(NIVision.MeasurementType.MT_AREA_BY_IMAGE_AREA, minimumArea, Short.MAX_VALUE, 0, 0);
     }
    
-    
-    public void targetRecognition(AxisCamera camera) 
+    /**
+     * Find a single-color, rectangle-ish object
+     * @param aspectRatio the horizontal to vertical distance ratio of the (bounding box surrounding the) object
+     * @param rectangularity score from 0-100 of how rectangular the object is.  See {@link ParticleReport#rectangularity} for details
+     */
+    public LinkedList<ParticleReport> findSingleTarget(Range hRange, Range sRange, Range vRange, double aspectRatio, double rectangularity) 
     {
-       
+        LinkedList<ParticleReport> targets = new LinkedList<ParticleReport>();
+
         try 
         {
             /**
@@ -74,9 +91,12 @@ public class RoboVision
              */
             camera.getImage(rawImage);
             //DO NOT CHANGE THESE VALUES BELOW.
-            NIVision.imaqColorThreshold(thresheldImage, rawImage, 255, ColorMode.HSV, new Range(105, 137), new Range(5, 50), new Range(0, 255)); // keep only green objects
-           
-            Log.debug("RoboVision", "Just finished thresholding.  Particles: " + NIVision.imaqCountParticles(thresheldImage, 1));
+            NIVision.imaqColorThreshold(thresheldImage, rawImage, 255, ColorMode.HSV, hRange, sRange, vRange);
+            
+            if(debug)
+            {
+            	Log.debug("RoboVision", "Just finished thresholding.  Particles: " + NIVision.imaqCountParticles(thresheldImage, 1));
+        	}
 
             //thresholdImage.write("/threshold.bmp");
             //NIVision.imaqWriteBMPFile(thresholdedImage, "/home/lvuser/RoboVision/thresholdedImage.bmp", 0, new RGBValue(255, 255, 255, 1));
@@ -84,107 +104,64 @@ public class RoboVision
             //find particles
             NIVision.imaqParticleFilter4(filteredImage, thresheldImage, filterCriteria, new NIVision.ParticleFilterOptions2(0,0,1,1), null);
             
+            //calculate this ahead of time, it's needed by each particle report
+            GetImageSizeResult filteredImageSize = NIVision.imaqGetImageSize(filteredImage);
+            
             //iterate through each particle and score to see if it is a target
             int numParticles = NIVision.imaqCountParticles(filteredImage, 1);
-            
-            Scores scores[] = new Scores[numParticles];
-            int horizontalTargetCount = 0, verticalTargetCount = 0;
-            
-            int verticalTargets[] = new int[MAX_PARTICLES];
-            int horizontalTargets[] = new int[MAX_PARTICLES];
-            
+                                    
             if(numParticles > 0)
             {
-                for (int i = 0; i <= MAX_PARTICLES && i < numParticles; i++)
+                for (int i = 0; i < numParticles; i++)
                 {
-                    scores[i] = new Scores();
 
-                    ParticleReport report = new ParticleReport(filteredImage, i);
+                    ParticleReport report = new ParticleReport(filteredImage, i, filteredImageSize);
 
                     //Score each particle on rectangularity and aspect ratio
-                    scores[i].rectangularity = scoreRectangularity(report);
-                    scores[i].aspectRatioVertical = scoreAspectRatio(filteredImage, report, i, true);
-                    scores[i].aspectRatioHorizontal = scoreAspectRatio(filteredImage, report, i, false);
+                    double aspectRatioScore = scoreAspectRatio(report, aspectRatio);               
                     
+                    double rectangularityDifference = Math.abs(report.rectangularity - rectangularity);
+                    
+                    //we want particles with a close aspect ratio and rectangularity to what we want, as well as a large area
+                    report.setScore(aspectRatioScore * RobotMath.clampDouble(RECTANGULARITY_MATCH_LIMIT - rectangularityDifference, 0, RECTANGULARITY_MATCH_LIMIT) * report.area);
+                    
+                    NIVision.Rect rect = new NIVision.Rect(report.boundingRectTop, report.boundingRectLeft, report.boundingRectHeight, report.boundingRectWidth);
 
-                    //Check if the particle is a horizontal target, if not, check if it's a vertical target
-                    if (isTarget(scores[i], false))
+                    if(aspectRatioScore > MINIMUM_ASPECT_RATIO_SCORE && report.rectangularity >= rectangularity)
                     {
-                        System.out.println("particle: " + i + "is a Horizontal Target centerX: " + report.center_of_mass_x + "centerY: " + report.center_of_mass_y);
-                        horizontalTargets[horizontalTargetCount++] = i; //Add particle to target array and increment count
-                        NIVision.Rect rect = new NIVision.Rect(report.boundingRectTop, report.boundingRectLeft, report.boundingRectHeight, report.boundingRectWidth);
-                        NIVision.imaqDrawShapeOnImage(rawImage, rawImage, rect, DrawMode.PAINT_INVERT, ShapeMode.SHAPE_RECT, 0.0f);
-                    }
-                    else if (isTarget(scores[i], true))
-                    {
-                        System.out.println("particle: " + i + "is a Vertical Target centerX: " + report.center_of_mass_x + "centerY: " + report.center_of_mass_x);
-                        verticalTargets[verticalTargetCount++] = i;  //Add particle to target array and increment count
-                        //draw on image
-                        NIVision.Rect rect = new NIVision.Rect(report.boundingRectTop, report.boundingRectLeft, report.boundingRectHeight, report.boundingRectWidth);
-                        NIVision.imaqDrawShapeOnImage(rawImage, rawImage, rect, DrawMode.PAINT_INVERT, ShapeMode.SHAPE_RECT, 0.0f);
-                        
+                    	if(debug)
+                        {
+	                        System.out.println("particle: " + i + "is a Horizontal Target centerX: " + report.center_of_mass_x + "centerY: " + report.center_of_mass_y);
+	                        NIVision.imaqDrawShapeOnImage(rawImage, rawImage, rect, DrawMode.PAINT_INVERT, ShapeMode.SHAPE_RECT, 0.0f);
+                        }
+                    	
+                    	targets.add(report);
+                    	
                     } 
                     else
                     {
-                        System.out.println("particle: " + i + "is not a Target centerX: " + report.center_of_mass_x + "centerY: " + report.center_of_mass_x);
+                    	if(debug)
+                        {
+	                        System.out.println("particle: " + i + "is not a Target centerX: " + report.center_of_mass_x + "centerY: " + report.center_of_mass_x);
+	                        NIVision.imaqDrawShapeOnImage(rawImage, rawImage, rect, DrawMode.DRAW_INVERT, ShapeMode.SHAPE_RECT, 0.0f);
+                        }
                     }
-                    System.out.println("rect: " + scores[i].rectangularity + " ARHoriz: " + scores[i].aspectRatioHorizontal + " ARVert: " + scores[i].aspectRatioVertical);
-                    System.out.println();
                 }
                    
             }
                 
-                CameraServer.getInstance().setImage(rawImage);
-
-//                //Zero out scores and set verticalIndex to first target in case there are no horizontal targets
-//                target.totalScore = target.leftScore = target.rightScore = target.tapeWidthScore = target.verticalScore = 0;
-//                target.verticalIndex = verticalTargets[0];
-//                for (int i = 0; i < verticalTargetCount; i++) {
-//                    ParticleAnalysisReport verticalReport = filteredImage.getParticleAnalysisReport(verticalTargets[i]);
-//                    for (int j = 0; j < horizontalTargetCount; j++) {
-//                        ParticleAnalysisReport horizontalReport = filteredImage.getParticleAnalysisReport(horizontalTargets[j]);
-//                        double horizWidth, horizHeight, vertWidth, leftScore, rightScore, tapeWidthScore, verticalScore, total;
-//
-//                        //Measure equivalent rectangle sides for use in score calculation
-//                        horizWidth = NIVision.MeasureParticle(filteredImage.image, horizontalTargets[j], false, MeasurementType.IMAQ_MT_EQUIVALENT_RECT_LONG_SIDE);
-//                        vertWidth = NIVision.MeasureParticle(filteredImage.image, verticalTargets[i], false, MeasurementType.IMAQ_MT_EQUIVALENT_RECT_SHORT_SIDE);
-//                        horizHeight = NIVision.MeasureParticle(filteredImage.image, horizontalTargets[j], false, MeasurementType.IMAQ_MT_EQUIVALENT_RECT_SHORT_SIDE);
-//
-//                        //Determine if the horizontal target is in the expected location to the left of the vertical target
-//                        leftScore = ratioToScore(1.2 * (verticalReport.boundingRectLeft - horizontalReport.center_mass_x) / horizWidth);
-//                        //Determine if the horizontal target is in the expected location to the right of the  vertical target
-//                        rightScore = ratioToScore(1.2 * (horizontalReport.center_mass_x - verticalReport.boundingRectLeft - verticalReport.boundingRectWidth) / horizWidth);
-//                        //Determine if the width of the tape on the two targets appears to be the same
-//                        tapeWidthScore = ratioToScore(vertWidth / horizHeight);
-//                        //Determine if the vertical location of the horizontal target appears to be correct
-//                        verticalScore = ratioToScore(1 - (verticalReport.boundingRectTop - horizontalReport.center_mass_y) / (4 * horizHeight));
-//                        total = leftScore > rightScore ? leftScore : rightScore;
-//                        total += tapeWidthScore + verticalScore;
-//
-//                        //If the target is the best detected so far store the information about it
-//                        if (total > target.totalScore) {
-//                            target.horizontalIndex = horizontalTargets[j];
-//                            target.verticalIndex = verticalTargets[i];
-//                            target.totalScore = total;
-//                            target.leftScore = leftScore;
-//                            target.rightScore = rightScore;
-//                            target.tapeWidthScore = tapeWidthScore;
-//                            target.verticalScore = verticalScore;
-//                        }
-//                    }
-//                    //Determine if the best target is a Hot target
-//                    target.Hot = isHot(target);
-//                }
-              
-//            filteredImage.free();
-//            thresholdImage.free();
-//            image.free();
+            CameraServer.getInstance().setImage(rawImage);
+            
+            targets.sort(null);
+            
         } 
         catch (VisionException ex)
         {
             Log.recoverable("RoboVision", ex.getMessage());
             ex.printStackTrace();
         }
+        
+        return targets;
     }
     /**
      * Computes a score (0-100) comparing the aspect ratio to the ideal aspect
@@ -193,33 +170,15 @@ public class RoboVision
      * moving to the left or right. The equivalent rectangle is the rectangle
      * with sides x and y where particle area= x*y and particle perimeter= 2x+2y
      *
-     * @param image The image containing the particle to score, needed to
-     * perform additional measurements
      * @param report The Particle Analysis Report for the particle, used for the
      * width, height, and particle number
-     * @param outer Indicates whether the particle aspect ratio should be
-     * compared to the ratio for the inner target or the outer
+     * 
      * @return The aspect ratio score (0-100)
      */
-    public static double scoreAspectRatio(Image image, ParticleReport report, int particleNumber, boolean vertical)
+    public static double scoreAspectRatio(ParticleReport report, double idealAspectRatio)
     {
-        double rectLong, rectShort, aspectRatio, idealAspectRatio;
 
-        rectLong = NIVision.imaqMeasureParticle(image, particleNumber, 0, NIVision.MeasurementType.MT_EQUIVALENT_RECT_LONG_SIDE);
-        rectShort = NIVision.imaqMeasureParticle(image, particleNumber, 0, MeasurementType.MT_EQUIVALENT_RECT_SHORT_SIDE);
-        idealAspectRatio = vertical ? (4.0 / 32) : (23.5 / 4);      //Vertical reflector 4" wide x 32" tall, horizontal 23.5" wide x 4" tall
-
-        //Divide width by height to measure aspect ratio
-        if (report.boundingRectWidth > report.boundingRectHeight) 
-        {
-            //particle is wider than it is tall, divide long by short
-            aspectRatio = ratioToScore((rectLong / rectShort) / idealAspectRatio);
-        } else
-        {
-            //particle is taller than it is wide, divide short by long
-            aspectRatio = ratioToScore((rectShort / rectLong) / idealAspectRatio);
-        }
-        return aspectRatio;
+        return ratioToScore(report.boundingRectWidth / report.boundingRectHeight / idealAspectRatio);
     }
     
     /**
@@ -230,45 +189,6 @@ public class RoboVision
     public static double ratioToScore(double ratio) 
     {
         return (Math.max(0, Math.min(100 * (1 - Math.abs(1 - ratio)), 100)));
-    }
-    
-    /**
-     * Computes a score (0-100) estimating how rectangular the particle is by
-     * comparing the area of the particle to the area of the bounding box
-     * surrounding it. A perfect rectangle would cover the entire bounding box.
-     *
-     * @param report The Particle Analysis Report for the particle to score
-     * @return The rectangularity score (0-100)
-     */
-    public static double scoreRectangularity(ParticleReport report) {
-        if (report.boundingRectWidth * report.boundingRectHeight != 0) {
-            return 100 * report.area / (report.boundingRectWidth * report.boundingRectHeight);
-        } else {
-            return 0;
-        }
-    }
-    
-    //Score limits used for target identification
-    static final int RECTANGULARITY_LIMIT = 50;
-    static final int ASPECT_RATIO_LIMIT = 50;
-
-    /**
-     * Compares scores to defined limits and returns true if the particle
-     * appears to be a target
-     *
-     * @return True if the particle meets all limits, false otherwise
-     */
-    public static boolean isTarget(Scores scores, boolean vertical) {
-        boolean isTarget = true;
-
-        isTarget &= scores.rectangularity > RECTANGULARITY_LIMIT;
-        if (vertical) {
-            isTarget &= scores.aspectRatioHorizontal > ASPECT_RATIO_LIMIT;
-        } else {
-            isTarget &= scores.aspectRatioVertical > ASPECT_RATIO_LIMIT;
-        }
-
-        return isTarget;
     }
 
 }

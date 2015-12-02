@@ -34,9 +34,6 @@ public class QuadratureEncoderLink implements IVelocityEncoder, IDistanceEncoder
 		return encoder.getRate() * 60;
 	}
 	
-	/**
-	 * Not (yet) supported
-	 */
 	public void clear()
 	{
 		encoder.reset();
