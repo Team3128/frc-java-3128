@@ -75,7 +75,7 @@ public class MainDriveCold extends MainClass
 		
 		updateDriveCOD = () ->
 		{
-			double joyX = listenerManagerExtreme.getRawAxis(ControllerXbox.JOY2Y);
+			double joyX = listenerManagerExtreme.getRawAxis(ControllerXbox.JOY2X);
 			double joyY = listenerManagerExtreme.getRawAxis(ControllerXbox.JOY1Y);
 			double throttle = -listenerManagerExtreme.getRawAxis(ControllerXbox.TRIGGERR);
 			
