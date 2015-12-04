@@ -23,8 +23,8 @@ import edu.wpi.first.wpilibj.vision.AxisCamera;
 /*
  *       /^\ 
  *      / _ \
- *     / [ ] \
- *    /  [_]  \
+ *     / | | \
+ *    /  |_|  \
  *   /    _    \
  *  /    (_)    \
  * /_____________\
@@ -34,6 +34,8 @@ import edu.wpi.first.wpilibj.vision.AxisCamera;
  * It may be non or partially functional.
  * Do not make any assumptions as to its behavior!
  * And don't blink.  Not even for a second.
+ * 
+ * Actually, it has been tested. And it works(as of 12/02/15)
  * -----------------------------------------------------*/
 public class RoboVision
 {
@@ -126,9 +128,13 @@ public class RoboVision
                     report.setScore(aspectRatioScore * RobotMath.clampDouble(RECTANGULARITY_MATCH_LIMIT - rectangularityDifference, 0, RECTANGULARITY_MATCH_LIMIT) * report.area);
                     
                     NIVision.Rect rect = new NIVision.Rect(report.boundingRectTop, report.boundingRectLeft, report.boundingRectHeight, report.boundingRectWidth);
-
-                    if(aspectRatioScore > MINIMUM_ASPECT_RATIO_SCORE && report.rectangularity >= rectangularity)
+                    
+                    System.out.println("Report.Rect: "+report.rectangularity);
+                    System.out.println("Rect: "+rectangularity);
+                    
+                    if(aspectRatioScore > MINIMUM_ASPECT_RATIO_SCORE && report.rectangularity >= 65 && rectangularity >= 90)
                     {
+                    	System.out.println("Itwerks!");
                     	if(debug)
                         {
 	                        System.out.println("particle: " + i + "is a Horizontal Target centerX: " + report.center_of_mass_x + "centerY: " + report.center_of_mass_y);
@@ -178,7 +184,7 @@ public class RoboVision
     public static double scoreAspectRatio(ParticleReport report, double idealAspectRatio)
     {
 
-        return ratioToScore(report.boundingRectWidth / report.boundingRectHeight / idealAspectRatio);
+        return ratioToScore(((double)report.boundingRectWidth / (double)report.boundingRectHeight) / idealAspectRatio);
     }
     
     /**
