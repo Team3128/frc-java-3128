@@ -26,13 +26,13 @@ public class SwerveDrive2
 		//90 degrees is exactly in the front
 						
 		double prevMotorPowerSign = 1;
-		
+				
 		/**
 		 * Sets the angle and power of the swerve module.  May also reverse the wheel to minimise movement time.
 		 * @param targetAngle
 		 * @param direction
 		 */
-		void setAngleAndPower(double targetAngle, double power)
+		void setAngleAndPower(double targetAngle, boolean setAngle, double power)
 		{			
 			double currentAngle = controller.getAngle();
 			
@@ -48,7 +48,10 @@ public class SwerveDrive2
 			//maintain previous state of reversal
 			power *= prevMotorPowerSign;
 			
-			turnMotor.setControlTarget(targetAngle);
+			if(setAngle)
+			{
+				turnMotor.setControlTarget(targetAngle);
+			}
 			driveMotor.setControlTarget(power);
 		}
 	}
@@ -93,12 +96,20 @@ public class SwerveDrive2
 
 	public void drive(double controllerPowX, double controllerPowY, double controllerRotate)
 	{
+		boolean setAngle = true;
+		
 		// Convert input coordinates to polar
 		//----------------------------------------------
 		double headingAngle = Math.toDegrees(Math.atan2(controllerPowX, controllerPowY));
 		
 		//Do pythagorean theorem to figure out the magnitude
 		double headingMagnitude = Math.sqrt(RobotMath.square(controllerPowX) + RobotMath.square(controllerPowY));
+		
+		if(headingMagnitude < .1)
+		{
+			headingMagnitude = 0;
+			setAngle = false; //don't change the angle if the joystick is not being moved
+		}
 		
 		if(enableDriverOrientedControl)
 		{
@@ -116,11 +127,11 @@ public class SwerveDrive2
 			if(isTurning)
 			{
 				double turningOffset = RobotMath.sgn(controllerRotate) * -1 * 90.0;
-				module.setAngleAndPower(module.angleOnWheelbase + turningOffset, Math.abs(controllerRotate));
+				module.setAngleAndPower(module.angleOnWheelbase + turningOffset, setAngle, Math.abs(controllerRotate));
 			}
 			else
 			{
-				module.setAngleAndPower(headingAngle, RobotMath.makeValidPower(headingMagnitude));
+				module.setAngleAndPower(headingAngle, setAngle, RobotMath.makeValidPower(headingMagnitude));
 			}
 		}
 	}
@@ -172,5 +183,7 @@ public class SwerveDrive2
 		newModule.turnMotor = turnMotor;
 		
 		newModule.angleOnWheelbase = angleOnWheelbase;
+		
+		modules.add(newModule);
 	}
 }

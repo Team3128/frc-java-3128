@@ -180,7 +180,7 @@ public class RobotMath {
    {
 	   double floored = Math.floor(toFloor);
 	   
-	   if(Double.isFinite(floored) && toFloor > Integer.MAX_VALUE)
+	   if(!Double.isFinite(floored) || toFloor > Integer.MAX_VALUE)
 	   {
 		   throw new IllegalArgumentException("The provided double cannot be represented by an int");
 	   }
@@ -197,7 +197,7 @@ public class RobotMath {
    public static int ceil_double_int(double toCeil)
    {
 	   double ceilinged = Math.ceil(toCeil);
-	   if(Double.isFinite(ceilinged) && ceilinged > Integer.MAX_VALUE)
+	   if(!Double.isFinite(ceilinged) || ceilinged > Integer.MAX_VALUE)
 	   {
 		   throw new IllegalArgumentException("The provided double cannot be represented by an int");
 	   }
@@ -236,6 +236,16 @@ public class RobotMath {
 	 * @return
 	 */
 	public static double square(double number)
+	{
+		return number * number;
+	}
+	
+	/**
+	 * Squares the argument.  Easier than RobotMath.floor_double_int(Math.pow(number, 2)).
+	 * @param number
+	 * @return
+	 */
+	public static int square(int number)
 	{
 		return number * number;
 	}

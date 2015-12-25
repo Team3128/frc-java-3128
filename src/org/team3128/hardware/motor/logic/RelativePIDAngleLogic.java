@@ -146,7 +146,7 @@ public class RelativePIDAngleLogic extends MotorLogic
 	        
 	       	if(_log)
 	    	{
-	            Log.debug(TAG, "target: " + targetAngle + " current: " + angle + " error: " + error + " output: " + output);
+	            //Log.debug(TAG, "target: " + targetAngle + " current: " + angle + " error: " + error + " output: " + output);
 	    	}
 	
 	        if(Math.abs(error) < threshold)

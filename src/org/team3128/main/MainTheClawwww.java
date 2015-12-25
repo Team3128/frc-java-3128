@@ -260,7 +260,7 @@ public class MainTheClawwww extends MainClass
 			LightsColor color = LightsColor.new8Bit(red, green, 0);
 			lights.setColor(color);
 			
-			Log.debug("ArmAngle", armRotateEncoder.getAngle() + " degrees");
+			//Log.debug("ArmAngle", armRotateEncoder.getAngle() + " degrees");
 		});
 		
 		//clawArm.startClawLimitThread();

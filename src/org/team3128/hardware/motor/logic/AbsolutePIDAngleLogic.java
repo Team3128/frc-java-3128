@@ -91,7 +91,7 @@ public class AbsolutePIDAngleLogic extends MotorLogic
         
        	if(_log)
     	{
-            Log.debug("PIDAngleTarget", "target: " + targetAngle + " current: " + angle + " error: " + error + " output: " + output);
+            //Log.debug("PIDAngleTarget", "target: " + targetAngle + " current: " + angle + " error: " + error + " output: " + output);
     	}
 
         if(Math.abs(error) < threshold)

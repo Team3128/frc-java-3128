@@ -17,38 +17,48 @@
     -->
   
   	<property name="frctest-folder" value="frctest"/>
+	<property name="lib-folder" value="${frctest-folder}/lib"/>
+	<property name="native-lib-folder" location="${frctest-folder}/lib/native"/>
+
 	<property name="test-project" value="../frc-java-tests"/>  
 	
 	<property name="test-build.dir" value="${frctest-folder}/build"/>
 	<property name="emulator-build.dir" value="${frctest-folder}/unittest-build"/>
   	<property name="robot-code-jar" value="${frctest-folder}/Robot Code.jar"/>
 	
-	<!-- assume that the test code is in the same workspce and cloned under the correct name  -->
+	<!-- assume that the test code is in the same workspace and cloned under the correct name  -->
 	<property name="test-src.dir" value="${test-project}/src"/>  
 	
-	<property name="javassist-jar" value="lib/javassist.jar"/>
-	<property name="guava-jar" value="lib/guava-18.0.jar"/>
-	<property name="reflections-jar" value="lib/reflections-0.9.9-RC1.jar"/>
-	<property name="frctest-jar" value="lib/FRC-Test.jar"/>
-	<property name="junit.jar" value="${test-project}/lib/junit.jar"/>
-	<property name="ant-junit.jar" value="${test-project}/lib/ant-junit.jar"/>
-	<property name="hamcrest.jar" value="${test-project}/lib/hamcrest-core-1.3.jar"/>
+	<property name="javassist-jar" value="${lib-folder}/javassist.jar"/>
+	<property name="guava-jar" value="${lib-folder}/guava-18.0.jar"/>
+	<property name="reflections-jar" value="${lib-folder}/reflections-0.9.9-RC1.jar"/>
+	<property name="frctest-jar" value="${lib-folder}/FRC-Test.jar"/>
+	<property name="junit.jar" value="${lib-folder}/junit.jar"/>
+	<property name="ant-junit.jar" value="${lib-folder}/ant-junit.jar"/>
+	<property name="hamcrest.jar" value="${lib-folder}/hamcrest-core-1.3.jar"/>
+	<property name="javajoystick.jar" value="${lib-folder}/JavaJoystick.jar"/>
 
-	<property name="emulatorclasspath" value="${javassist-jar}:${guava-jar}:${reflections-jar}:${frctest-jar}"/>
+	<property name="emulatorclasspath" value="${javassist-jar}:${guava-jar}:${reflections-jar}:${frctest-jar}:${javajoystick.jar}"/>
 	
 	<!-- all of the jars needed to run test mode -->
-	<property name="testclasspath" value="${emulatorclasspath}:${robot-code-jar}:${junit.jar}:${ant-junit.jar}:${hamcrest.jar}"/>
+	<property name="testclasspath" value="${emulatorclasspath}:${robot-code-jar}:${junit.jar}:${ant-junit.jar}:${hamcrest.jar}:${javajoystick.jar}"/>
 	
 	
 	<target name="test" depends="testcompile">
-		<junit>
+		<junit fork="yes">
 		  <batchtest>
-		    <fileset dir="${test-build.dir}" includes="**/*.class"/>
+		    <fileset dir="${test-build.dir}" >
+		    	<include name="**/*Test*.class"/>
+		    </fileset>
 		  </batchtest>
 		  <classpath>
 		    <pathelement path="${testclasspath}"/>
 		    <pathelement location="${test-build.dir}"/>
+		    	
+		  	<!-- include resources -->
+		    <pathelement location="${test-project}/src"/>
 		  </classpath>
+		  <sysproperty key="java.library.path" value="${native-lib-folder}"/>
 		  <formatter type="plain" usefile="false" /> <!-- to screen -->
 		  <!--formatter type="xml"/-->
 		</junit>
@@ -63,12 +73,35 @@
 	 	</junitreport-->
 	</target>
 	
+	<target name="testdebug" depends="testcompile">
+		<junit fork="yes">
+		  <batchtest>
+		    <fileset dir="${test-build.dir}" >
+		    	<include name="**/*Test*.class"/>
+		    </fileset>
+		  </batchtest>
+		  <classpath>
+		    <pathelement path="${testclasspath}"/>
+		    <pathelement location="${test-build.dir}"/>
+		    	
+		  	<!-- include resources -->
+		    <pathelement location="${test-project}/src"/>
+		  </classpath>
+		  <sysproperty key="java.library.path" value="${native-lib-folder}"/>
+		  <formatter type="plain" usefile="false" /> <!-- to screen -->
+			
+  		  <jvmarg value="-Xdebug" />
+  		  <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5432" />
+		</junit>		
+	</target>
+	
 	<target name="runemulator" depends="emulatorjar" description="Run the robot emulator.">
 		<java fork="true" classname="frctest.EmulatorMain">
 		  <classpath>
 		    <pathelement path="${emulatorclasspath}"/>
 		    <pathelement location="${robot-code-jar}"/>
 		  </classpath>
+		  <sysproperty key="java.library.path" value="${native-lib-folder}"/>
 		</java>
 	</target>
 	
