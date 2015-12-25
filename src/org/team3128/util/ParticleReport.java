@@ -4,7 +4,7 @@ import com.ni.vision.NIVision;
 import com.ni.vision.NIVision.GetImageSizeResult;
 
 /**
- * Class to hold data about a vison particle.  Taken from the 2015 vision example.
+ * Class to hold data about a vision particle.  Taken from the 2015 vision example.
  * @author Jamie
  *
  */
@@ -58,7 +58,7 @@ public class ParticleReport implements Comparable<ParticleReport>{
         center_of_mass_y = (int) NIVision.imaqMeasureParticle(image, particleIndex, 0, NIVision.MeasurementType.MT_CENTER_OF_MASS_Y);
         
         if (boundingRectWidth * boundingRectHeight != 0) {
-            rectangularity = 100 * area / (boundingRectWidth * boundingRectHeight);
+            rectangularity = 100 * (double) area / ((double) boundingRectWidth * boundingRectHeight);
         } else {
             rectangularity = 0;
         }
