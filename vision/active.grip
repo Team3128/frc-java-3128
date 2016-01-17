@@ -1,0 +1,10 @@
+<grip:Pipeline>
+  <sources/>
+  <steps/>
+  <connections/>
+  <settings>
+    <teamNumber>0</teamNumber>
+    <publishAddress></publishAddress>
+    <deployAddress></deployAddress>
+  </settings>
+</grip:Pipeline>
