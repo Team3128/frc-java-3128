@@ -1,0 +1,10 @@
+<grip:Pipeline>
+  <sources/>
+  <steps/>
+  <connections/>
+  <settings>
+    <teamNumber>3128</teamNumber>
+    <publishAddress>192.168.1.129</publishAddress>
+    <deployAddress></deployAddress>
+  </settings>
+</grip:Pipeline>
