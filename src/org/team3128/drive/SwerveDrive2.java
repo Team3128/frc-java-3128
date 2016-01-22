@@ -18,7 +18,7 @@ public class SwerveDrive2
 	{
 		MotorGroup driveMotor;
 		
-		MotorGroup turnMotor;
+		MotorGroup turnMotor; //90 degrees is forward
 		
 		RelativePIDAngleLogic controller;
 		
@@ -34,9 +34,9 @@ public class SwerveDrive2
 		 */
 		void setAngleAndPower(double targetAngle, boolean setAngle, double power)
 		{			
-			double currentAngle = controller.getAngle();
+			double currentAngle = RobotMath.normalizeAngle(controller.getAngle());
 			
-			double difference = RobotMath.sgn(targetAngle - currentAngle);
+			double difference = RobotMath.sgn(RobotMath.normalizeAngle(targetAngle) - currentAngle);
 			
 			if(difference > 90 && difference < 270)
 			{
@@ -100,7 +100,7 @@ public class SwerveDrive2
 		
 		// Convert input coordinates to polar
 		//----------------------------------------------
-		double headingAngle = Math.toDegrees(Math.atan2(controllerPowX, controllerPowY));
+		double headingAngle = Math.toDegrees(Math.atan2(controllerPowY, controllerPowX)); // 90 degrees is forward
 		
 		//Do pythagorean theorem to figure out the magnitude
 		double headingMagnitude = Math.sqrt(RobotMath.square(controllerPowX) + RobotMath.square(controllerPowY));
@@ -179,7 +179,7 @@ public class SwerveDrive2
 		newModule.controller = new RelativePIDAngleLogic(p, i, d, 1, false, encoder, homingSwitch, homingSwitchOffset, true);
 		
 		turnMotor.setSpeedController(newModule.controller);
-		turnMotor.startControl(0);
+		turnMotor.startControl(90);
 		newModule.turnMotor = turnMotor;
 		
 		newModule.angleOnWheelbase = angleOnWheelbase;

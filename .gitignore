@@ -2,7 +2,10 @@ bin
 /dist
 /build
 /frctest/*build*
+/frctest/Robot Code.jar
 /sysProps.xml
 /build-emu
 /junit
 /build-test
+frctest/Robot Code.jar
+frctest/Robot Code.jar

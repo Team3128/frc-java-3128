@@ -33,6 +33,7 @@ public class ControllerSimXbox implements ControllerType
 
 	public static final Axis JOY1X = new Axis(0);
 	public static final Axis JOY1Y = new Axis(1);
+	public static final Axis SIM_WINDOW_Z = new Axis(2); // Z axis (scroll wheel) in the simulator's joystick window
 	public static final Axis JOY2X = new Axis(3);
 	public static final Axis JOY2Y = new Axis(4);
 
