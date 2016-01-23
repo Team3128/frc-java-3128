@@ -8,7 +8,7 @@ import org.team3128.hardware.motor.logic.RelativePIDAngleLogic;
 import org.team3128.util.RobotMath;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Gyro;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 public class SwerveDrive2
 {
