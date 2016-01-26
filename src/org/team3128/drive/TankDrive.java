@@ -30,7 +30,7 @@ public class TankDrive
 	
     
     /**
-     * circumfrence of wheels in cm
+     * circumference of wheels in cm
      */
     public final double wheelCircumfrence;
     

@@ -58,7 +58,7 @@ public class ParticleReport implements Comparable<ParticleReport>{
         center_of_mass_y = (int) NIVision.imaqMeasureParticle(image, particleIndex, 0, NIVision.MeasurementType.MT_CENTER_OF_MASS_Y);
         
         if (boundingRectWidth * boundingRectHeight != 0) {
-            rectangularity = 100 * (double) area / ((double) boundingRectWidth * boundingRectHeight);
+            rectangularity = 100 * (double) area / ((double) boundingRectWidth * (double) boundingRectHeight);
         } else {
             rectangularity = 0;
         }
@@ -75,17 +75,27 @@ public class ParticleReport implements Comparable<ParticleReport>{
 	 * showing the math behind this approach see the Vision Processing section of the ScreenStepsLive documentation.
 	 *                                               ^^^^^^^^^^^^^^^^^^^^^^^^^
 	 *                                               HAH!  Still says that it is coming soon! -Jamie
-	
+	 *                                               
+	 * @param targetWidth the actual width of the target in cm
+	 *
      * @return The estimated distance to the target in cm.
 	 */
-	public double computeDistance()
+	public double computeDistanceHorizontal(double targetWidth)
 	{
-		double normalizedWidth, targetWidth;
+		//width of the plane of view at the depth of the particle
+		double fieldWidth = ((double)targetWidth * imageSize.width)/boundingRectWidth;
 
-		normalizedWidth = 2*(boundingRectRight - boundingRectLeft)/imageSize.width;
-		targetWidth = 7;
-
-		return  targetWidth/(normalizedWidth*12*Math.tan(VIEW_ANGLE*Math.PI/(180*2)));
+		
+		return  fieldWidth / (2 * TANGENT_OF_HALF_VIEW_ANGLE);
+	}
+	
+	public double widthOfBall(int boundingRectangleTop, int boundingRectangleBottom, int boundingRectangleLeft, int boundingRectangleRight){
+		int S1 = boundingRectangleRight-boundingRectangleLeft;
+		int S2 = boundingRectangleTop-boundingRectangleBottom;
+		double Avg = (double)((S1+S2)/2);
+		System.out.println("The width of the ball would be: " + S1);
+		System.out.println("The height of the ball would be: " + S2);
+		return Avg;
 	}
 	
 	/**

@@ -82,7 +82,7 @@ public class RobotMath {
    }
 
    /**
-    * Makes the provided power into a valid power level.
+    * Makes the provided power into a valid motor power level.
     * <p/>
     * @param pow power level to convert
     * <p/>
