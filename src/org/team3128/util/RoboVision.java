@@ -15,6 +15,8 @@ import com.ni.vision.NIVision.ShapeMode;
 import com.ni.vision.VisionException;
 
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.vision.AxisCamera;
 
 
@@ -55,7 +57,12 @@ public class RoboVision
     //How close the rectangularity score has to be for something to be considered a target
     final static int RECTANGULARITY_MATCH_LIMIT = 20;
     
-    final static int MINIMUM_ASPECT_RATIO_SCORE = 70;
+    final static int MINIMUM_ASPECT_RATIO_SCORE = 90;
+    
+    SendableChooser imageTypes;
+    
+    final static String OVERLAY_IMAGE_CHOICE = "Target Overlay";
+    final static String COLOR_FILTERED_IMAGE_CHOICE = "Color Filtered";
 
     /**
      * 
@@ -71,6 +78,14 @@ public class RoboVision
     	this.camera = camera;
     	
     	this.debug = debug;
+    	
+    	if(debug)
+    	{
+    		imageTypes = new SendableChooser();
+    		imageTypes.addDefault(OVERLAY_IMAGE_CHOICE, rawImage);
+    		imageTypes.addDefault(COLOR_FILTERED_IMAGE_CHOICE, thresheldImage);
+    		SmartDashboard.putData("Image Type Chooser", imageTypes);
+    	}
     	
     	filterCriteria = new NIVision.ParticleFilterCriteria2[1];
     	filterCriteria[0] = new NIVision.ParticleFilterCriteria2(NIVision.MeasurementType.MT_AREA_BY_IMAGE_AREA, minimumArea, Short.MAX_VALUE, 0, 0);
@@ -131,8 +146,9 @@ public class RoboVision
                     
                     System.out.println("Report.Rect: "+report.rectangularity);
                     System.out.println("Rect: "+rectangularity);
+                    System.out.println("Aspect Ratio: " + aspectRatioScore);
                     
-                    if(aspectRatioScore > MINIMUM_ASPECT_RATIO_SCORE && report.rectangularity >= 65 && rectangularity >= 90)
+                    if(report.rectangularity > 65 && aspectRatioScore > 1 && aspectRatioScore < 1.5)
                     {
                     	System.out.println("Itwerks!");
                     	if(debug)
@@ -156,7 +172,10 @@ public class RoboVision
                    
             }
                 
-            CameraServer.getInstance().setImage(rawImage);
+            if(debug)
+            {
+                CameraServer.getInstance().setImage((Image) imageTypes.getSelected());
+            }
             
             targets.sort(null);
             
