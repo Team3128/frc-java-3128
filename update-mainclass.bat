@@ -7,9 +7,11 @@ echo.
 rem enable substituting variables inside if statements
 setlocal enabledelayedexpansion
 
+set roborioAddress=roborio-%teamnumber%-FRC.local
+
 echo Testing connection...
 echo.
-ping -n 1 roborio-%teamnumber%.local >nul
+ping -n 1 %roborioAddress% >nul
 
 if %errorlevel%==0 (
 	echo Connected to Team %teamnumber%'s roboRIO
@@ -18,7 +20,7 @@ if %errorlevel%==0 (
 	set /P mainclass="Enter the name of the main class you want to use: "
 	echo.
 	
-	tools\plink.exe lvuser@roborio-3128.local "echo !mainclass! > ~/AlumNarMainClass.txt"
+	tools\plink.exe lvuser@%roborioAddress% "echo !mainclass! > ~/AlumNarMainClass.txt"
 	
 	echo. 
 	if !errorlevel!==0 (

@@ -66,13 +66,13 @@ public class MainFlyingSwallow extends MainClass
 		rightDriveEncoder = new QuadratureEncoderLink(3, 4, 128, true);
 		
 		leftMotors = new MotorGroup();
+		leftMotors.addControlledMotor(new Talon(0));
 		leftMotors.addControlledMotor(new Talon(1));
-		leftMotors.addControlledMotor(new Talon(2));
 		
 		
 		rightMotors = new MotorGroup();
+		rightMotors.addControlledMotor(new Talon(2));
 		rightMotors.addControlledMotor(new Talon(3));
-		rightMotors.addControlledMotor(new Talon(4));
 		rightMotors.invert();
 	
 		drive = new TankDrive(leftMotors, rightMotors, leftDriveEncoder, rightDriveEncoder, 8 * Units.in * Math.PI, 24.5 * Units.in);
