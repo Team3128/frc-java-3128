@@ -1,7 +1,7 @@
 <grip:Pipeline>
   <sources>
     <grip:Camera>
-      <property name="address" value="http://10.31.28.126"/>
+      <property name="address" value="http://10.31.28.100"/>
     </grip:Camera>
   </sources>
   <steps>
@@ -106,7 +106,7 @@
   </connections>
   <settings>
     <teamNumber>3128</teamNumber>
-    <publishAddress>10.31.28.102</publishAddress>
+    <publishAddress>10.31.28.119</publishAddress>
     <deployAddress></deployAddress>
   </settings>
 </grip:Pipeline>

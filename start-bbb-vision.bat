@@ -27,7 +27,7 @@ if %errorlevel% equ 0 (
 	echo -------------------------------------------------------
 	echo.
 	
-	tools\plink.exe -ssh -pw %PASSWORD% %CONNECTION_ARGS% "killall java; nohup java -jar %GRIPDIR%/GRIP-archlinuxarm-deployable.jar %GRIPDIR%/%GRIPFILE%"
+	tools\plink.exe -ssh -pw %PASSWORD% %CONNECTION_ARGS% "killall java; java -jar %GRIPDIR%/GRIP-archlinuxarm-deployable.jar %GRIPDIR%/%GRIPFILE%"
 	
 	echo. 
  ) ELSE (

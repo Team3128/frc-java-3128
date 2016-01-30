@@ -12,6 +12,7 @@ import org.team3128.listener.ListenerManager;
 import org.team3128.listener.controller.ControllerExtreme3D;
 import org.team3128.util.Units;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -39,7 +40,22 @@ public class MainFlyingSwallow extends MainClass
 	
 	IListenerCallback updateDriveCOD;
 	
-	Piston gearshiftPiston, intakePiston;
+	Piston leftGearshiftPiston, rightGearshiftPiston;
+	Piston leftIntakePiston, rightIntakePiston;
+	Compressor externalCompressor;
+	
+	//Air tracker code
+	final static int NUMBER_OF_AIR_TANKS = 2;
+	final static double AIR_PER_AIR_TANK = 100 ; //cm3
+	final static double AIR_FOR_MICRO_PISTON = AIR_PER_AIR_TANK / 140; //140 extensions/retractions per tank at 40 psi
+	final static double AIR_FOR_MEDIUM_PISTON = AIR_PER_AIR_TANK / 40; //40 extensions/retractions per tank at 40 psi
+	final static double TOTAL_STARTING_AIR = NUMBER_OF_AIR_TANKS * AIR_PER_AIR_TANK;
+	
+	double microPistonExtensions = 0;
+	double mediumPistonExtensions = 0;
+	
+	boolean inHighGear;
+
 		
 	public MainFlyingSwallow()
 	{	
@@ -61,7 +77,14 @@ public class MainFlyingSwallow extends MainClass
 	
 		drive = new TankDrive(leftMotors, rightMotors, leftDriveEncoder, rightDriveEncoder, 8 * Units.in * Math.PI, 24.5 * Units.in);
 		
-		gearshiftPiston = new Piston(new Solenoid(0), new Solenoid(1));
+		leftGearshiftPiston = new Piston(new Solenoid(0), new Solenoid(1));
+		rightGearshiftPiston = new Piston(new Solenoid(2), new Solenoid(3));
+
+		leftIntakePiston = new Piston(new Solenoid(4), new Solenoid(5));
+		rightIntakePiston = new Piston(new Solenoid(6), new Solenoid(7));
+		externalCompressor = new Compressor();
+		externalCompressor.stop();
+
 		
 		updateDriveCOD = () ->
 		{
@@ -76,6 +99,14 @@ public class MainFlyingSwallow extends MainClass
 	protected void initializeRobot(RobotTemplate robotTemplate)
 	{	
 		robotTemplate.addListenerManager(listenerManagerExtreme);
+		
+		leftGearshiftPiston.setPistonOff();
+		rightGearshiftPiston.setPistonOff();
+		
+		inHighGear = false;
+		
+		leftIntakePiston.setPistonOff();
+		rightIntakePiston.setPistonOff();
 		
         Log.info("MainFlyingSwallow", "Activating the Flying Swallow");
         Log.info("MainFlyingSwallow", "...but which one, an African or a European?");
@@ -106,8 +137,28 @@ public class MainFlyingSwallow extends MainClass
 			powerDistPanel.clearStickyFaults();
 		});
 		
-		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN2, () -> gearshiftPiston.invertPiston());
-		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN3, () -> intakePiston.invertPiston());
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN2, () -> 
+		{
+			leftGearshiftPiston.setPistonInvert();
+			rightGearshiftPiston.setPistonInvert();;
+			++microPistonExtensions;
+		
+		});
+		
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN8, () -> 
+		{
+			externalCompressor.start();
+		});
+		
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN9, () -> 
+		{
+			externalCompressor.stop();
+			
+			//reset air counter
+			mediumPistonExtensions = 0;
+			microPistonExtensions = 0;
+		});
+
 
 	}
 
@@ -120,5 +171,14 @@ public class MainFlyingSwallow extends MainClass
 	protected void updateDashboard()
 	{
 		SmartDashboard.putNumber("Total Current: ", powerDistPanel.getTotalCurrent());
+		
+		double airLeft /* cm3 */ = TOTAL_STARTING_AIR - (microPistonExtensions * AIR_FOR_MICRO_PISTON) - (mediumPistonExtensions * AIR_FOR_MEDIUM_PISTON);
+		
+		SmartDashboard.putNumber("Air Left (cm³):", airLeft);
+		SmartDashboard.putNumber("Shifts Left:", Math.floor(airLeft / AIR_FOR_MICRO_PISTON));
+		SmartDashboard.putNumber("Intake Movements Left:", Math.floor(airLeft / AIR_FOR_MEDIUM_PISTON));
+		
+		SmartDashboard.putString("Current Gear", inHighGear ? "High" : "Low");
+
 	}
 }
