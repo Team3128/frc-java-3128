@@ -5,7 +5,8 @@ import org.team3128.hardware.encoder.angular.IAngularEncoder;
 import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.util.RobotMath;
 
-import edu.wpi.first.wpilibj.interfaces.Gyro;
+import edu.wpi.first.wpilibj.Gyro;
+
 
 /**
  * Drive class for the swerve drive on our 2014 robot.

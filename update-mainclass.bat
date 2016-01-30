@@ -22,9 +22,9 @@ if %errorlevel%==0 (
 	
 	echo. 
 	if !errorlevel!==0 (
-		echo Success! Main class updated to !mainclass!.
+		echo Success. Main class updated to !mainclass!.
 	) ELSE (
-		echo Failure!
+		echo Failure.
 	)
 ) ELSE (
 	echo Failed to connect.  Exiting...
