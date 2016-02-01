@@ -59,11 +59,11 @@ public class MainFlyingSwallow extends MainClass
 		
 	public MainFlyingSwallow()
 	{	
-		listenerManagerExtreme = new ListenerManager(new Joystick(0), ControllerExtreme3D.instance);	
+		listenerManagerExtreme = new ListenerManager(ControllerExtreme3D.instance, new Joystick(0), new Joystick(1));	
 		powerDistPanel = new PowerDistributionPanel();
 		
-		leftDriveEncoder = new QuadratureEncoderLink(0,	1, 128, false);
-		rightDriveEncoder = new QuadratureEncoderLink(3, 4, 128, true);
+		leftDriveEncoder = new QuadratureEncoderLink(0,	1, 1024, false);
+		rightDriveEncoder = new QuadratureEncoderLink(3, 4, 1024, true);
 		
 		leftMotors = new MotorGroup();
 		leftMotors.addControlledMotor(new Talon(0));

@@ -20,7 +20,7 @@ public class MainUltrasonicTest extends MainClass {
 	
 	public MainUltrasonicTest() 
 	{
-		lm = new ListenerManager(new Joystick(4), ControllerXbox.instance);
+		lm = new ListenerManager(ControllerXbox.instance, new Joystick(4));
 
 		testUltrasonic = new MaxSonar(2, Resolution.MM, Port.kOnboard);
 	}
