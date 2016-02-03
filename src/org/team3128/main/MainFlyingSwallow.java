@@ -59,7 +59,7 @@ public class MainFlyingSwallow extends MainClass
 		
 	public MainFlyingSwallow()
 	{	
-		listenerManagerExtreme = new ListenerManager(ControllerExtreme3D.instance, new Joystick(0), new Joystick(1));	
+		listenerManagerExtreme = new ListenerManager(ControllerExtreme3D.instance, new Joystick(0)/*, new Joystick(1)*/);	
 		powerDistPanel = new PowerDistributionPanel();
 		
 		leftDriveEncoder = new QuadratureEncoderLink(0,	1, 1024, false);
@@ -68,31 +68,30 @@ public class MainFlyingSwallow extends MainClass
 		leftMotors = new MotorGroup();
 		leftMotors.addControlledMotor(new Talon(0));
 		leftMotors.addControlledMotor(new Talon(1));
+		leftMotors.invert();
 		
 		
 		rightMotors = new MotorGroup();
 		rightMotors.addControlledMotor(new Talon(2));
 		rightMotors.addControlledMotor(new Talon(3));
-		rightMotors.invert();
 	
 		drive = new TankDrive(leftMotors, rightMotors, leftDriveEncoder, rightDriveEncoder, 8 * Units.in * Math.PI, 24.5 * Units.in);
 		
-		leftGearshiftPiston = new Piston(new Solenoid(0), new Solenoid(1));
-		rightGearshiftPiston = new Piston(new Solenoid(2), new Solenoid(3));
+		leftGearshiftPiston = new Piston(new Solenoid(0), new Solenoid(4));
+		rightGearshiftPiston = new Piston(new Solenoid(1), new Solenoid(5));
 
-		leftIntakePiston = new Piston(new Solenoid(4), new Solenoid(5));
-		rightIntakePiston = new Piston(new Solenoid(6), new Solenoid(7));
+		leftIntakePiston = new Piston(new Solenoid(2), new Solenoid(6));
+		rightIntakePiston = new Piston(new Solenoid(3), new Solenoid(7));
 		externalCompressor = new Compressor();
 		externalCompressor.stop();
 
 		
 		updateDriveCOD = () ->
 		{
-			double joyX = listenerManagerExtreme.getRawAxis(ControllerExtreme3D.JOYX);
+			double joyX = .3 * listenerManagerExtreme.getRawAxis(ControllerExtreme3D.TWIST);
 			double joyY = listenerManagerExtreme.getRawAxis(ControllerExtreme3D.JOYY);
-			double throttle = -listenerManagerExtreme.getRawAxis(ControllerExtreme3D.THROTTLE);
 			
-			drive.arcadeDrive(joyX, joyY, throttle, listenerManagerExtreme.getRawBool(ControllerExtreme3D.TRIGGERDOWN));
+			drive.arcadeDrive(joyX, joyY, 1, listenerManagerExtreme.getRawBool(ControllerExtreme3D.TRIGGERDOWN));
 		};
 	}
 
@@ -125,7 +124,7 @@ public class MainFlyingSwallow extends MainClass
 		//-----------------------------------------------------------
 		// Drive code, on Logitech Extreme3D joystick
 		//-----------------------------------------------------------
-		listenerManagerExtreme.addListener(ControllerExtreme3D.JOYX, updateDriveCOD);
+		listenerManagerExtreme.addListener(ControllerExtreme3D.TWIST, updateDriveCOD);
 		listenerManagerExtreme.addListener(ControllerExtreme3D.JOYY, updateDriveCOD);
 		listenerManagerExtreme.addListener(ControllerExtreme3D.THROTTLE, updateDriveCOD);
 		listenerManagerExtreme.addListener(ControllerExtreme3D.TRIGGERDOWN, updateDriveCOD);
@@ -142,6 +141,7 @@ public class MainFlyingSwallow extends MainClass
 			leftGearshiftPiston.setPistonInvert();
 			rightGearshiftPiston.setPistonInvert();;
 			++microPistonExtensions;
+			inHighGear = !inHighGear;
 		
 		});
 		
@@ -158,6 +158,14 @@ public class MainFlyingSwallow extends MainClass
 			mediumPistonExtensions = 0;
 			microPistonExtensions = 0;
 		});
+		
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN3, () ->
+		{
+			leftIntakePiston.setPistonInvert();
+			leftIntakePiston.setPistonInvert();
+			
+			++mediumPistonExtensions;
+		});
 
 
 	}
@@ -170,11 +178,11 @@ public class MainFlyingSwallow extends MainClass
 	@Override
 	protected void updateDashboard()
 	{
-		SmartDashboard.putNumber("Total Current: ", powerDistPanel.getTotalCurrent());
+		//SmartDashboard.putNumber("Total Current: ", powerDistPanel.getTotalCurrent());
 		
 		double airLeft /* cm3 */ = TOTAL_STARTING_AIR - (microPistonExtensions * AIR_FOR_MICRO_PISTON) - (mediumPistonExtensions * AIR_FOR_MEDIUM_PISTON);
 		
-		SmartDashboard.putNumber("Air Left (cm³):", airLeft);
+		SmartDashboard.putNumber("Air Left (cmÂ³):", airLeft);
 		SmartDashboard.putNumber("Shifts Left:", Math.floor(airLeft / AIR_FOR_MICRO_PISTON));
 		SmartDashboard.putNumber("Intake Movements Left:", Math.floor(airLeft / AIR_FOR_MEDIUM_PISTON));
 		
