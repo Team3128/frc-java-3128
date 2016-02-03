@@ -49,7 +49,7 @@ public class MainCameraTest extends MainClass
 	
 	public MainCameraTest()
 	{	
-		manager = new ListenerManager(new Joystick(0), ControllerXbox.instance);
+		manager = new ListenerManager(ControllerXbox.instance, new Joystick(0));
 		
 		powerDistPanel = new PowerDistributionPanel();
 		

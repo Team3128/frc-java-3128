@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * Main class for our 2015 robot, The Clawwww minus the Claw (www) ( just drive ).
+ * Holonomic drive test robot once numbered 3129
  * @author Jamie (modified by Wesley)
  *
  */
@@ -44,7 +44,7 @@ public class MainDriveHolo extends MainClass
 	
 	public MainDriveHolo()
 	{	
-		listenerManagerExtreme = new ListenerManager(new Joystick(0), ControllerExtreme3D.instance);	
+		listenerManagerExtreme = new ListenerManager(ControllerExtreme3D.instance, new Joystick(0));
 		powerDistPanel = new PowerDistributionPanel();
 		
 		holo = new HolonomicDrive(leftFrontMotors, leftBackMotors, rightFrontMotors, rightBackMotors, listenerManagerExtreme);

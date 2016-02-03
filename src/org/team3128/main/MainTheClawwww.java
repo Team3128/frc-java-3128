@@ -84,9 +84,9 @@ public class MainTheClawwww extends MainClass
 	
 	public MainTheClawwww()
 	{	
-		listenerManagerExtreme = new ListenerManager(new Joystick(0), ControllerExtreme3D.instance);
-		listenerManagerJoyLeft = new ListenerManager(new Joystick(2), ControllerAttackJoy.instance);
-		listenerManagerJoyRight = new ListenerManager(new Joystick(1), ControllerAttackJoy.instance);		
+		listenerManagerExtreme = new ListenerManager(ControllerExtreme3D.instance, new Joystick(0));
+		listenerManagerJoyLeft = new ListenerManager(ControllerAttackJoy.instance, new Joystick(2));
+		listenerManagerJoyRight = new ListenerManager(ControllerAttackJoy.instance, new Joystick(1));		
 		powerDistPanel = new PowerDistributionPanel();
 		
 		leftDriveEncoder = new QuadratureEncoderLink(0,	1, 128, false);
