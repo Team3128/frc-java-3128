@@ -7,7 +7,7 @@ import org.team3128.listener.control.Button;
  * Controller object for an Xbox controller being used through the simulator.
  * @author Jamie
  */
-public class ControllerSimXbox implements ControllerType
+public class ControllerSimXbox 
 {
 	public static final Button ADOWN = new Button(1, false);
 	public static final Button BDOWN = new Button(2, false);
@@ -44,16 +44,4 @@ public class ControllerSimXbox implements ControllerType
 		}
 		
 		public static final ControllerSimXbox instance = new ControllerSimXbox();
-		
-		@Override
-		public int getMaxButtonValue()
-		{
-			return 10;
-		}
-
-		@Override
-		public int getMaxJoystickValue()
-		{
-			return 4;
-		}
 }

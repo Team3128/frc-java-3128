@@ -11,7 +11,6 @@ import org.team3128.hardware.lights.PWMLights;
 import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.listener.ListenerManager;
 import org.team3128.listener.control.Always;
-import org.team3128.listener.controller.ControllerXbox;
 import org.team3128.util.ParticleReport;
 import org.team3128.util.RoboVision;
 import org.team3128.util.Units;
@@ -49,7 +48,7 @@ public class MainCameraTest extends MainClass
 	
 	public MainCameraTest()
 	{	
-		manager = new ListenerManager(ControllerXbox.instance, new Joystick(0));
+		manager = new ListenerManager(new Joystick(0));
 		
 		powerDistPanel = new PowerDistributionPanel();
 		

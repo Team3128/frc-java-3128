@@ -7,7 +7,7 @@ import org.team3128.listener.control.Button;
  * Controller object for a Saitek X55 flight simulator joystick.
  * @author Jamie
  */
-public class ControllerSaitekX55 implements ControllerType
+public class ControllerSaitekX55
 {
 		public static final Button TRIGGERDOWN = new Button(1, false);
 		public static final Button ADOWN = new Button(2, false);
@@ -51,16 +51,4 @@ public class ControllerSaitekX55 implements ControllerType
 		}
 		
 		public static final ControllerSaitekX55 instance = new ControllerSaitekX55();
-
-		@Override
-		public int getMaxButtonValue()
-		{
-			return 14;
-		}
-
-		@Override
-		public int getMaxJoystickValue()
-		{
-			return 2;
-		}
 }

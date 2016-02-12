@@ -7,7 +7,7 @@ import org.team3128.listener.control.Button;
  * Controller object for a Logitech Extreme3D joystick.
  * @author Jamie
  */
-public class ControllerExtreme3D implements ControllerType
+public class ControllerExtreme3D
 {
 		public static final Button TRIGGERDOWN = new Button(1, false);
 		public static final Button DOWN2 = new Button(2, false);
@@ -48,16 +48,4 @@ public class ControllerExtreme3D implements ControllerType
 		}
 		
 		public static final ControllerExtreme3D instance = new ControllerExtreme3D();
-
-		@Override
-		public int getMaxButtonValue()
-		{
-			return 12;
-		}
-
-		@Override
-		public int getMaxJoystickValue()
-		{
-			return 3;
-		}
 }

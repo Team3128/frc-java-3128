@@ -22,7 +22,7 @@ public class MainPneumaticsTest extends MainClass
 	
 	public MainPneumaticsTest()
 	{	
-		listenerManagerExtreme = new ListenerManager(ControllerXbox.instance, new Joystick(0));	
+		listenerManagerExtreme = new ListenerManager(new Joystick(0));	
 		
 		testPiston = new Piston(new Solenoid(0), new Solenoid(1));
 		testPiston.invertPiston();

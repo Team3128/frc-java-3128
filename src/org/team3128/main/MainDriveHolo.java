@@ -44,7 +44,7 @@ public class MainDriveHolo extends MainClass
 	
 	public MainDriveHolo()
 	{	
-		listenerManagerExtreme = new ListenerManager(ControllerExtreme3D.instance, new Joystick(0));
+		listenerManagerExtreme = new ListenerManager(new Joystick(0));
 		powerDistPanel = new PowerDistributionPanel();
 		
 		holo = new HolonomicDrive(leftFrontMotors, leftBackMotors, rightFrontMotors, rightBackMotors, listenerManagerExtreme);

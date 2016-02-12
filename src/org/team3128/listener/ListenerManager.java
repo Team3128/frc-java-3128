@@ -13,8 +13,7 @@ import org.team3128.listener.control.Always;
 import org.team3128.listener.control.Axis;
 import org.team3128.listener.control.Button;
 import org.team3128.listener.control.IControl;
-import org.team3128.listener.controller.ControllerType;
-import org.team3128.util.Pair;
+import org.team3128.listener.control.POV;
 import org.team3128.util.SynchronizedMultimap;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -47,14 +46,29 @@ public class ListenerManager
 	// wpilib object which represents a controller
 	private ArrayList<Joystick> _joysticks;
 
-	private HashMap<Axis, Double> _joystickValues;
-
-	private Set<Button> _buttonValues;
-
-	private ControllerType _controlType;
-	
+		
 	//used for buddy-box syle joystick precedence, to determine if a joystick axis is being used.
 	private static final double JOYSTICK_DEADZONE = .15;
+	
+	private class ControlValues
+	{
+		public Set<Button> buttonValues;
+		
+		public HashMap<Axis, Double> joystickValues;
+		
+		public ArrayList<POV> povValues;
+		ControlValues()
+		{
+			buttonValues = new HashSet<>();
+			joystickValues = new HashMap<Axis, Double>();
+			povValues = new ArrayList<POV>();
+		}
+	}
+	
+	private ControlValues currentControls;
+	
+	//zero indexed
+	private final int numButtons, numAxes, numPOVs;
 
 	/**
 	 * Construct a ListenerManager from joysticks and their type
@@ -62,19 +76,28 @@ public class ListenerManager
 	 * @param joysticks The joystick or joysticks to pull data from.
 	 *   If multiple joysticks are provided, their inputs will be combined additively. That is, if one person presses A and the other presses B, both A and B's listeners will be triggered.
 	 *   For axes, whichever value is outside the joystick deadzone will be used.  If both axes are in use, the joystick specified first in the arguments will take precedence.
+	 *   
+	 *   NOTE: All joysticks are expected to be the same physical model.  If they're not, things are not going to work properly.
 	 */
-	public ListenerManager(ControllerType controlType, Joystick... joysticks)
+	public ListenerManager(Joystick... joysticks)
 	{
+		if(joysticks == null || joysticks.length < 1)
+		{
+			throw new IllegalArgumentException("Invalid joystick arguments");
+		}
+		
 		_controlValuesMutex = new ReentrantLock();
 		_listeners = new SynchronizedMultimap<IControl, IListenerCallback>();
 		_joysticks = new ArrayList<>();
 		Collections.addAll(_joysticks, joysticks);
-		_controlType = controlType;
+		
+		numButtons = joysticks[0].getButtonCount() - 1;
+		numAxes = joysticks[0].getAxisCount() - 1;
 
-		Pair<Set<Button>, HashMap<Axis, Double>> controlValues = pollAllJoysticks();
+		numPOVs = joysticks[0].getPOVCount() - 1;
 
-		_joystickValues = controlValues.right;
-		_buttonValues = controlValues.left;
+
+		currentControls = pollAllJoysticks();
 	}
 
 	/**
@@ -87,6 +110,21 @@ public class ListenerManager
 	public void addListener(IControl key, IListenerCallback listener)
 	{
 		_listeners.put(key, listener);
+	}
+	
+	/**
+	 * Add a listener for the given list of controls.
+	 * 
+	 * @param keys
+	 * @param listener
+	 */
+	public void addListener(IListenerCallback listener, IControl... keys)
+	{
+		for(IControl control : keys)
+		{
+			_listeners.put(control, listener);
+
+		}
 	}
 
 	/**
@@ -127,7 +165,7 @@ public class ListenerManager
 		_controlValuesMutex.lock();
 		boolean retval;
 
-		retval = _buttonValues.contains(button);
+		retval = currentControls.buttonValues.contains(button);
 		_controlValuesMutex.unlock();
 		
 		return retval;
@@ -144,7 +182,7 @@ public class ListenerManager
 		_controlValuesMutex.lock();
 		Double retval = 0.0;
 
-		retval = _joystickValues.get(axis);
+		retval = currentControls.joystickValues.get(axis);
 
 		if (retval == null)
 		{
@@ -161,44 +199,52 @@ public class ListenerManager
 	 * Collect control information from all joysticks.
 	 * @return
 	 */
-	Pair<Set<Button>, HashMap<Axis, Double>> pollAllJoysticks()
+	ControlValues pollAllJoysticks()
 	{
-		Set<Button> netButtonValues = new HashSet<>();
-		HashMap<Axis, Double> netJoystickValues = new HashMap<Axis, Double>();
+		ControlValues newControls = new ControlValues();
+
 		
 		_controlValuesMutex.lock();
-
-
-
 
 		for(int index = _joysticks.size() - 1; index >= 0; --index)
 		{
 			Joystick currentJoystick = _joysticks.get(index);			
 			// read button values
-			for (int counter = 1; counter <= _controlType.getMaxButtonValue(); counter++)
+			for (int counter = 1; counter <= numButtons; counter++)
 			{
 				boolean buttonValue = currentJoystick.getRawButton(counter);
 
 				if(buttonValue)
 				{
-					netButtonValues.add(new Button(counter, false));
+					newControls.buttonValues.add(new Button(counter, false));
 				}
 			}
 
 			// read joystick values
-			for (int counter = 0; counter <= _controlType.getMaxJoystickValue(); counter++)
+			for (int counter = 0; counter <= numAxes; counter++)
 			{
 				Axis currAxis = new Axis(counter);
 				double thisJoystickValue = currentJoystick.getRawAxis(counter);
-				if((!netJoystickValues.containsKey(currAxis)) || Math.abs(thisJoystickValue) > JOYSTICK_DEADZONE)
+				if((!newControls.joystickValues.containsKey(currAxis)) || Math.abs(thisJoystickValue) > JOYSTICK_DEADZONE)
 				{
-					netJoystickValues.put(currAxis, thisJoystickValue);
+					newControls.joystickValues.put(currAxis, thisJoystickValue);
+				}
+			}
+			
+			// read POV values
+			for (int counter = 0; counter <= numPOVs; counter++)
+			{
+				POV pov = POV.fromWPILIbAngle(counter, currentJoystick.getPOV(counter));
+								
+				if(!(((newControls.povValues.size() - 1 > counter) && newControls.povValues.get(counter) != null) && pov.getDirectionValue() == 0))
+				{
+					newControls.povValues.add(pov);
 				}
 			}
 		}
 		_controlValuesMutex.unlock();
 		
-		return new Pair<Set<Button>, HashMap<Axis, Double>>(netButtonValues, netJoystickValues);
+		return newControls;
 
 	}
 	
@@ -224,7 +270,7 @@ public class ListenerManager
 	 */
 	public void tick()
 	{
-		Pair<Set<Button>, HashMap<Axis, Double>> newValues = pollAllJoysticks();
+		ControlValues newValues = pollAllJoysticks();
 		Set<IListenerCallback> listenersToInvoke = new HashSet<IListenerCallback>();
 
 		// add ALWAYS listenable
@@ -243,39 +289,47 @@ public class ListenerManager
 		//don't need to lock _controlValuesMutex here because we know it's not going to be modified, because we're the only ones modifying it
 
 		//check for pressed buttons
-		for(Button button : newValues.left)
+		for(Button button : newValues.buttonValues)
 		{
-			if(!_buttonValues.contains(button))
+			if(!currentControls.buttonValues.contains(button))
 			{
 				addListenersForControl(listenersToInvoke, new Button(button.getCode(), false));
 			}
 		}
 		
 		//check for unpressed buttons
-		for(Button button : _buttonValues)
+		for(Button button : currentControls.buttonValues)
 		{
-			if(!newValues.left.contains(button))
+			if(!newValues.buttonValues.contains(button))
 			{
 				addListenersForControl(listenersToInvoke, new Button(button.getCode(), true));
 			}
 		}
 
 		// loop through joystick values
-		for (Axis axis : newValues.right.keySet())
+		for (Axis axis : newValues.joystickValues.keySet())
 		{
 			// has this particular value changed?
-			if (Math.abs(_joystickValues.get(axis) - newValues.right.get(axis)) > .0001)
+			if (Math.abs(currentControls.joystickValues.get(axis) - newValues.joystickValues.get(axis)) > .0001)
 			{
 				addListenersForControl(listenersToInvoke, axis);
 
+			}
+		}
+		
+		for(POV oldPOVValue : currentControls.povValues)
+		{
+			POV newPOVValue = newValues.povValues.get(oldPOVValue.getIndexOnJoystick());
+			if(!newPOVValue.equals(oldPOVValue))
+			{
+				addListenersForControl(listenersToInvoke, newPOVValue);
 			}
 		}
 
 		// update class variables to match new data
 		{
 			_controlValuesMutex.lock();
-			_buttonValues = newValues.left;
-			_joystickValues = newValues.right;
+			currentControls = newValues;
 			_controlValuesMutex.unlock();
 		}
 

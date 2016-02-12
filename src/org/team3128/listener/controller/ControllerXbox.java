@@ -7,7 +7,7 @@ import org.team3128.listener.control.Button;
  * Controller object for an Xbox controller.
  * @author Jamie
  */
-public class ControllerXbox implements ControllerType
+public class ControllerXbox
 {
 	public static final Button ADOWN = new Button(1, false);
 	public static final Button BDOWN = new Button(2, false);
@@ -45,16 +45,4 @@ public class ControllerXbox implements ControllerType
 		}
 		
 		public static final ControllerXbox instance = new ControllerXbox();
-		
-		@Override
-		public int getMaxButtonValue()
-		{
-			return 10;
-		}
-
-		@Override
-		public int getMaxJoystickValue()
-		{
-			return 5;
-		}
 }

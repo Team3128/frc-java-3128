@@ -8,7 +8,7 @@ import org.team3128.listener.control.Button;
  * 
  * @author Jamie
  */
-public class ControllerAttackJoy implements ControllerType
+public class ControllerAttackJoy
 {
 		public static final Button DOWN1 = new Button(1, false);
 		public static final Button DOWN2 = new Button(2, false);
@@ -45,16 +45,4 @@ public class ControllerAttackJoy implements ControllerType
 		}
 		
 		public static final ControllerAttackJoy instance = new ControllerAttackJoy();
-
-		@Override
-		public int getMaxButtonValue()
-		{
-			return 11;
-		}
-
-		@Override
-		public int getMaxJoystickValue()
-		{
-			return 2;
-		}
 }

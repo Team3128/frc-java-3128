@@ -55,7 +55,7 @@ public class MainDriveCold extends MainClass
 	
 	public MainDriveCold()
 	{	
-		listenerManagerExtreme = new ListenerManager(ControllerXbox.instance, new Joystick(0));
+		listenerManagerExtreme = new ListenerManager(new Joystick(0));
 		powerDistPanel = new PowerDistributionPanel();
 		
 		leftDriveEncoder = new QuadratureEncoderLink(0,	1, 128, false);
