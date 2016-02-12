@@ -194,7 +194,7 @@ public class MainFlyingSwallow extends MainClass
 			microPistonExtensions = 0;
 		});
 		
-		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN5, () ->
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN10, () ->
 		{
 			leftIntakePiston.setPistonInvert();
 			rightIntakePiston.setPistonInvert();
@@ -205,46 +205,39 @@ public class MainFlyingSwallow extends MainClass
 		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN3, () -> 
 		{
 			intakeSpinner.setControlTarget(IntakeState.INTAKE.motorPower);
-			Log.debug("FS Intake", "Starting");
 
 		});
 		
 		listenerManagerExtreme.addListener(ControllerExtreme3D.UP3, () -> 
 		{
-			Log.debug("FS Intake", "Stopping");
-			intakeSpinner.setControlTarget(0);
+			intakeSpinner.setControlTarget(IntakeState.STOPPED.motorPower);
 		});
 		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN4, () -> 
 		{
-			intakeSpinner.setControlTarget(IntakeState.STOPPED.motorPower);
+			intakeSpinner.setControlTarget(IntakeState.OUTTAKE.motorPower);
 		});
 		listenerManagerExtreme.addListener(ControllerExtreme3D.UP4, () -> 
 		{
 			intakeSpinner.setControlTarget(IntakeState.STOPPED.motorPower);
 		});
 		
-		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN12, () -> 
-		{
-			if(intakeState == IntakeState.OUTTAKE)
-			{
-				intakeState = IntakeState.STOPPED;
-			}
-			else
-			{
-				intakeState = IntakeState.OUTTAKE;
-			}
-			intakeSpinner.setControlTarget(intakeState.motorPower);
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN5, () -> {
+			backArm.set(1);	
 		});
 		
-		listenerManagerExtreme.addListener(ControllerExtreme3D.JOYX, () -> {
-			double power = listenerManagerExtreme.getRawAxis(ControllerExtreme3D.JOYX);
-			if(Math.abs(power) < .15)
-			{
-				power = 0;
-			}
-			
-			backArm.set(power);	
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN6, () -> {
+			backArm.set(-1);	
 		});
+		
+		listenerManagerExtreme.addListener(ControllerExtreme3D.UP6, () -> {
+			backArm.set(0);	
+		});
+
+		listenerManagerExtreme.addListener(ControllerExtreme3D.UP5, () -> {
+			backArm.set(0);	
+		});
+
+
 
 		backArm.changeControlMode(TalonControlMode.PercentVbus);
 		intakeSpinner.setControlTarget(0);

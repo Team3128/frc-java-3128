@@ -247,7 +247,7 @@ public class ListenerManager
 		{
 			if(!_buttonValues.contains(button))
 			{
-				addListenersForControl(listenersToInvoke, new Button(button.getCode(), true));
+				addListenersForControl(listenersToInvoke, new Button(button.getCode(), false));
 			}
 		}
 		
@@ -256,7 +256,7 @@ public class ListenerManager
 		{
 			if(!newValues.left.contains(button))
 			{
-				addListenersForControl(listenersToInvoke, new Button(button.getCode(), false));
+				addListenersForControl(listenersToInvoke, new Button(button.getCode(), true));
 			}
 		}
 
