@@ -50,9 +50,9 @@ public class SwerveDrive2
 			
 			if(setAngle)
 			{
-				turnMotor.setControlTarget(targetAngle);
+				turnMotor.setTarget(targetAngle);
 			}
-			driveMotor.setControlTarget(power);
+			driveMotor.setTarget(power);
 		}
 	}
 	
@@ -141,7 +141,7 @@ public class SwerveDrive2
 		for(SwerveModule module : modules)
 		{
 			module.turnMotor.resetSpeedControl();
-			module.driveMotor.setControlTarget(0);
+			module.driveMotor.setTarget(0);
 		}
 	}
 	

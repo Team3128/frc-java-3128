@@ -64,6 +64,7 @@ public class MainFlyingSwallow extends MainClass
 	double mediumPistonExtensions = 0;
 	
 	boolean inHighGear;
+	boolean usingBackCamera;
 	
 	enum IntakeState
 	{
@@ -90,18 +91,21 @@ public class MainFlyingSwallow extends MainClass
 		rightDriveEncoder = new QuadratureEncoderLink(3, 4, 128, true);
 		
 		leftMotors = new MotorGroup();
-		leftMotors.addControlledMotor(new Talon(2));
-		leftMotors.addControlledMotor(new Talon(3));
+		leftMotors.addMotor(new Talon(8));
+		leftMotors.addMotor(new Talon(9));
 		leftMotors.invert();
 		//leftMotors.setSpeedScalar(1.25);
 		
 		
 		rightMotors = new MotorGroup();
-		rightMotors.addControlledMotor(new Talon(0));
-		rightMotors.addControlledMotor(new Talon(1));
+		rightMotors.addMotor(new Talon(0));
+		rightMotors.addMotor(new Talon(1));
 		
 		intakeSpinner = new MotorGroup();
-		intakeSpinner.addControlledMotor(new Victor(5));
+		intakeSpinner.addMotor(new Victor(3));
+		
+		innerRoller = new MotorGroup();
+		innerRoller.addMotor(new Talon(4));
 	
 		drive = new TankDrive(leftMotors, rightMotors, leftDriveEncoder, rightDriveEncoder, 8 * Units.in * Math.PI, 24.5 * Units.in);
 		
@@ -204,21 +208,28 @@ public class MainFlyingSwallow extends MainClass
 		
 		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN3, () -> 
 		{
-			intakeSpinner.setControlTarget(IntakeState.INTAKE.motorPower);
+			intakeSpinner.setTarget(IntakeState.INTAKE.motorPower);
+			innerRoller.setTarget(IntakeState.INTAKE.motorPower);
 
 		});
 		
 		listenerManagerExtreme.addListener(ControllerExtreme3D.UP3, () -> 
 		{
-			intakeSpinner.setControlTarget(IntakeState.STOPPED.motorPower);
+			intakeSpinner.setTarget(IntakeState.STOPPED.motorPower);
+			innerRoller.setTarget(IntakeState.STOPPED.motorPower);
+
 		});
 		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN4, () -> 
 		{
-			intakeSpinner.setControlTarget(IntakeState.OUTTAKE.motorPower);
+			intakeSpinner.setTarget(IntakeState.OUTTAKE.motorPower);
+			innerRoller.setTarget(IntakeState.OUTTAKE.motorPower);
+
 		});
 		listenerManagerExtreme.addListener(ControllerExtreme3D.UP4, () -> 
 		{
-			intakeSpinner.setControlTarget(IntakeState.STOPPED.motorPower);
+			intakeSpinner.setTarget(IntakeState.STOPPED.motorPower);
+			innerRoller.setTarget(IntakeState.STOPPED.motorPower);
+
 		});
 		
 		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN5, () -> {
@@ -240,7 +251,7 @@ public class MainFlyingSwallow extends MainClass
 
 
 		backArm.changeControlMode(TalonControlMode.PercentVbus);
-		intakeSpinner.setControlTarget(0);
+		intakeSpinner.setTarget(0);
 		intakeState = IntakeState.STOPPED;
 		
 	}

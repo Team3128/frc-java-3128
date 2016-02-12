@@ -36,7 +36,7 @@ public class MotorGroup
     {
     	for(SpeedController controller : controllers)
     	{
-        	addControlledMotor(controller);
+        	addMotor(controller);
     	}
     }
     
@@ -56,7 +56,7 @@ public class MotorGroup
     	
     	for(SpeedController controller : controllers)
     	{
-        	addControlledMotor(controller);
+        	addMotor(controller);
     	}
     }
     
@@ -113,7 +113,7 @@ public class MotorGroup
      * Add a motor to the list of motors that is controlled by this MotorGroup.
      * @param controller
      */
-    public void addControlledMotor(SpeedController controller)
+    public void addMotor(SpeedController controller)
     {
     	motors.add(controller);
     }
@@ -138,7 +138,7 @@ public class MotorGroup
      * Sets the MotorLogic target, or the speed directly if there is no controller.
      * @param target
      */
-    public void setControlTarget(double target)
+    public void setTarget(double target)
     {
         if(motorLogic == null)
         {

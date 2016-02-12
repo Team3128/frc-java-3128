@@ -64,10 +64,10 @@ public class MainDriveHolo extends MainClass
 		rightFrontMotors = new MotorGroup();
 		rightBackMotors = new MotorGroup();
 
-		leftFrontMotors.addControlledMotor(new Victor(0));
-		leftBackMotors.addControlledMotor(new Victor(1));
-		rightFrontMotors.addControlledMotor(new Victor(2));
-		rightBackMotors.addControlledMotor(new Victor(3));
+		leftFrontMotors.addMotor(new Victor(0));
+		leftBackMotors.addMotor(new Victor(1));
+		rightFrontMotors.addMotor(new Victor(2));
+		rightBackMotors.addMotor(new Victor(3));
 		
 		holo = new HolonomicDrive(leftFrontMotors, leftBackMotors, rightFrontMotors, rightBackMotors, listenerManagerExtreme);
 		

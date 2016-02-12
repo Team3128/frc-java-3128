@@ -93,34 +93,34 @@ public class MainTheClawwww extends MainClass
 		rightDriveEncoder = new QuadratureEncoderLink(3, 4, 128, true);
 		
 		leftMotors = new MotorGroup(/*new PIDSpeedTarget(0, leftDriveEncoder, new VelocityPID(.1, 0, 0))*/);
-		leftMotors.addControlledMotor(new Talon(1));
-		leftMotors.addControlledMotor(new Talon(2));
+		leftMotors.addMotor(new Talon(1));
+		leftMotors.addMotor(new Talon(2));
 		//leftMotors.startControl(0);
 		
 		
 		rightMotors = new MotorGroup(/*new PIDSpeedTarget(0, rightDriveEncoder, new VelocityPID(.1, 0, 0))*/);
-		rightMotors.addControlledMotor(new Talon(3));
-		rightMotors.addControlledMotor(new Talon(4));
+		rightMotors.addMotor(new Talon(3));
+		rightMotors.addMotor(new Talon(4));
 		rightMotors.invert();
 		//rightMotors.startControl(0);
 		
 		armTurnMotor = new MotorGroup();
-		armTurnMotor.addControlledMotor(new Talon(6));
+		armTurnMotor.addMotor(new Talon(6));
 		armTurnMotor.invert();
 		
 
 		armRotateEncoder = new AnalogPotentiometerEncoder(0, 0, 4.829, 300);
 		
 		armJointMotor = new MotorGroup();
-		armJointMotor.addControlledMotor(new Talon(5));
+		armJointMotor.addMotor(new Talon(5));
 		
 		armJointEncoder = new AnalogPotentiometerEncoder(1, 0, 4.829, 300);
 		
 		frontHookMotor = new MotorGroup();
-		frontHookMotor.addControlledMotor(new Talon(9));
+		frontHookMotor.addMotor(new Talon(9));
 		
 		clawGrabMotor = new MotorGroup();
-		clawGrabMotor.addControlledMotor(new Talon(8));
+		clawGrabMotor.addMotor(new Talon(8));
 		
 		//lights = new PWMLights(0, 9, 7);
 
@@ -233,25 +233,25 @@ public class MainTheClawwww extends MainClass
 		listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN6, () -> elbowInverted = true);
 		listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN7, () -> elbowInverted = false);
 		
-		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN1, () -> clawGrabMotor.setControlTarget(0.8));
-		listenerManagerJoyRight.addListener(ControllerAttackJoy.UP1, () -> clawGrabMotor.setControlTarget(0));
-		listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN1, () -> clawGrabMotor.setControlTarget(-0.8));
-		listenerManagerJoyLeft.addListener(ControllerAttackJoy.UP1, () -> clawGrabMotor.setControlTarget(0));
+		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN1, () -> clawGrabMotor.setTarget(0.8));
+		listenerManagerJoyRight.addListener(ControllerAttackJoy.UP1, () -> clawGrabMotor.setTarget(0));
+		listenerManagerJoyLeft.addListener(ControllerAttackJoy.DOWN1, () -> clawGrabMotor.setTarget(-0.8));
+		listenerManagerJoyLeft.addListener(ControllerAttackJoy.UP1, () -> clawGrabMotor.setTarget(0));
 		
-		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN4, () -> clawGrabMotor.setControlTarget(0.8));
-		listenerManagerJoyRight.addListener(ControllerAttackJoy.UP4, () -> clawGrabMotor.setControlTarget(0));
-		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN5, () -> clawGrabMotor.setControlTarget(-0.8));
-		listenerManagerJoyRight.addListener(ControllerAttackJoy.UP5, () -> clawGrabMotor.setControlTarget(0));
-		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN3, () -> frontHookMotor.setControlTarget(0.3));
-		listenerManagerExtreme.addListener(ControllerExtreme3D.UP3, () -> frontHookMotor.setControlTarget(0));
-		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN4, () -> frontHookMotor.setControlTarget(-0.3));
-		listenerManagerExtreme.addListener(ControllerExtreme3D.UP4, () -> frontHookMotor.setControlTarget(0));
-		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN5, () -> frontHookMotor.setControlTarget(0.3));
-		listenerManagerExtreme.addListener(ControllerExtreme3D.UP5, () -> frontHookMotor.setControlTarget(0));
-		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN6, () -> frontHookMotor.setControlTarget(-0.3));
-		listenerManagerExtreme.addListener(ControllerExtreme3D.UP6, () -> frontHookMotor.setControlTarget(0));
+		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN4, () -> clawGrabMotor.setTarget(0.8));
+		listenerManagerJoyRight.addListener(ControllerAttackJoy.UP4, () -> clawGrabMotor.setTarget(0));
+		listenerManagerJoyRight.addListener(ControllerAttackJoy.DOWN5, () -> clawGrabMotor.setTarget(-0.8));
+		listenerManagerJoyRight.addListener(ControllerAttackJoy.UP5, () -> clawGrabMotor.setTarget(0));
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN3, () -> frontHookMotor.setTarget(0.3));
+		listenerManagerExtreme.addListener(ControllerExtreme3D.UP3, () -> frontHookMotor.setTarget(0));
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN4, () -> frontHookMotor.setTarget(-0.3));
+		listenerManagerExtreme.addListener(ControllerExtreme3D.UP4, () -> frontHookMotor.setTarget(0));
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN5, () -> frontHookMotor.setTarget(0.3));
+		listenerManagerExtreme.addListener(ControllerExtreme3D.UP5, () -> frontHookMotor.setTarget(0));
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN6, () -> frontHookMotor.setTarget(-0.3));
+		listenerManagerExtreme.addListener(ControllerExtreme3D.UP6, () -> frontHookMotor.setTarget(0));
 
-		listenerManagerExtreme.addListener(ControllerExtreme3D.UP8, () -> frontHookMotor.setControlTarget(0));
+		listenerManagerExtreme.addListener(ControllerExtreme3D.UP8, () -> frontHookMotor.setTarget(0));
 
 		listenerManagerExtreme.addListener(Always.instance, () -> {
 			int red = RobotMath.clampInt(RobotMath.floor_double_int(255 * (powerDistPanel.getTotalCurrent() / 30.0)), 0, 255);

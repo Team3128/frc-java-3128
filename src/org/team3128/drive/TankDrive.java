@@ -102,8 +102,8 @@ public class TankDrive
     	
     	//Log.debug("TankDrive", "x1: " + joyX + " throttle: " + throttle + " spdR: " + spdR + " spdL: " + spdL);
 
-    	leftMotors.setControlTarget(spdL);
-    	rightMotors.setControlTarget(spdR);
+    	leftMotors.setTarget(spdL);
+    	rightMotors.setTarget(spdR);
     }
     
     /**
@@ -113,8 +113,8 @@ public class TankDrive
      */
     public void tankDrive(double powL, double powR)
     {
-    	leftMotors.setControlTarget(powL);
-    	rightMotors.setControlTarget(powR);
+    	leftMotors.setTarget(powL);
+    	rightMotors.setTarget(powR);
     }
     
 	public void clearEncoders()
@@ -125,8 +125,8 @@ public class TankDrive
 
 	public void stopMovement()
 	{
-		leftMotors.setControlTarget(0);
-		rightMotors.setControlTarget(0);
+		leftMotors.setTarget(0);
+		rightMotors.setTarget(0);
 	}
 	
     /**
@@ -190,7 +190,7 @@ public class TankDrive
     		enc = RobotMath.cmToRotations((2.0* Math.PI * wheelBase)*(abs(_degs)/360.0), wheelCircumfrence);
     		clearEncoders();
     		
-    		sideMotors.setControlTarget(AutoUtils.speedMultiplier * RobotMath.sgn(_degs) * .25);
+    		sideMotors.setTarget(AutoUtils.speedMultiplier * RobotMath.sgn(_degs) * .25);
     		startTime = System.currentTimeMillis();
         }
 
@@ -292,14 +292,14 @@ public class TankDrive
     		leftSideDirection = RobotMath.sgn(speedLeft);
     		if(Math.abs(speedLeft) > threshold)
     		{
-    			leftMotors.setControlTarget(AutoUtils.speedMultiplier * -1 * _power * leftSideDirection);
+    			leftMotors.setTarget(AutoUtils.speedMultiplier * -1 * _power * leftSideDirection);
     		}
     		
     		double speedRight = encRight.getSpeedInRPM();
     		rightSideDirection = RobotMath.sgn(speedRight);
     		if(Math.abs(speedRight) > threshold)
     		{
-    			rightMotors.setControlTarget(AutoUtils.speedMultiplier * -1 * _power * rightSideDirection);
+    			rightMotors.setTarget(AutoUtils.speedMultiplier * -1 * _power * rightSideDirection);
     		}
         }
 
@@ -318,14 +318,14 @@ public class TankDrive
     		if(RobotMath.sgn(leftSpeedRPM) != leftSideDirection || leftSpeedRPM < threshold)
     		{
     			leftSideFinished = true;
-    			leftMotors.setControlTarget(0);
+    			leftMotors.setTarget(0);
     		}
     		
     		double rightSpeedRPM = encRight.getSpeedInRPM();
     		if(RobotMath.sgn(rightSpeedRPM) != rightSideDirection || rightSpeedRPM < threshold)
     		{
     			rightSideFinished = true;
-    			rightMotors.setControlTarget(0);
+    			rightMotors.setTarget(0);
     		}
         }
         
@@ -403,8 +403,8 @@ public class TankDrive
         {
     		enc = RobotMath.floor_double_int(RobotMath.cmToRotations((Math.PI * wheelBase)*(abs(_degs)/360.0), wheelCircumfrence));
     		clearEncoders();
-    		forwardMotors.setControlTarget(AutoUtils.speedMultiplier * RobotMath.sgn(_degs) * .5);
-    		backwardMotors.setControlTarget(AutoUtils.speedMultiplier * -1 * RobotMath.sgn(_degs)* .5);
+    		forwardMotors.setTarget(AutoUtils.speedMultiplier * RobotMath.sgn(_degs) * .5);
+    		backwardMotors.setTarget(AutoUtils.speedMultiplier * -1 * RobotMath.sgn(_degs)* .5);
     		startTime = System.currentTimeMillis();
         }
 
@@ -482,11 +482,11 @@ public class TankDrive
     		int norm = (int) RobotMath.sgn(_cm);
     		startTime = System.currentTimeMillis();
     		if(fullThrottle){
-    			leftMotors.setControlTarget(AutoUtils.speedMultiplier*norm);
-    			rightMotors.setControlTarget(AutoUtils.speedMultiplier*norm);
+    			leftMotors.setTarget(AutoUtils.speedMultiplier*norm);
+    			rightMotors.setTarget(AutoUtils.speedMultiplier*norm);
     		}else{
-    			leftMotors.setControlTarget(AutoUtils.speedMultiplier * .25 * norm);
-    			rightMotors.setControlTarget(AutoUtils.speedMultiplier * .25 * norm);
+    			leftMotors.setTarget(AutoUtils.speedMultiplier * .25 * norm);
+    			rightMotors.setTarget(AutoUtils.speedMultiplier * .25 * norm);
     		}
         }
 
@@ -598,8 +598,8 @@ public class TankDrive
    		clearEncoders();
    		startTime = System.currentTimeMillis();
    		
-   		leftMotors.setControlTarget(powRight); //both sides start at the same power
-   		rightMotors.setControlTarget(powRight);
+   		leftMotors.setTarget(powRight); //both sides start at the same power
+   		rightMotors.setTarget(powRight);
        }
 
        // Called repeatedly when this Command is scheduled to run
@@ -608,7 +608,7 @@ public class TankDrive
        	//P calculation
        	double error = encLeft.getSpeedInRPM() -  encRight.getSpeedInRPM();
        	powRight += kP * error;
-   		rightMotors.setControlTarget(powRight);
+   		rightMotors.setTarget(powRight);
 
    		if(_msec != 0 && System.currentTimeMillis() - startTime >_msec)
    		{
@@ -677,7 +677,7 @@ public class TankDrive
 	protected void initialize() {
 		// Starts the counter until stopping the motors
 		startTime = System.currentTimeMillis();
-		armMotors.setControlTarget(-0.3);
+		armMotors.setTarget(-0.3);
 	}
 
 	@Override
@@ -688,7 +688,7 @@ public class TankDrive
 			//Haha I did it like this so it would be C++ geddit?
 			c++;
 		}
-		armMotors.setControlTarget(0);
+		armMotors.setTarget(0);
 		if(moveForward){
 			drive.new CmdMoveForward(dToDrive*Units.cm,1000,true);
 		}else{
@@ -707,13 +707,13 @@ public class TankDrive
 
 	@Override
 	protected void end() {
-		armMotors.setControlTarget(0);
+		armMotors.setTarget(0);
 		stopMovement();
 	}
 
 	@Override
 	protected void interrupted() {
-		armMotors.setControlTarget(0);
+		armMotors.setTarget(0);
 	}   
    } 
 }

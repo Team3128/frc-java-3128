@@ -26,7 +26,7 @@ public class CmdToteGrab extends Command
 
 	@Override
 	protected void execute() {
-		frontHookMotor.setControlTarget(.3);
+		frontHookMotor.setTarget(.3);
 		
 	}
 
@@ -37,13 +37,13 @@ public class CmdToteGrab extends Command
 
 	@Override
 	protected void end() {
-		frontHookMotor.setControlTarget(0);
+		frontHookMotor.setTarget(0);
 		
 	}
 
 	@Override
 	protected void interrupted() {
-		frontHookMotor.setControlTarget(0);
+		frontHookMotor.setTarget(0);
 		
 	}
 	

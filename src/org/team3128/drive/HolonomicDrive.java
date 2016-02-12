@@ -51,10 +51,10 @@ public class HolonomicDrive
     	
     	Log.debug("HolonomicDrive", String.format("joyY: %f, joyTurn: %f, spdLB: %f, spdRF: %f, spdLF %f, spdRB: %f", joyY, joyTurn, _spdLB, _spdRF, _spdLF, _spdRB));
 
-    	_driveLeftFront.setControlTarget(_spdLF);
-    	_driveLeftBack.setControlTarget(_spdLB);
-    	_driveRightFront.setControlTarget(_spdRF);
-    	_driveRightBack.setControlTarget(_spdRB);
+    	_driveLeftFront.setTarget(_spdLF);
+    	_driveLeftBack.setTarget(_spdLB);
+    	_driveRightFront.setTarget(_spdRF);
+    	_driveRightBack.setTarget(_spdRB);
     }
 }
 

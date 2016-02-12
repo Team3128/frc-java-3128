@@ -115,13 +115,13 @@ public class ClawArm
 	public void closeClaw()
 	{
 		//the limit switch will stop it
-		_clawGrab.setControlTarget(-1);
+		_clawGrab.setTarget(-1);
 	}
 	
 	public void openClaw()
 	{
 		//the limit switch will stop it
-		_clawGrab.setControlTarget(1);
+		_clawGrab.setTarget(1);
 	}
 	
 	public void stopClawLimitThread()
@@ -159,13 +159,13 @@ public class ClawArm
 				if(armUsingAutoControl && !jointUsingAutoControl)
 				{
 					double newAngle = Math.toDegrees(Math.acos((-1.444 * Math.cos(Math.toRadians(_armJointEncoder.getAngle() - elbowTravelMiddle)) + 1.1667)));
-					_armRotate.setControlTarget(newAngle);
+					_armRotate.setTarget(newAngle);
 				}
 				else if(!armUsingAutoControl && jointUsingAutoControl)
 				{
 					//created from the formula in isOverHeightLimit()
 					double newAngle = Math.toDegrees(Math.acos((-.6923 * Math.cos(Math.toRadians(_armRotateEncoder.getAngle() - shoulderTravelMiddle)) + .8077)));
-					_armJoint.setControlTarget(newAngle);
+					_armJoint.setTarget(newAngle);
 				}
 			}
 			
@@ -289,12 +289,12 @@ public class ClawArm
 		{
 			if(Math.abs(joyPower) >= .1)
 			{
-				_armJoint.setControlTarget(joyPower);
+				_armJoint.setTarget(joyPower);
 			}
 			else
 			{
 				//switchJointToAutoControl();
-				_armJoint.setControlTarget(0);
+				_armJoint.setTarget(0);
 			}
 		}
 	}
@@ -315,7 +315,7 @@ public class ClawArm
 		{
 			if(Math.abs(joyPower) >= .1)
 			{
-				_armRotate.setControlTarget(joyPower);
+				_armRotate.setTarget(joyPower);
 			}
 			else
 			{
@@ -332,20 +332,20 @@ public class ClawArm
 	{
 		if(armUsingAutoControl)
 		{
-			_armRotate.setControlTarget(_armRotateEncoder.getAngle());
+			_armRotate.setTarget(_armRotateEncoder.getAngle());
 		}
 		else
 		{
-			_armRotate.setControlTarget(0);
+			_armRotate.setTarget(0);
 		}
 		
 		if(jointUsingAutoControl)
 		{
-			_armJoint.setControlTarget(_armJointEncoder.getAngle());
+			_armJoint.setTarget(_armJointEncoder.getAngle());
 		}
 		else
 		{
-			_armJoint.setControlTarget(0);
+			_armJoint.setTarget(0);
 		}
 		
 	}
@@ -456,7 +456,7 @@ public class ClawArm
 	    // Called once after isFinished returns true
 	    protected void end()
 	    {
-	    	_clawGrab.setControlTarget(0);
+	    	_clawGrab.setTarget(0);
 	    }
 
 	    // Called when another command which requires one or more of the same
@@ -505,7 +505,7 @@ public class ClawArm
 	    // Called once after isFinished returns true
 	    protected void end()
 	    {
-	    	_clawGrab.setControlTarget(0);
+	    	_clawGrab.setTarget(0);
 	    }
 
 	    // Called when another command which requires one or more of the same

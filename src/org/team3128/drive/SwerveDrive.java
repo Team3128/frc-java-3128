@@ -78,9 +78,9 @@ public class SwerveDrive
         double[] l = optimizeSwerve(_encFL.getAngle(), angL, spdL);
         double[] b = optimizeSwerve(_encBk.getAngle(), angB, spdB);
         
-        _rotFR.setControlTarget(r[0]+(x1 == 0 && x2 != 0 ? 0.1 : 0));
-        _rotFL.setControlTarget(l[0]+(x1 == 0 && x2 != 0 ? 0.1 : 0));
-        _rotBk.setControlTarget(b[0]+(x1 == 0 && x2 != 0 ? 0.1 : 0));
+        _rotFR.setTarget(r[0]+(x1 == 0 && x2 != 0 ? 0.1 : 0));
+        _rotFL.setTarget(l[0]+(x1 == 0 && x2 != 0 ? 0.1 : 0));
+        _rotBk.setTarget(b[0]+(x1 == 0 && x2 != 0 ? 0.1 : 0));
         
         r[1] /= maxVel;
         l[1] /= maxVel;
@@ -93,9 +93,9 @@ public class SwerveDrive
             b[1] /= scl;
         }
         
-        _drvFR.setControlTarget(-r[1]/1.0);
-        _drvFL.setControlTarget(-l[1]/1.0);
-        _drvBk.setControlTarget(-b[1]/1.0);
+        _drvFR.setTarget(-r[1]/1.0);
+        _drvFL.setTarget(-l[1]/1.0);
+        _drvBk.setTarget(-b[1]/1.0);
     }
 
 
