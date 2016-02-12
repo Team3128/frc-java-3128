@@ -14,10 +14,10 @@ public class TakeToteIntoZoneAuto extends CommandGroup
 {
     public TakeToteIntoZoneAuto(TankDrive tankDrive, MotorGroup toteHookMotor, PWMLights lights)
     {
-    	addSequential(tankDrive.new CmdMoveForward(2 * Units.cm, 1000));
+    	addSequential(tankDrive.new CmdMoveForward(2 * Units.cm, 1000, true));
     	addSequential(new CmdToteGrab(toteHookMotor, 700));
     	addSequential(tankDrive.new CmdInPlaceTurn(90, 4000, Direction.RIGHT));
-    	addSequential(tankDrive.new CmdMoveForward(200 * Units.cm, 0));
+    	addSequential(tankDrive.new CmdMoveForward(200 * Units.cm, 0, true));
     	
     	lights.setColor(LightsColor.new8Bit(1, 1, 0xff));
     }

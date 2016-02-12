@@ -21,7 +21,7 @@ public class FarCanGrabAuto extends CommandGroup
     	addSequential(new CmdDelay(4000));
     	
     	addSequential(new CmdLog("Driving To Can"));
-    	addSequential(drive.new CmdMoveForward(27, 2000));
+    	addSequential(drive.new CmdMoveForward(27, 2000, true));
     	
     	addSequential(new CmdLog("Closing Claw"));
         addSequential(arm.new CmdCloseClaw(2000));
@@ -34,7 +34,7 @@ public class FarCanGrabAuto extends CommandGroup
     	addSequential(new CmdDelay(2000));
         
     	addSequential(new CmdLog("Backing Up"));
-    	addSequential(drive.new CmdMoveForward(-200, 10000));
+    	addSequential(drive.new CmdMoveForward(-200, 10000, true));
 
     }
 }

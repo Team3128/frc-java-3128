@@ -10,7 +10,7 @@ public class DriveIntoAutoZoneAuto extends CommandGroup
 {
     public DriveIntoAutoZoneAuto(TankDrive tankDrive, PWMLights lights)
     {
-    	addSequential(tankDrive.new CmdMoveForward(-200, 0));
+    	addSequential(tankDrive.new CmdMoveForward(-200.0, 0, true));
     	lights.setColor(LightsColor.new4Bit(0xf, 0xf, 0xf));
     }
 }

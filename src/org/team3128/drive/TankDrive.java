@@ -9,6 +9,7 @@ import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
 import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.util.Direction;
 import org.team3128.util.RobotMath;
+import org.team3128.util.Units;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -23,6 +24,8 @@ public class TankDrive
 {
 	private MotorGroup leftMotors;
     
+	private MotorGroup armMotors;
+	
     private MotorGroup rightMotors;
     
 	private QuadratureEncoderLink encLeft;
@@ -228,8 +231,8 @@ public class TankDrive
     /*
      *       /^\ 
      *      / _ \
-     *     / [ ] \
-     *    /  [_]  \
+     *     / | | \
+     *    /  |_|  \
      *   /    _    \
      *  /    (_)    \
      * /_____________\
@@ -437,6 +440,8 @@ public class TankDrive
     /**
      * Command to move forward the given amount of centimeters
      */
+    
+    
     public class CmdMoveForward extends Command {
 
     	double _cm;
@@ -450,31 +455,39 @@ public class TankDrive
     	 */
     	double enc;
     	
+    	boolean fullThrottle = false;
+    	
     	boolean rightDone = false;
     	
     	boolean leftDone = false;
     	
-    	/**
+    	/*
     	 * @param d how far to move.  Accepts negative values.
     	 * @param msec How long the move should take. If set to 0, do not time the move
     	 */
-        public CmdMoveForward(double d, int msec)
+        public CmdMoveForward(double d, int msec, boolean fullSpeed)
         {
         	_cm = d;
+        	
+        	fullThrottle = fullSpeed;
         	
         	_msec = msec;
         }
 
         protected void initialize()
         {
+        	
     		clearEncoders();
     		enc = abs(RobotMath.cmToRotations(_cm, wheelCircumfrence));
     		int norm = (int) RobotMath.sgn(_cm);
     		startTime = System.currentTimeMillis();
-
-    		
-    		leftMotors.setControlTarget(AutoUtils.speedMultiplier * .25 * norm);
-    		rightMotors.setControlTarget(AutoUtils.speedMultiplier * .25 * norm);
+    		if(fullThrottle){
+    			leftMotors.setControlTarget(AutoUtils.speedMultiplier*norm);
+    			rightMotors.setControlTarget(AutoUtils.speedMultiplier*norm);
+    		}else{
+    			leftMotors.setControlTarget(AutoUtils.speedMultiplier * .25 * norm);
+    			rightMotors.setControlTarget(AutoUtils.speedMultiplier * .25 * norm);
+    		}
         }
 
         // Called repeatedly when this Command is scheduled to run
@@ -523,8 +536,8 @@ public class TankDrive
     *        _
     *       / \ 
     *      / _ \
-    *     / [ ] \
-    *    /  [_]  \
+    *     / | | \
+    *    /  |_|  \
     *   /    _    \
     *  /    (_)    \
     * /_____________\
@@ -628,4 +641,79 @@ public class TankDrive
        	
        }
    }
+   /*
+    *        _
+    *       / \ 
+    *      / _ \
+    *     / | | \
+    *    /  |_|  \
+    *   /    _    \
+    *  /    (_)    \
+    * /_____________\
+    * -----------------------------------------------------
+    * UNTESTED CODE!
+    * Probably won't work.
+    * This class has never been tried on an actual robot.
+    * It may be non or partially functional.
+    * Do not make any assumptions as to its behavior!
+    * Programmers are not responsible if it blows up the western Hemisphere.
+    * And don't blink.  Not even for a second.
+    * -----------------------------------------------------*/
+   public class CmdMoveArm extends Command{
+	   
+	   long startTime;
+	   TankDrive drive;
+	   int timeTillStop;
+	   boolean moveForward;
+	   double dToDrive;
+	   //Constructor that does stuff
+	   public CmdMoveArm(int timeTillStop, boolean moveForward, double dToDrive,TankDrive x){
+		   this.timeTillStop = timeTillStop;
+		   drive = x;
+		   this.moveForward = moveForward;
+		   this.dToDrive = dToDrive;
+	   }
+	@Override
+	protected void initialize() {
+		// Starts the counter until stopping the motors
+		startTime = System.currentTimeMillis();
+		armMotors.setControlTarget(-0.3);
+	}
+
+	@Override
+	protected void execute() {
+		int c = 0;
+		for(int i = 0; i < 10000; i++){
+			//Does nothing, just counts to wait for the shovel fries to go down
+			//Haha I did it like this so it would be C++ geddit?
+			c++;
+		}
+		armMotors.setControlTarget(0);
+		if(moveForward){
+			drive.new CmdMoveForward(dToDrive*Units.cm,1000,true);
+		}else{
+			stopMovement();
+		}
+	//	armMotors.wait();
+	}
+
+	@Override
+	protected boolean isFinished() {
+		if(System.currentTimeMillis()-startTime>timeTillStop){
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	protected void end() {
+		armMotors.setControlTarget(0);
+		stopMovement();
+	}
+
+	@Override
+	protected void interrupted() {
+		armMotors.setControlTarget(0);
+	}   
+   } 
 }

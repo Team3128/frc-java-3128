@@ -12,6 +12,7 @@ import org.team3128.listener.ListenerManager;
 import org.team3128.listener.controller.ControllerExtreme3D;
 import org.team3128.util.Units;
 
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -55,20 +56,20 @@ public class MainFlyingSwallow extends MainClass
 	double mediumPistonExtensions = 0;
 	
 	boolean inHighGear;
-
-		
+	
 	public MainFlyingSwallow()
-	{	
+	{
 		listenerManagerExtreme = new ListenerManager(ControllerExtreme3D.instance, new Joystick(0)/*, new Joystick(1)*/);	
 		powerDistPanel = new PowerDistributionPanel();
 		
-		leftDriveEncoder = new QuadratureEncoderLink(0,	1, 1024, false);
-		rightDriveEncoder = new QuadratureEncoderLink(3, 4, 1024, true);
+		leftDriveEncoder = new QuadratureEncoderLink(0,	1, 128, false);
+		rightDriveEncoder = new QuadratureEncoderLink(3, 4, 128, true);
 		
 		leftMotors = new MotorGroup();
 		leftMotors.addControlledMotor(new Talon(0));
 		leftMotors.addControlledMotor(new Talon(1));
 		leftMotors.invert();
+		//leftMotors.setSpeedScalar(1.25);
 		
 		
 		rightMotors = new MotorGroup();
@@ -88,15 +89,19 @@ public class MainFlyingSwallow extends MainClass
 		
 		updateDriveCOD = () ->
 		{
-			double joyX = .3 * listenerManagerExtreme.getRawAxis(ControllerExtreme3D.TWIST);
+			double joyX = .4 * listenerManagerExtreme.getRawAxis(ControllerExtreme3D.TWIST);
 			double joyY = listenerManagerExtreme.getRawAxis(ControllerExtreme3D.JOYY);
 			
-			drive.arcadeDrive(joyX, joyY, 1, listenerManagerExtreme.getRawBool(ControllerExtreme3D.TRIGGERDOWN));
+			drive.arcadeDrive(joyX, joyY, -listenerManagerExtreme.getRawAxis(ControllerExtreme3D.THROTTLE), listenerManagerExtreme.getRawBool(ControllerExtreme3D.TRIGGERDOWN));
 		};
 	}
 
 	protected void initializeRobot(RobotTemplate robotTemplate)
 	{	
+		CameraServer camera = CameraServer.getInstance();
+		camera.setQuality(10);
+		camera.startAutomaticCapture("cam0");
+		
 		robotTemplate.addListenerManager(listenerManagerExtreme);
 		
 		leftGearshiftPiston.setPistonOff();
