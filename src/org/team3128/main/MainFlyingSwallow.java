@@ -12,12 +12,15 @@ import org.team3128.listener.ListenerManager;
 import org.team3128.listener.controller.ControllerExtreme3D;
 import org.team3128.util.Units;
 
+import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -33,9 +36,14 @@ public class MainFlyingSwallow extends MainClass
 		
 	public MotorGroup leftMotors;
 	public MotorGroup rightMotors;
+	public MotorGroup intakeSpinner;
+	public MotorGroup innerRoller;
+
 	public QuadratureEncoderLink leftDriveEncoder;
 	public QuadratureEncoderLink rightDriveEncoder;
 	public PowerDistributionPanel powerDistPanel;
+	
+	public CANTalon backArm;
 	
 	public TankDrive drive;
 	
@@ -57,6 +65,22 @@ public class MainFlyingSwallow extends MainClass
 	
 	boolean inHighGear;
 	
+	enum IntakeState
+	{
+		STOPPED(0),
+		INTAKE(-.5),
+		OUTTAKE(.5);
+		public final double motorPower;
+		
+		private IntakeState(double motorPower)
+		{
+			this.motorPower = motorPower;
+		}
+	}
+	
+	IntakeState intakeState;
+	
+	
 	public MainFlyingSwallow()
 	{
 		listenerManagerExtreme = new ListenerManager(ControllerExtreme3D.instance, new Joystick(0)/*, new Joystick(1)*/);	
@@ -66,23 +90,26 @@ public class MainFlyingSwallow extends MainClass
 		rightDriveEncoder = new QuadratureEncoderLink(3, 4, 128, true);
 		
 		leftMotors = new MotorGroup();
-		leftMotors.addControlledMotor(new Talon(0));
-		leftMotors.addControlledMotor(new Talon(1));
+		leftMotors.addControlledMotor(new Talon(2));
+		leftMotors.addControlledMotor(new Talon(3));
 		leftMotors.invert();
 		//leftMotors.setSpeedScalar(1.25);
 		
 		
 		rightMotors = new MotorGroup();
-		rightMotors.addControlledMotor(new Talon(2));
-		rightMotors.addControlledMotor(new Talon(3));
+		rightMotors.addControlledMotor(new Talon(0));
+		rightMotors.addControlledMotor(new Talon(1));
+		
+		intakeSpinner = new MotorGroup();
+		intakeSpinner.addControlledMotor(new Victor(5));
 	
 		drive = new TankDrive(leftMotors, rightMotors, leftDriveEncoder, rightDriveEncoder, 8 * Units.in * Math.PI, 24.5 * Units.in);
 		
-		leftGearshiftPiston = new Piston(new Solenoid(0), new Solenoid(4));
-		rightGearshiftPiston = new Piston(new Solenoid(1), new Solenoid(5));
+		leftGearshiftPiston = new Piston(new Solenoid(0), new Solenoid(7));
+		rightGearshiftPiston = new Piston(new Solenoid(1), new Solenoid(6));
 
-		leftIntakePiston = new Piston(new Solenoid(2), new Solenoid(6));
-		rightIntakePiston = new Piston(new Solenoid(3), new Solenoid(7));
+		leftIntakePiston = new Piston(new Solenoid(2), new Solenoid(5));
+		rightIntakePiston = new Piston(new Solenoid(3), new Solenoid(4));
 		externalCompressor = new Compressor();
 		externalCompressor.stop();
 
@@ -112,6 +139,8 @@ public class MainFlyingSwallow extends MainClass
 		leftIntakePiston.setPistonOff();
 		rightIntakePiston.setPistonOff();
 		
+		backArm = new CANTalon(0);
+		
         Log.info("MainFlyingSwallow", "Activating the Flying Swallow");
         Log.info("MainFlyingSwallow", "...but which one, an African or a European?");
 	}
@@ -122,6 +151,7 @@ public class MainFlyingSwallow extends MainClass
 
 	protected void initializeAuto()
 	{
+		backArm.changeControlMode(TalonControlMode.Position);
 	}
 	
 	protected void initializeTeleop()
@@ -136,7 +166,7 @@ public class MainFlyingSwallow extends MainClass
 		listenerManagerExtreme.addListener(ControllerExtreme3D.TRIGGERUP, updateDriveCOD);
 
 		
-		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN12, () ->
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN7, () ->
 		{
 			powerDistPanel.clearStickyFaults();
 		});
@@ -164,15 +194,62 @@ public class MainFlyingSwallow extends MainClass
 			microPistonExtensions = 0;
 		});
 		
-		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN3, () ->
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN5, () ->
 		{
 			leftIntakePiston.setPistonInvert();
-			leftIntakePiston.setPistonInvert();
+			rightIntakePiston.setPistonInvert();
 			
 			++mediumPistonExtensions;
 		});
+		
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN3, () -> 
+		{
+			intakeSpinner.setControlTarget(IntakeState.INTAKE.motorPower);
+			Log.debug("FS Intake", "Starting");
 
+		});
+		
+		listenerManagerExtreme.addListener(ControllerExtreme3D.UP3, () -> 
+		{
+			Log.debug("FS Intake", "Stopping");
+			intakeSpinner.setControlTarget(0);
+		});
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN4, () -> 
+		{
+			intakeSpinner.setControlTarget(IntakeState.STOPPED.motorPower);
+		});
+		listenerManagerExtreme.addListener(ControllerExtreme3D.UP4, () -> 
+		{
+			intakeSpinner.setControlTarget(IntakeState.STOPPED.motorPower);
+		});
+		
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN12, () -> 
+		{
+			if(intakeState == IntakeState.OUTTAKE)
+			{
+				intakeState = IntakeState.STOPPED;
+			}
+			else
+			{
+				intakeState = IntakeState.OUTTAKE;
+			}
+			intakeSpinner.setControlTarget(intakeState.motorPower);
+		});
+		
+		listenerManagerExtreme.addListener(ControllerExtreme3D.JOYX, () -> {
+			double power = listenerManagerExtreme.getRawAxis(ControllerExtreme3D.JOYX);
+			if(Math.abs(power) < .15)
+			{
+				power = 0;
+			}
+			
+			backArm.set(power);	
+		});
 
+		backArm.changeControlMode(TalonControlMode.PercentVbus);
+		intakeSpinner.setControlTarget(0);
+		intakeState = IntakeState.STOPPED;
+		
 	}
 
 	@Override

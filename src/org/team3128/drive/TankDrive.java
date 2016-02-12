@@ -100,7 +100,7 @@ public class TankDrive
     	spdR = RobotMath.makeValidPower(joyY + joyX);
     	spdL = RobotMath.makeValidPower(joyY - joyX);
     	
-    	Log.debug("ArcadeDrive", "x1: " + joyX + " throttle: " + throttle + " spdR: " + spdR + " spdL: " + spdL);
+    	//Log.debug("TankDrive", "x1: " + joyX + " throttle: " + throttle + " spdR: " + spdR + " spdL: " + spdL);
 
     	leftMotors.setControlTarget(spdL);
     	rightMotors.setControlTarget(spdR);
