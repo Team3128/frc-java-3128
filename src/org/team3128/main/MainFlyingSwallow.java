@@ -26,9 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * Main class for our 2015 robot, The Clawwww minus the Claw (www) ( just drive ).
- * @author Jamie (modified by Wesley)
- *
+ * Main class for our 2016 robot, the Flying Swallow.
  */
 public class MainFlyingSwallow extends MainClass
 {
@@ -111,7 +109,7 @@ public class MainFlyingSwallow extends MainClass
 		innerRoller.addMotor(new Victor(3));
 		innerRoller.invert();
 	
-		drive = new TankDrive(leftMotors, rightMotors, leftDriveEncoder, rightDriveEncoder, 7.65 * Units.in * Math.PI, 24.5 * Units.in);
+		drive = new TankDrive(leftMotors, rightMotors, leftDriveEncoder, rightDriveEncoder, 7.65 * Units.in * Math.PI, 1, 26.125 * Units.in);
 		
 		leftGearshiftPiston = new Piston(new Solenoid(0), new Solenoid(7));
 		rightGearshiftPiston = new Piston(new Solenoid(1), new Solenoid(6));

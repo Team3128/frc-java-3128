@@ -71,7 +71,7 @@ public class MainDriveCold extends MainClass
 		rightMotors.addMotor(new Talon(4));
 		rightMotors.invert();
 	
-		drive = new TankDrive(leftMotors, rightMotors, leftDriveEncoder, rightDriveEncoder, 6 * Units.in * Math.PI, 24.5 * Units.in);
+		drive = new TankDrive(leftMotors, rightMotors, leftDriveEncoder, rightDriveEncoder, 6 * Units.in * Math.PI, 1, 24.5 * Units.in);
 		
 		updateDriveCOD = () ->
 		{
