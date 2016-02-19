@@ -1,7 +1,7 @@
 package org.team3128.autonomous.commands.defencecrossers;
 
 import org.team3128.drive.TankDrive;
-import org.team3128.util.Units;
+import org.team3128.util.units.Length;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
@@ -24,6 +24,6 @@ public class CmdGoAcrossRoughTerrain extends CommandGroup {
 	    * -----------------------------------------------------*/
 	 public CmdGoAcrossRoughTerrain(TankDrive drive)
 	 {
-		 addSequential(drive.new CmdMoveForward(500 * Units.cm, 5000, true));
+		 addSequential(drive.new CmdMoveForward(500 * Length.cm, 5000, true));
 	 }
 }

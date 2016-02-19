@@ -1,4 +1,4 @@
-package org.team3128.util;
+package org.team3128.util.units;
 
 /**
  * Conversion ratios of various units to cm, used so that you don't have
@@ -8,7 +8,7 @@ package org.team3128.util;
  * @author Jamie
  *
  */
-public class Units
+public class Length
 {
 	//metric
 	public static final double cm = 1;

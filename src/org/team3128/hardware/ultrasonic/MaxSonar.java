@@ -4,7 +4,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.team3128.Log;
 import org.team3128.util.Pair;
-import org.team3128.util.Units;
+import org.team3128.util.units.Length;
 
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.SerialPort;
@@ -36,9 +36,9 @@ public class MaxSonar extends IUltrasonic
 	public static enum Resolution
 	{
 		//inch-resolution sensors, such as the MB1010
-		INCH(Units.in, 3, 255),
-		CM(Units.cm, 3, 765), //cm-resolution sensors
-		MM(Units.mm, 4, 5000); //mm-resolution sensors, such as the MB1013
+		INCH(Length.in, 3, 255),
+		CM(Length.cm, 3, 765), //cm-resolution sensors
+		MM(Length.mm, 4, 5000); //mm-resolution sensors, such as the MB1013
 		
 		double conversionFactor;
 		int bytesPerResponse; //including the carriage return
