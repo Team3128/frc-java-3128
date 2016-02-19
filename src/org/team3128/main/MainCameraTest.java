@@ -13,7 +13,7 @@ import org.team3128.listener.ListenerManager;
 import org.team3128.listener.control.Always;
 import org.team3128.util.ParticleReport;
 import org.team3128.util.RoboVision;
-import org.team3128.util.Units;
+import org.team3128.util.units.Length;
 
 import com.ni.vision.NIVision.Range;
 
@@ -65,7 +65,7 @@ public class MainCameraTest extends MainClass
 		rightMotors.addMotor(new Talon(4));
 		rightMotors.invert();
 	
-		drive = new TankDrive(leftMotors, rightMotors, leftDriveEncoder, rightDriveEncoder, 6 * Units.in * Math.PI, 24.5 * Units.in);
+		drive = new TankDrive(leftMotors, rightMotors, leftDriveEncoder, rightDriveEncoder, 6 * Length.in * Math.PI, 1,  24.5 * Length.in);
 	}
 
 	@Override
@@ -143,14 +143,14 @@ public class MainCameraTest extends MainClass
 					new Range(SmartDashboard.getInt("minH"), SmartDashboard.getInt("maxH")), 
 	        		new Range(SmartDashboard.getInt("minS"), SmartDashboard.getInt("maxS")),
 	        		new Range(SmartDashboard.getInt("minV"), SmartDashboard.getInt("maxV")),
-	        		SmartDashboard.getNumber("aspectRatio",(21.9 * Units.in)/(28.8 * Units.in)),
+	        		SmartDashboard.getNumber("aspectRatio",(21.9 * Length.in)/(28.8 * Length.in)),
 	        		SmartDashboard.getNumber("rectangularityScore"));
 			if(!targets.isEmpty())
 			{
 				
 				ParticleReport targetReport = targets.get(0);
 				
-				SmartDashboard.putNumber("Target distance (in)", targetReport.computeDistanceHorizontal(21.9 * Units.in) /Units.in);
+				SmartDashboard.putNumber("Target distance (in)", targetReport.computeDistanceHorizontal(21.9 * Length.in) /Length.in);
 				SmartDashboard.putNumber("target heading angle", targetReport.getHeadingAngleOffset());
 			}
 			else

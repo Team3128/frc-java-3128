@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import org.team3128.drive.TankDrive;
 import org.team3128.util.ParticleReport;
 import org.team3128.util.RoboVision;
-import org.team3128.util.Units;
+import org.team3128.util.units.Length;
 
 import com.ni.vision.NIVision.Range;
 
@@ -34,7 +34,7 @@ public class CmdVisionGoTowardsCan extends Command
 	
 	RoboVision visionProcessor;
 	
-	private static final double DESIRED_CAN_DISTANCE = 2 * Units.yd;
+	private static final double DESIRED_CAN_DISTANCE = 2 * Length.yd;
 	private static final long TIME_UNTIL_CAN_LOST = 2000;  //if the robot doesn't see a can for this long, it will stop and spin looking for it
 	private final static double kPdistance = .05, kPangle = 1.0;
 	

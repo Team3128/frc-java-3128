@@ -1,6 +1,6 @@
 package org.team3128.hardware.ultrasonic;
 
-import org.team3128.util.Units;
+import org.team3128.util.units.Length;
 
 import edu.wpi.first.wpilibj.Ultrasonic;
 
@@ -50,7 +50,7 @@ public class DigitalUltrasonic extends IUltrasonic
 			}
 		}
 			
-		return ultrasonic.getRangeMM() * Units.mm;
+		return ultrasonic.getRangeMM() * Length.mm;
 	}
 
 	@Override

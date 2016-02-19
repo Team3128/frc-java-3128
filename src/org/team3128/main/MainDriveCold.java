@@ -12,7 +12,7 @@ import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.listener.IListenerCallback;
 import org.team3128.listener.ListenerManager;
 import org.team3128.listener.controller.ControllerXbox;
-import org.team3128.util.Units;
+import org.team3128.util.units.Length;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -71,7 +71,7 @@ public class MainDriveCold extends MainClass
 		rightMotors.addMotor(new Talon(4));
 		rightMotors.invert();
 	
-		drive = new TankDrive(leftMotors, rightMotors, leftDriveEncoder, rightDriveEncoder, 6 * Units.in * Math.PI, 24.5 * Units.in);
+		drive = new TankDrive(leftMotors, rightMotors, leftDriveEncoder, rightDriveEncoder, 6 * Length.in * Math.PI, 1, 24.5 * Length.in);
 		
 		updateDriveCOD = () ->
 		{

@@ -7,13 +7,13 @@ import org.team3128.drive.TankDrive;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
 import org.team3128.hardware.misc.Piston;
 import org.team3128.hardware.motor.MotorGroup;
-import org.team3128.listener.IListenerCallback;
 import org.team3128.listener.ListenerManager;
 import org.team3128.listener.control.POV;
 import org.team3128.listener.controller.ControllerExtreme3D;
-import org.team3128.util.Units;
+import org.team3128.util.units.Length;
 
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
@@ -26,9 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * Main class for our 2015 robot, The Clawwww minus the Claw (www) ( just drive ).
- * @author Jamie (modified by Wesley)
- *
+ * Main class for our 2016 robot, the Flying Swallow.
  */
 public class MainFlyingSwallow extends MainClass
 {
@@ -49,8 +47,6 @@ public class MainFlyingSwallow extends MainClass
 	
 	public TankDrive drive;
 	
-	IListenerCallback updateDriveCOD;
-	
 	Piston leftGearshiftPiston, rightGearshiftPiston;
 	Piston leftIntakePiston, rightIntakePiston;
 	Compressor externalCompressor;
@@ -67,6 +63,9 @@ public class MainFlyingSwallow extends MainClass
 	
 	boolean inHighGear;
 	boolean usingBackCamera;
+	
+	final static double HIGH_GEAR_GEAR_RATIO = .944/1;
+	final static double LOW_GEAR_GEAR_RATIO = 2.5/1;
 	
 	enum IntakeState
 	{
@@ -111,7 +110,7 @@ public class MainFlyingSwallow extends MainClass
 		innerRoller.addMotor(new Victor(3));
 		innerRoller.invert();
 	
-		drive = new TankDrive(leftMotors, rightMotors, leftDriveEncoder, rightDriveEncoder, 7.65 * Units.in * Math.PI, 24.5 * Units.in);
+		drive = new TankDrive(leftMotors, rightMotors, leftDriveEncoder, rightDriveEncoder, 7.65 * Length.in * Math.PI, LOW_GEAR_GEAR_RATIO, 26.125 * Length.in);
 		//
 		leftGearshiftPiston = new Piston(new Solenoid(2), new Solenoid(5),true,false);
 		rightGearshiftPiston = new Piston(new Solenoid(0), new Solenoid(7),true,false);
@@ -120,15 +119,13 @@ public class MainFlyingSwallow extends MainClass
 		rightIntakePiston = new Piston(new Solenoid(1), new Solenoid(6),true,false);
 		externalCompressor = new Compressor();
 		externalCompressor.stop();
-
 		
-		updateDriveCOD = () ->
-		{
-			double joyX = .4 * listenerManagerExtreme.getRawAxis(ControllerExtreme3D.TWIST);
-			double joyY = listenerManagerExtreme.getRawAxis(ControllerExtreme3D.JOYY);
+		
+		backArm = new CANTalon(0);
+		
+		backArm.setEncPosition(0);
+		backArm.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
 			
-			drive.arcadeDrive(joyX, joyY, -listenerManagerExtreme.getRawAxis(ControllerExtreme3D.THROTTLE), listenerManagerExtreme.getRawBool(ControllerExtreme3D.TRIGGERDOWN));
-		};
 	}
 
 	protected void initializeRobot(RobotTemplate robotTemplate)
@@ -146,17 +143,14 @@ public class MainFlyingSwallow extends MainClass
 		
 		//leftIntakePiston.setPistonOff();
 		//rightIntakePiston.setPistonOff();
-		
-		backArm = new CANTalon(0);
-		
-		backArm.setEncPosition(0);
-		
+
         Log.info("MainFlyingSwallow", "Activating the Flying Swallow");
         Log.info("MainFlyingSwallow", "...but which one, an African or a European?");
 	}
 
 	protected void initializeDisabled()
 	{
+		backArm.disableControl();
 	}
 
 	protected void initializeAuto()
@@ -169,12 +163,13 @@ public class MainFlyingSwallow extends MainClass
 		//-----------------------------------------------------------
 		// Drive code, on Logitech Extreme3D joystick
 		//-----------------------------------------------------------
-		listenerManagerExtreme.addListener(ControllerExtreme3D.TWIST, updateDriveCOD);
-		listenerManagerExtreme.addListener(ControllerExtreme3D.JOYY, updateDriveCOD);
-		listenerManagerExtreme.addListener(ControllerExtreme3D.THROTTLE, updateDriveCOD);
-		listenerManagerExtreme.addListener(ControllerExtreme3D.TRIGGERDOWN, updateDriveCOD);
-		listenerManagerExtreme.addListener(ControllerExtreme3D.TRIGGERUP, updateDriveCOD);
-
+		listenerManagerExtreme.addListener(() ->
+		{
+			double joyX = .4 * listenerManagerExtreme.getRawAxis(ControllerExtreme3D.TWIST);
+			double joyY = listenerManagerExtreme.getRawAxis(ControllerExtreme3D.JOYY);
+			
+			drive.arcadeDrive(joyX, joyY, -listenerManagerExtreme.getRawAxis(ControllerExtreme3D.THROTTLE), listenerManagerExtreme.getRawBool(ControllerExtreme3D.TRIGGERDOWN));
+		}, ControllerExtreme3D.TRIGGERUP, ControllerExtreme3D.TWIST, ControllerExtreme3D.JOYY, ControllerExtreme3D.THROTTLE, ControllerExtreme3D.TRIGGERDOWN);
 		
 		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN7, () ->
 		{

@@ -7,7 +7,7 @@ import org.team3128.hardware.motor.limiter.AngleLimiter;
 import org.team3128.hardware.motor.limiter.SwitchLimiter;
 import org.team3128.hardware.motor.logic.BlankSpeedLogic;
 import org.team3128.hardware.motor.logic.AbsolutePIDAngleLogic;
-import org.team3128.util.Units;
+import org.team3128.util.units.Length;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -267,10 +267,10 @@ public class ClawArm
 		armAngle -= shoulderTravelMiddle;
 		jointAngle -= elbowTravelMiddle;
 		
-		double result = (34 * Units.in) +
-				(Math.cos(Math.toRadians(armAngle)) * 36 * Units.in) +
-				(Math.cos(Math.toRadians(jointAngle)) * 52 * Units.in);
-		return result > 76 * Units.in;
+		double result = (34 * Length.in) +
+				(Math.cos(Math.toRadians(armAngle)) * 36 * Length.in) +
+				(Math.cos(Math.toRadians(jointAngle)) * 52 * Length.in);
+		return result > 76 * Length.in;
 	}
 	
 	/**

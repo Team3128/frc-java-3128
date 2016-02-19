@@ -23,7 +23,7 @@ import org.team3128.listener.control.Always;
 import org.team3128.listener.controller.ControllerAttackJoy;
 import org.team3128.listener.controller.ControllerExtreme3D;
 import org.team3128.util.RobotMath;
-import org.team3128.util.Units;
+import org.team3128.util.units.Length;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -126,7 +126,7 @@ public class MainTheClawwww extends MainClass
 
 		clawArm = new ClawArm(armTurnMotor, armJointMotor, clawGrabMotor, armRotateEncoder, armJointEncoder, powerDistPanel);
 
-		drive = new TankDrive(leftMotors, rightMotors, leftDriveEncoder, rightDriveEncoder, 6 * Units.in * Math.PI, 24.5 * Units.in);
+		drive = new TankDrive(leftMotors, rightMotors, leftDriveEncoder, rightDriveEncoder, 6 * Length.in * Math.PI, 1, 24.5 * Length.in);
 		
 		updateDriveCOD = () ->
 		{

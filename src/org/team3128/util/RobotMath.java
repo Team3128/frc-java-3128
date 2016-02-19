@@ -219,16 +219,6 @@ public class RobotMath {
 		return (360 / wheelCircumference) * cm;
 	}
 	
-	/**
-	 * Convert cm of robot movement to wheel rotations
-	 * @param cm
-	 * @param wheelCircumference the circumference of the wheels
-	 * @return
-	 */
-	public static double cmToRotations(double cm, double wheelCircumference)
-	{
-		return cm / wheelCircumference;
-	}
 	
 	/**
 	 * Squares the argument.  Easier than Math.pow(number, 2).
