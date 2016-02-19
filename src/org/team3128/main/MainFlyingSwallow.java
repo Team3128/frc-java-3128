@@ -71,8 +71,8 @@ public class MainFlyingSwallow extends MainClass
 	enum IntakeState
 	{
 		STOPPED(0),
-		INTAKE(-1),
-		OUTTAKE(1);
+		INTAKE(1),
+		OUTTAKE(-1);
 		public final double motorPower;
 		
 		private IntakeState(double motorPower)
@@ -112,12 +112,12 @@ public class MainFlyingSwallow extends MainClass
 		innerRoller.invert();
 	
 		drive = new TankDrive(leftMotors, rightMotors, leftDriveEncoder, rightDriveEncoder, 7.65 * Units.in * Math.PI, 24.5 * Units.in);
-		
-		leftGearshiftPiston = new Piston(new Solenoid(0), new Solenoid(7));
-		rightGearshiftPiston = new Piston(new Solenoid(1), new Solenoid(6));
+		//
+		leftGearshiftPiston = new Piston(new Solenoid(2), new Solenoid(5),true,false);
+		rightGearshiftPiston = new Piston(new Solenoid(0), new Solenoid(7),true,false);
 
-		leftIntakePiston = new Piston(new Solenoid(2), new Solenoid(5));
-		rightIntakePiston = new Piston(new Solenoid(3), new Solenoid(4));
+		leftIntakePiston = new Piston(new Solenoid(4), new Solenoid(3),true,false);
+		rightIntakePiston = new Piston(new Solenoid(1), new Solenoid(6),true,false);
 		externalCompressor = new Compressor();
 		externalCompressor.stop();
 
@@ -139,13 +139,13 @@ public class MainFlyingSwallow extends MainClass
 		
 		robotTemplate.addListenerManager(listenerManagerExtreme);
 		
-		leftGearshiftPiston.setPistonOff();
-		rightGearshiftPiston.setPistonOff();
+		//leftGearshiftPiston.setPistonOff();
+		//rightGearshiftPiston.setPistonOff();
 		
 		inHighGear = false;
 		
-		leftIntakePiston.setPistonOff();
-		rightIntakePiston.setPistonOff();
+		//leftIntakePiston.setPistonOff();
+		//rightIntakePiston.setPistonOff();
 		
 		backArm = new CANTalon(0);
 		
@@ -215,7 +215,7 @@ public class MainFlyingSwallow extends MainClass
 		listenerManagerExtreme.addListener(() -> 
 		{
 			intakeSpinner.setTarget(IntakeState.OUTTAKE.motorPower);
-			innerRoller.setTarget(.5);
+			innerRoller.setTarget(-0.5);
 
 		}, new POV(0, 8), new POV(0, 1), new POV(0, 2));
 		
@@ -229,7 +229,7 @@ public class MainFlyingSwallow extends MainClass
 		listenerManagerExtreme.addListener(() -> 
 		{
 			intakeSpinner.setTarget(IntakeState.INTAKE.motorPower);
-			innerRoller.setTarget(-.5);
+			innerRoller.setTarget(0.5);
 
 		}, new POV(0, 4), new POV(0, 5), new POV(0, 6));
 		
