@@ -10,6 +10,10 @@ public class BackRaiserArm
 {
 	CANTalon armMotor;
 	
+	public BackRaiserArm(CANTalon armMotor) {
+		this.armMotor = armMotor;
+	}
+
 	//spins of output shaft per spin of the encoder
 	static final double GEAR_RATIO = 1 / 10.0;
 	

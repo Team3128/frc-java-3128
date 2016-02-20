@@ -5,6 +5,7 @@ import org.team3128.MainClass;
 import org.team3128.RobotTemplate;
 import org.team3128.drive.TankDrive;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
+import org.team3128.hardware.mechanisms.BackRaiserArm;
 import org.team3128.hardware.misc.Piston;
 import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.listener.ListenerManager;
@@ -13,7 +14,6 @@ import org.team3128.listener.controller.ControllerExtreme3D;
 import org.team3128.util.units.Length;
 
 import edu.wpi.first.wpilibj.CANTalon;
-import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
@@ -43,7 +43,8 @@ public class MainFlyingSwallow extends MainClass
 	public QuadratureEncoderLink rightDriveEncoder;
 	public PowerDistributionPanel powerDistPanel;
 	
-	public CANTalon backArm;
+	public CANTalon backArmMotor;
+	public BackRaiserArm backArm;
 	
 	public TankDrive drive;
 	
@@ -121,11 +122,12 @@ public class MainFlyingSwallow extends MainClass
 		externalCompressor.stop();
 		
 		
-		backArm = new CANTalon(0);
+		backArmMotor = new CANTalon(0);
 		
-		backArm.setEncPosition(0);
-		backArm.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-			
+		//backArmMotor.setEncPosition(0);
+		//backArmMotor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+		
+		//backArm = new BackRaiserArm(backArmMotor);
 	}
 
 	protected void initializeRobot(RobotTemplate robotTemplate)
@@ -150,12 +152,12 @@ public class MainFlyingSwallow extends MainClass
 
 	protected void initializeDisabled()
 	{
-		backArm.disableControl();
+		backArmMotor.disableControl();
 	}
 
 	protected void initializeAuto()
 	{
-		backArm.changeControlMode(TalonControlMode.Position);
+		backArmMotor.changeControlMode(TalonControlMode.Position);
 	}
 	
 	protected void initializeTeleop()
@@ -229,24 +231,24 @@ public class MainFlyingSwallow extends MainClass
 		}, new POV(0, 4), new POV(0, 5), new POV(0, 6));
 		
 		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN5, () -> {
-			backArm.set(.5);	
+			backArmMotor.set(.5);	
 		});
 		
 		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN6, () -> {
-			backArm.set(-.5);	
+			backArmMotor.set(-.5);	
 		});
 		
 		listenerManagerExtreme.addListener(ControllerExtreme3D.UP6, () -> {
-			backArm.set(0);	
+			backArmMotor.set(0);	
 		});
 
 		listenerManagerExtreme.addListener(ControllerExtreme3D.UP5, () -> {
-			backArm.set(0);	
+			backArmMotor.set(0);	
 		});
 		
 		
 
-		backArm.changeControlMode(TalonControlMode.PercentVbus);
+		backArmMotor.changeControlMode(TalonControlMode.PercentVbus);
 		intakeSpinner.setTarget(0);
 		intakeState = IntakeState.STOPPED;
 		
@@ -270,7 +272,7 @@ public class MainFlyingSwallow extends MainClass
 		
 		SmartDashboard.putString("Current Gear", inHighGear ? "High" : "Low");
 		
-		SmartDashboard.putNumber("Back Encoder Value:", backArm.getPosition());
+		//SmartDashboard.putNumber("Back Encoder Value:", backArm.getAngle());
 		
 		SmartDashboard.putNumber("POV:", joystick.getPOV());
 
