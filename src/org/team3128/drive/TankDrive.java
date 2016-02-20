@@ -308,6 +308,7 @@ public class TankDrive
     	//sgn of the right side speed
     	double rightSideDirection;
     	
+    	
     	/**
     	 * 
     	 * @param power Motor power to break with.
@@ -496,13 +497,13 @@ public class TankDrive
     	 */
     	double enc;
     	
-    	boolean fullThrottle = false;
-    	
+    	double power;
+    	    	
     	boolean rightDone = false;
     	
     	boolean leftDone = false;
     	
-    	/*
+    	/**
     	 * @param d how far to move.  Accepts negative values.
     	 * @param msec How long the move should take. If set to 0, do not time the move
     	 */
@@ -510,7 +511,20 @@ public class TankDrive
         {
         	_cm = d;
         	
-        	fullThrottle = fullSpeed;
+        	power = fullSpeed ? 1 : .30;
+        	
+        	_msec = msec;
+        }
+        
+    	/**
+    	 * @param d how far to move.  Accepts negative values.
+    	 * @param msec How long the move should take. If set to 0, do not time the move
+    	 */
+        public CmdMoveForward(double d, int msec, double power)
+        {
+        	_cm = d;
+        	
+        	this.power = power;
         	
         	_msec = msec;
         }
@@ -522,19 +536,14 @@ public class TankDrive
     		enc = abs(cmToRotations(_cm, wheelCircumfrence));
     		int norm = (int) RobotMath.sgn(_cm);
     		startTime = System.currentTimeMillis();
-    		if(fullThrottle){
-    			leftMotors.setTarget(AutoUtils.speedMultiplier*norm * 1);
-    			rightMotors.setTarget(AutoUtils.speedMultiplier*norm * 1);
-    		}else{
-    			leftMotors.setTarget(AutoUtils.speedMultiplier * .35 * norm);
-    			rightMotors.setTarget(AutoUtils.speedMultiplier * .35 * norm);
-    		}
+			leftMotors.setTarget(norm * power);
+			rightMotors.setTarget(norm * power);
         }
 
         // Called repeatedly when this Command is scheduled to run
         protected void execute()
         {
-    		if(_msec != 0 && System.currentTimeMillis() - startTime >_msec)
+    		if(_msec != 0 && (timeSinceInitialized() * 1000) >_msec)
     		{
     			stopMovement();
     			AutoUtils.killRobot("Move Overtime");

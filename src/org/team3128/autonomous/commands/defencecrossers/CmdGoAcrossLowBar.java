@@ -24,6 +24,6 @@ public class CmdGoAcrossLowBar extends CommandGroup {
 	    * -----------------------------------------------------*/
 	 public CmdGoAcrossLowBar(TankDrive drive)
 	 {
-		 addSequential(drive.new CmdMoveForward(500 * Length.cm, 5000, true));
+		 addSequential(drive.new CmdMoveForward(200 * Length.cm, 5000, true));
 	 }
 }

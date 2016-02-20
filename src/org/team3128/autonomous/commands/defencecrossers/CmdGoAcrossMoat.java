@@ -1,6 +1,6 @@
 package org.team3128.autonomous.commands.defencecrossers;
 
-import org.team3128.drive.TankDrive;
+import org.team3128.main.MainFlyingSwallow;
 import org.team3128.util.units.Length;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -22,8 +22,10 @@ public class CmdGoAcrossMoat extends CommandGroup {
 	    * Do not make any assumptions as to its behavior!
 	    * And don't blink.  Not even for a second.
 	    * -----------------------------------------------------*/
-	 public CmdGoAcrossMoat(TankDrive drive)
+	 public CmdGoAcrossMoat(MainFlyingSwallow robot)
 	 {
-		 addSequential(drive.new CmdMoveForward(500 * Length.cm, 5000, true));
+		 addSequential(robot.new CmdUpshift());
+		 addSequential(robot.drive.new CmdMoveForward(200 * Length.cm, 5000, true));
+		 
 	 }
 }

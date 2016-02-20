@@ -29,7 +29,6 @@ public class AutoUtils
 		//throw new RuntimeException("Error in automatic movement - " + cause + "\nRobot shut down!");
 	}
 
-	//convert motor power to RPM
 	public static final double speedMultiplier = 1;
 
 }

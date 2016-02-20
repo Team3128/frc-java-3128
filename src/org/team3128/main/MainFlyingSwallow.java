@@ -3,6 +3,7 @@ package org.team3128.main;
 import org.team3128.Log;
 import org.team3128.MainClass;
 import org.team3128.RobotTemplate;
+import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossMoat;
 import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossPortcullis;
 import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossShovelFries;
 import org.team3128.autonomous.programs.FlyingSwallowTestAuto;
@@ -26,6 +27,7 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -69,8 +71,7 @@ public class MainFlyingSwallow extends MainClass
 	boolean inHighGear;
 	boolean usingBackCamera;
 	
-	final static double HIGH_GEAR_GEAR_RATIO = .944/1;
-	final static double LOW_GEAR_GEAR_RATIO = 1/((84/20.0) * 3);
+	final static double DRIVE_WHEELS_GEAR_RATIO = 1/((84/20.0) * 3);
 	
 	enum IntakeState
 	{
@@ -115,7 +116,7 @@ public class MainFlyingSwallow extends MainClass
 		innerRoller.addMotor(new Victor(3));
 		innerRoller.invert();
 	
-		drive = new TankDrive(leftMotors, rightMotors, leftDriveEncoder, rightDriveEncoder, 7.65 * Length.in * Math.PI, LOW_GEAR_GEAR_RATIO, 26.125 * Length.in);
+		drive = new TankDrive(leftMotors, rightMotors, leftDriveEncoder, rightDriveEncoder, 7.65 * Length.in * Math.PI, DRIVE_WHEELS_GEAR_RATIO, 26.125 * Length.in);
 		//
 		leftGearshiftPiston = new Piston(new Solenoid(2), new Solenoid(5),true,false);
 		rightGearshiftPiston = new Piston(new Solenoid(0), new Solenoid(7),true,false);
@@ -271,12 +272,16 @@ public class MainFlyingSwallow extends MainClass
 		autoChooser.addDefault("Test Back Arm", new FlyingSwallowTestAuto(this));
 		autoChooser.addObject("Go Across Portcullis", new CmdGoAcrossPortcullis(drive, backArm));
 		autoChooser.addObject("Go Across Shovel Fries", new CmdGoAcrossShovelFries(drive, leftIntakePiston, rightIntakePiston));
+		autoChooser.addObject("Go Across Moat", new CmdGoAcrossMoat(this));
+		autoChooser.addObject("Go Across Portcullis", new CmdGoAcrossPortcullis(drive, backArm));
+		autoChooser.addObject("Go Across Portcullis", new CmdGoAcrossPortcullis(drive, backArm));
+		autoChooser.addObject("Go Across Portcullis", new CmdGoAcrossPortcullis(drive, backArm));
+
 
 		
 		//shift to low gear
-		rightGearshiftPiston.setPistonOn();
-		leftGearshiftPiston.setPistonOn();
-		inHighGear = false;
+		shiftToLowGear();
+
 	}
 
 	@Override
@@ -300,5 +305,88 @@ public class MainFlyingSwallow extends MainClass
 
 
 
+	}
+	
+	void shiftToHighGear()
+	{
+		rightGearshiftPiston.setPistonOff();
+		leftGearshiftPiston.setPistonOff();
+		inHighGear = true;
+	}
+	
+	
+	void shiftToLowGear()
+	{
+		rightGearshiftPiston.setPistonOn();
+		leftGearshiftPiston.setPistonOn();
+		inHighGear = false;
+	}
+	
+	public class CmdUpshift extends Command
+	{
+
+		@Override
+		protected void initialize() {
+			shiftToHighGear();
+			
+		}
+
+		@Override
+		protected void execute() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		protected boolean isFinished() {
+			return timeSinceInitialized() > .5;
+		}
+
+		@Override
+		protected void end() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		protected void interrupted() {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+	
+	public class CmdDownshift extends Command
+	{
+
+		@Override
+		protected void initialize() {
+			shiftToLowGear();
+			
+		}
+
+		@Override
+		protected void execute() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		protected boolean isFinished() {
+			return timeSinceInitialized() > .5;
+		}
+
+		@Override
+		protected void end() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		protected void interrupted() {
+			// TODO Auto-generated method stub
+			
+		}
+		
 	}
 }
