@@ -3,6 +3,9 @@ package org.team3128.main;
 import org.team3128.Log;
 import org.team3128.MainClass;
 import org.team3128.RobotTemplate;
+import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossPortcullis;
+import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossShovelFries;
+import org.team3128.autonomous.programs.FlyingSwallowTestAuto;
 import org.team3128.drive.TankDrive;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
 import org.team3128.hardware.mechanisms.BackRaiserArm;
@@ -14,6 +17,7 @@ import org.team3128.listener.controller.ControllerExtreme3D;
 import org.team3128.util.units.Length;
 
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
@@ -54,7 +58,7 @@ public class MainFlyingSwallow extends MainClass
 	
 	//Air tracker code
 	final static int NUMBER_OF_AIR_TANKS = 2;
-	final static double AIR_PER_AIR_TANK = 100 ; //cm3
+	final static double AIR_PER_AIR_TANK = 574 ; //cm3
 	final static double AIR_FOR_MICRO_PISTON = AIR_PER_AIR_TANK / 140; //140 extensions/retractions per tank at 40 psi
 	final static double AIR_FOR_MEDIUM_PISTON = AIR_PER_AIR_TANK / 40; //40 extensions/retractions per tank at 40 psi
 	final static double TOTAL_STARTING_AIR = NUMBER_OF_AIR_TANKS * AIR_PER_AIR_TANK;
@@ -66,7 +70,7 @@ public class MainFlyingSwallow extends MainClass
 	boolean usingBackCamera;
 	
 	final static double HIGH_GEAR_GEAR_RATIO = .944/1;
-	final static double LOW_GEAR_GEAR_RATIO = 2.5/1;
+	final static double LOW_GEAR_GEAR_RATIO = 1/((84/20.0) * 3);
 	
 	enum IntakeState
 	{
@@ -91,7 +95,7 @@ public class MainFlyingSwallow extends MainClass
 		powerDistPanel = new PowerDistributionPanel();
 		
 		leftDriveEncoder = new QuadratureEncoderLink(0,	1, 128, false);
-		rightDriveEncoder = new QuadratureEncoderLink(3, 4, 128, true);
+		rightDriveEncoder = new QuadratureEncoderLink(2, 3, 128, true);
 		
 		leftMotors = new MotorGroup();
 		leftMotors.addMotor(new Talon(8));
@@ -124,10 +128,12 @@ public class MainFlyingSwallow extends MainClass
 		
 		backArmMotor = new CANTalon(0);
 		
-		//backArmMotor.setEncPosition(0);
-		//backArmMotor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-		
-		//backArm = new BackRaiserArm(backArmMotor);
+		backArmMotor.setEncPosition(0);
+		backArmMotor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+		backArmMotor.setForwardSoftLimit(0);
+		backArmMotor.enableForwardSoftLimit(true);
+
+		backArm = new BackRaiserArm(backArmMotor);
 	}
 
 	protected void initializeRobot(RobotTemplate robotTemplate)
@@ -138,13 +144,8 @@ public class MainFlyingSwallow extends MainClass
 		
 		robotTemplate.addListenerManager(listenerManagerExtreme);
 		
-		//leftGearshiftPiston.setPistonOff();
-		//rightGearshiftPiston.setPistonOff();
-		
 		inHighGear = false;
 		
-		//leftIntakePiston.setPistonOff();
-		//rightIntakePiston.setPistonOff();
 
         Log.info("MainFlyingSwallow", "Activating the Flying Swallow");
         Log.info("MainFlyingSwallow", "...but which one, an African or a European?");
@@ -152,12 +153,13 @@ public class MainFlyingSwallow extends MainClass
 
 	protected void initializeDisabled()
 	{
-		backArmMotor.disableControl();
 	}
 
 	protected void initializeAuto()
 	{
 		backArmMotor.changeControlMode(TalonControlMode.Position);
+		backArmMotor.clearIAccum();
+
 	}
 	
 	protected void initializeTeleop()
@@ -246,9 +248,18 @@ public class MainFlyingSwallow extends MainClass
 			backArmMotor.set(0);	
 		});
 		
-		
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN11, () -> {
+			backArmMotor.setEncPosition(0);	
+			backArmMotor.enableForwardSoftLimit(true);
+		});
+
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN12, () -> {
+			backArmMotor.enableForwardSoftLimit(false);
+		});
 
 		backArmMotor.changeControlMode(TalonControlMode.PercentVbus);
+		backArmMotor.clearIAccum();
+		backArmMotor.set(0);
 		intakeSpinner.setTarget(0);
 		intakeState = IntakeState.STOPPED;
 		
@@ -257,6 +268,15 @@ public class MainFlyingSwallow extends MainClass
 	@Override
 	protected void addAutoPrograms(SendableChooser autoChooser)
 	{
+		autoChooser.addDefault("Test Back Arm", new FlyingSwallowTestAuto(this));
+		autoChooser.addObject("Go Across Portcullis", new CmdGoAcrossPortcullis(drive, backArm));
+		autoChooser.addObject("Go Across Shovel Fries", new CmdGoAcrossShovelFries(drive, leftIntakePiston, rightIntakePiston));
+
+		
+		//shift to low gear
+		rightGearshiftPiston.setPistonOn();
+		leftGearshiftPiston.setPistonOn();
+		inHighGear = false;
 	}
 
 	@Override
@@ -272,7 +292,9 @@ public class MainFlyingSwallow extends MainClass
 		
 		SmartDashboard.putString("Current Gear", inHighGear ? "High" : "Low");
 		
-		//SmartDashboard.putNumber("Back Encoder Value:", backArm.getAngle());
+		SmartDashboard.putNumber("Back Arm Angle:", backArm.getAngle());
+		SmartDashboard.putNumber("Left Drive Enc Distance:", leftDriveEncoder.getDistanceInDegrees());
+		SmartDashboard.putNumber("Right Drive Enc Distance:", rightDriveEncoder.getDistanceInDegrees());
 		
 		SmartDashboard.putNumber("POV:", joystick.getPOV());
 

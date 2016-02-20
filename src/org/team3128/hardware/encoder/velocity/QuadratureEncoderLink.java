@@ -2,6 +2,7 @@ package org.team3128.hardware.encoder.velocity;
 
 import org.team3128.hardware.encoder.distance.IDistanceEncoder;
 
+import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
 
 /**
@@ -23,7 +24,7 @@ public class QuadratureEncoderLink implements IVelocityEncoder, IDistanceEncoder
 	 */
 	public QuadratureEncoderLink(int dataAPort, int dataBPort, double pulsesPerRevolution, boolean inverted) 
 	{
-		encoder = new Encoder(dataAPort, dataBPort);
+		encoder = new Encoder(dataAPort, dataBPort, inverted, EncodingType.k4X);
 		encoder.setDistancePerPulse(1/pulsesPerRevolution);
 	}
 

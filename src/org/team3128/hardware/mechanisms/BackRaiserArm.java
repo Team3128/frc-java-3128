@@ -15,7 +15,11 @@ public class BackRaiserArm
 	}
 
 	//spins of output shaft per spin of the encoder
-	static final double GEAR_RATIO = 1 / 10.0;
+	static final double GEAR_RATIO = 1 / 180.0;
+	
+	//apparently, even if you invert the sensor and the output shaft of a Talon SRX,
+	//that doesn't cover the target position value and you still have to invert it yourself
+	static final boolean ARM_INVERTED = true;
 	
 	/**
 	 * Get the angle of the arm in degrees.  Zero is entirely back, laying on the robot.
@@ -28,6 +32,7 @@ public class BackRaiserArm
 	}
 	
 	//CTRE Mag Encoder is read in rotations
+	//see the Talon SRX Software Reference Manual
 	double encDistanceToAngle(double encoderDistance)
 	{
 		return (encoderDistance * Angle.ROTATIONS) * GEAR_RATIO;
@@ -59,11 +64,9 @@ public class BackRaiserArm
    public class CmdMoveToAngle extends Command
    {
 	   int msTillStop;
-	   long startTime;
-
 	   double targetAngle;
 	   
-	   final static double ANGLE_TOLERANCE = 1.0 * Angle.DEGREES;
+	   final static double ANGLE_TOLERANCE = 4.0 * Angle.DEGREES;
 	   //Constructor that does stuff
 	   public CmdMoveToAngle(int msTillStop, double targetAngle)
 	   {
@@ -73,21 +76,22 @@ public class BackRaiserArm
 		@Override
 		protected void initialize()
 		{
-			// Starts the counter until stopping the motors
-			startTime = System.currentTimeMillis();
 		}
 
 		@Override
 		protected void execute() {
-			armMotor.set(angleToEncoderDistance(targetAngle));
+			Log.debug("BackRaiserArm", "Moving to encoder count " + angleToEncoderDistance(targetAngle));
+			armMotor.set((ARM_INVERTED ? -1 : 1) * angleToEncoderDistance(targetAngle));
 		}
 
 	@Override
 	protected boolean isFinished() {
-		
-		if(System.currentTimeMillis()-startTime > msTillStop)
+
+		Log.debug("BackRaiserArm", "Position error: " + armMotor.getError());
+		if((timeSinceInitialized() * 1000) > msTillStop)
 		{
 			Log.unusual("CmdMoveToAngle", "Time Killed!");
+			armMotor.set(armMotor.getPosition());
 			return true;
 		}
 		

@@ -523,11 +523,11 @@ public class TankDrive
     		int norm = (int) RobotMath.sgn(_cm);
     		startTime = System.currentTimeMillis();
     		if(fullThrottle){
-    			leftMotors.setTarget(AutoUtils.speedMultiplier*norm);
-    			rightMotors.setTarget(AutoUtils.speedMultiplier*norm);
+    			leftMotors.setTarget(AutoUtils.speedMultiplier*norm * 1);
+    			rightMotors.setTarget(AutoUtils.speedMultiplier*norm * 1);
     		}else{
-    			leftMotors.setTarget(AutoUtils.speedMultiplier * .25 * norm);
-    			rightMotors.setTarget(AutoUtils.speedMultiplier * .25 * norm);
+    			leftMotors.setTarget(AutoUtils.speedMultiplier * .35 * norm);
+    			rightMotors.setTarget(AutoUtils.speedMultiplier * .35 * norm);
     		}
         }
 

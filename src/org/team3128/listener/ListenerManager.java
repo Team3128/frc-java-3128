@@ -67,8 +67,11 @@ public class ListenerManager
 	
 	private ControlValues currentControls;
 	
+	//1 indexed
+	private final int numButtons;
+
 	//zero indexed
-	private final int numButtons, numAxes, numPOVs;
+	private final int numAxes, numPOVs;
 
 	/**
 	 * Construct a ListenerManager from joysticks and their type
@@ -91,7 +94,7 @@ public class ListenerManager
 		_joysticks = new ArrayList<>();
 		Collections.addAll(_joysticks, joysticks);
 		
-		numButtons = joysticks[0].getButtonCount() - 1;
+		numButtons = joysticks[0].getButtonCount();
 		numAxes = joysticks[0].getAxisCount() - 1;
 
 		numPOVs = joysticks[0].getPOVCount() - 1;
