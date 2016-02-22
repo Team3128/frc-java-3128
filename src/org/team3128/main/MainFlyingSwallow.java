@@ -215,7 +215,7 @@ public class MainFlyingSwallow extends MainClass
 		listenerManagerExtreme.addListener(() -> 
 		{
 			intakeSpinner.setTarget(IntakeState.OUTTAKE.motorPower);
-			innerRoller.setTarget(-0.5);
+			innerRoller.setTarget(-1);
 
 		}, new POV(0, 8), new POV(0, 1), new POV(0, 2));
 		

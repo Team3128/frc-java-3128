@@ -1,5 +1,6 @@
 package org.team3128.autonomous.programs;
 
+import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossMoat;
 import org.team3128.main.MainFlyingSwallow;
 import org.team3128.util.units.Length;
 
@@ -14,5 +15,6 @@ public class FlyingSwallowTestAuto extends CommandGroup {
 		//addSequential(robot.backArm.new CmdMoveToAngle(10000, 180 * Angle.DEGREES));
 		
 		addSequential(robot.drive.new CmdMoveForward(100 * Length.cm, 5000, false));
+		addSequential(new CmdGoAcrossMoat(robot));
     }
 }
