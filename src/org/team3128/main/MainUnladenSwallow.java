@@ -9,32 +9,29 @@ import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossShovelFries;
 import org.team3128.autonomous.programs.FlyingSwallowTestAuto;
 import org.team3128.drive.TankDrive;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
+import org.team3128.hardware.lights.LightsColor;
+import org.team3128.hardware.lights.PWMLights;
 import org.team3128.hardware.mechanisms.BackRaiserArm;
+import org.team3128.hardware.mechanisms.TwoSpeedGearshift;
 import org.team3128.hardware.misc.Piston;
 import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.listener.ListenerManager;
 import org.team3128.listener.control.POV;
 import org.team3128.listener.controller.ControllerExtreme3D;
-import org.team3128.util.units.Length;
 
 import edu.wpi.first.wpilibj.CANTalon;
-import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
-import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Talon;
-import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * Main class for our 2016 robot, the Flying Swallow.
+ * Main class for our 2016 robot, the Unladen Swallow.
  */
-public class MainFlyingSwallow extends MainClass
+public abstract class MainUnladenSwallow extends MainClass
 {
 	
 	public ListenerManager listenerManagerExtreme;
@@ -54,6 +51,10 @@ public class MainFlyingSwallow extends MainClass
 	
 	public TankDrive drive;
 	
+	public PWMLights lights;
+	
+	public TwoSpeedGearshift gearshift;
+	
 	Piston leftGearshiftPiston, rightGearshiftPiston;
 	Piston leftIntakePiston, rightIntakePiston;
 	Compressor externalCompressor;
@@ -68,7 +69,6 @@ public class MainFlyingSwallow extends MainClass
 	double microPistonExtensions = 0;
 	double mediumPistonExtensions = 0;
 	
-	boolean inHighGear;
 	boolean usingBackCamera;
 	
 	final static double DRIVE_WHEELS_GEAR_RATIO = 1/((84/20.0) * 3);
@@ -89,52 +89,8 @@ public class MainFlyingSwallow extends MainClass
 	IntakeState intakeState;
 	
 	
-	public MainFlyingSwallow()
+	public MainUnladenSwallow()
 	{
-		joystick = new Joystick(0);
-		listenerManagerExtreme = new ListenerManager(joystick/*, new Joystick(1)*/);	
-		powerDistPanel = new PowerDistributionPanel();
-		
-		leftDriveEncoder = new QuadratureEncoderLink(0,	1, 128, false);
-		rightDriveEncoder = new QuadratureEncoderLink(2, 3, 128, true);
-		
-		leftMotors = new MotorGroup();
-		leftMotors.addMotor(new Talon(8));
-		leftMotors.addMotor(new Talon(9));
-		leftMotors.invert();
-		//leftMotors.setSpeedScalar(1.25);
-		
-		
-		rightMotors = new MotorGroup();
-		rightMotors.addMotor(new Talon(0));
-		rightMotors.addMotor(new Talon(1));
-		
-		intakeSpinner = new MotorGroup();
-		intakeSpinner.addMotor(new Victor(2));
-		
-		innerRoller = new MotorGroup();
-		innerRoller.addMotor(new Victor(3));
-		innerRoller.invert();
-	
-		drive = new TankDrive(leftMotors, rightMotors, leftDriveEncoder, rightDriveEncoder, 7.65 * Length.in * Math.PI, DRIVE_WHEELS_GEAR_RATIO, 26.125 * Length.in);
-		//
-		leftGearshiftPiston = new Piston(new Solenoid(2), new Solenoid(5),true,false);
-		rightGearshiftPiston = new Piston(new Solenoid(0), new Solenoid(7),true,false);
-
-		leftIntakePiston = new Piston(new Solenoid(4), new Solenoid(3),true,false);
-		rightIntakePiston = new Piston(new Solenoid(1), new Solenoid(6),true,false);
-		externalCompressor = new Compressor();
-		externalCompressor.stop();
-		
-		
-		backArmMotor = new CANTalon(0);
-		
-		backArmMotor.setEncPosition(0);
-		backArmMotor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-		backArmMotor.setForwardSoftLimit(0);
-		backArmMotor.enableForwardSoftLimit(true);
-
-		backArm = new BackRaiserArm(backArmMotor);
 	}
 
 	protected void initializeRobot(RobotTemplate robotTemplate)
@@ -144,21 +100,20 @@ public class MainFlyingSwallow extends MainClass
 		camera.startAutomaticCapture("cam0");
 		
 		robotTemplate.addListenerManager(listenerManagerExtreme);
-		
-		inHighGear = false;
-		
-
-        Log.info("MainFlyingSwallow", "Activating the Flying Swallow");
-        Log.info("MainFlyingSwallow", "...but which one, an African or a European?");
+				
+        Log.info("MainUnladenSwallow", "Activating the Unladen Swallow");
+        Log.info("MainUnladenSwallow", "...but which one, an African or a European?");
 	}
 
 	protected void initializeDisabled()
 	{
+		// clear the motor speed set in autonomous, if there was one (because the robot was estopped)
+		drive.arcadeDrive(0, 0, 0, false);
 	}
 
 	protected void initializeAuto()
 	{
-		backArmMotor.changeControlMode(TalonControlMode.Position);
+		backArm.setLocked();
 		backArmMotor.clearIAccum();
 
 	}
@@ -183,10 +138,7 @@ public class MainFlyingSwallow extends MainClass
 		
 		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN2, () -> 
 		{
-			leftGearshiftPiston.setPistonInvert();
-			rightGearshiftPiston.setPistonInvert();;
-			++microPistonExtensions;
-			inHighGear = !inHighGear;
+			gearshift.shiftToOtherGear();
 		
 		});
 		
@@ -258,12 +210,12 @@ public class MainFlyingSwallow extends MainClass
 			backArmMotor.enableForwardSoftLimit(false);
 		});
 
-		backArmMotor.changeControlMode(TalonControlMode.PercentVbus);
+		backArm.setForTeleop();
 		backArmMotor.clearIAccum();
 		backArmMotor.set(0);
 		intakeSpinner.setTarget(0);
 		intakeState = IntakeState.STOPPED;
-		
+		lights.setColor(LightsColor.blue);
 	}
 
 	@Override
@@ -280,14 +232,14 @@ public class MainFlyingSwallow extends MainClass
 
 		
 		//shift to low gear
-		shiftToLowGear();
+		gearshift.shiftToLow();
 
 	}
 
 	@Override
 	protected void updateDashboard()
 	{
-		//SmartDashboard.putNumber("Total Current: ", powerDistPanel.getTotalCurrent());
+		SmartDashboard.putNumber("Total Current: ", powerDistPanel.getTotalCurrent());
 		
 		double airLeft /* cm3 */ = TOTAL_STARTING_AIR - (microPistonExtensions * AIR_FOR_MICRO_PISTON) - (mediumPistonExtensions * AIR_FOR_MEDIUM_PISTON);
 		
@@ -295,7 +247,7 @@ public class MainFlyingSwallow extends MainClass
 		SmartDashboard.putNumber("Shifts Left:", Math.floor(airLeft / AIR_FOR_MICRO_PISTON));
 		SmartDashboard.putNumber("Intake Movements Left:", Math.floor(airLeft / AIR_FOR_MEDIUM_PISTON));
 		
-		SmartDashboard.putString("Current Gear", inHighGear ? "High" : "Low");
+		SmartDashboard.putString("Current Gear", gearshift.isInHighGear() ? "High" : "Low");
 		
 		SmartDashboard.putNumber("Back Arm Angle:", backArm.getAngle());
 		SmartDashboard.putNumber("Left Drive Enc Distance:", leftDriveEncoder.getDistanceInDegrees());
@@ -307,86 +259,58 @@ public class MainFlyingSwallow extends MainClass
 
 	}
 	
-	void shiftToHighGear()
+	/**
+	 * Command to set the position of the ball intake.
+	 * @author Jamie
+	 *
+	 */
+	public class CmdSetIntake extends Command
 	{
-		rightGearshiftPiston.setPistonOff();
-		leftGearshiftPiston.setPistonOff();
-		inHighGear = true;
-	}
-	
-	
-	void shiftToLowGear()
-	{
-		rightGearshiftPiston.setPistonOn();
-		leftGearshiftPiston.setPistonOn();
-		inHighGear = false;
-	}
-	
-	public class CmdUpshift extends Command
-	{
+		boolean setToUp;
+		
+		
+		public CmdSetIntake(boolean up)
+		{
+			setToUp = up;
+		}
 
 		@Override
-		protected void initialize() {
-			shiftToHighGear();
+		protected void initialize()
+		{
 			
 		}
 
 		@Override
 		protected void execute() {
-			// TODO Auto-generated method stub
-			
+			if(setToUp)
+			{
+				leftIntakePiston.setPistonOn();
+				rightIntakePiston.setPistonOn();
+			}
+			else
+			{
+				leftIntakePiston.setPistonOff();
+				rightIntakePiston.setPistonOff();
+			}
 		}
 
 		@Override
 		protected boolean isFinished() {
-			return timeSinceInitialized() > .5;
+			return timeSinceInitialized() > 1;
 		}
 
 		@Override
 		protected void end() {
-			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
 		protected void interrupted() {
-			// TODO Auto-generated method stub
 			
 		}
 		
 	}
 	
-	public class CmdDownshift extends Command
-	{
+	
 
-		@Override
-		protected void initialize() {
-			shiftToLowGear();
-			
-		}
-
-		@Override
-		protected void execute() {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		protected boolean isFinished() {
-			return timeSinceInitialized() > .5;
-		}
-
-		@Override
-		protected void end() {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		protected void interrupted() {
-			// TODO Auto-generated method stub
-			
-		}
-		
-	}
 }

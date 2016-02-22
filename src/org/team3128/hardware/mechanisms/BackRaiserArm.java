@@ -4,6 +4,7 @@ import org.team3128.Log;
 import org.team3128.util.units.Angle;
 
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class BackRaiserArm
@@ -43,6 +44,31 @@ public class BackRaiserArm
 		return (armAngle / GEAR_RATIO) / Angle.ROTATIONS;
 	}
 	
+	/**
+	 * Stop the motor from moving
+	 */
+	public void setLocked()
+	{
+		armMotor.changeControlMode(TalonControlMode.PercentVbus);
+		armMotor.set(0); //enable braking
+	}
+	
+	/**
+	 * Set the motor so that it can be controlled in position mode
+	 */
+	public void setForAutoControl()
+	{
+		armMotor.changeControlMode(TalonControlMode.Position);
+	}
+	
+	/**
+	 * Set the motor so that its speed can be set manually
+	 */
+	public void setForTeleop()
+	{
+		armMotor.changeControlMode(TalonControlMode.PercentVbus);
+	}
+	
 	/*
 	    *        _
 	    *       / \ 
@@ -76,12 +102,13 @@ public class BackRaiserArm
 		@Override
 		protected void initialize()
 		{
+			setForAutoControl();
+			armMotor.set((ARM_INVERTED ? -1 : 1) * angleToEncoderDistance(targetAngle));
 		}
 
 		@Override
 		protected void execute() {
 			Log.debug("BackRaiserArm", "Moving to encoder count " + angleToEncoderDistance(targetAngle));
-			armMotor.set((ARM_INVERTED ? -1 : 1) * angleToEncoderDistance(targetAngle));
 		}
 
 	@Override
@@ -91,12 +118,13 @@ public class BackRaiserArm
 		if((timeSinceInitialized() * 1000) > msTillStop)
 		{
 			Log.unusual("CmdMoveToAngle", "Time Killed!");
-			armMotor.set(armMotor.getPosition());
+			setLocked();
 			return true;
 		}
 		
 		else if(Math.abs(getAngle() - targetAngle) < ANGLE_TOLERANCE)
 		{
+			setLocked();
 			return true;
 		}
 		
