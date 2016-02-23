@@ -8,9 +8,9 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 /**
  *	This auto is used by developers to run commands to test the robot
  */
-public class FlyingSwallowTestAuto extends CommandGroup {
+public class UnladenSwallowTestAuto extends CommandGroup {
     
-	public FlyingSwallowTestAuto(MainUnladenSwallow robot)
+	public UnladenSwallowTestAuto(MainUnladenSwallow robot)
 	{
 		//addSequential(robot.backArm.new CmdMoveToAngle(10000, 180 * Angle.DEGREES));
 		

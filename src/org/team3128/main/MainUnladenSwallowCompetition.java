@@ -70,7 +70,7 @@ public  class MainUnladenSwallowCompetition extends MainUnladenSwallow
 
 		backArm = new BackRaiserArm(backArmMotor);
 		
-		lights = new PWMLights(10, 11, 12);
+		lights = new PWMLights(17, 18, 19);
 		
 	}
 	

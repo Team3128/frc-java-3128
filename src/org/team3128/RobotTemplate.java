@@ -40,6 +40,8 @@ public class RobotTemplate extends IterativeRobot
 	
 	Thread dashboardUpdateThread;
 	
+	boolean wasInAutonomous = false;
+	
 	@Override
     public void robotInit()
     {
@@ -48,6 +50,7 @@ public class RobotTemplate extends IterativeRobot
         
         if(!constructMainClass())
         {
+        	Log.fatal("RobotTemplate", "Could not construct main class!");
         	throw new RuntimeException("Could not construct main class!");
         }
         
@@ -70,6 +73,12 @@ public class RobotTemplate extends IterativeRobot
     @Override
     public void disabledInit()
     {
+    	//re-construct all of the autonomous programs so they can be run again
+    	if(wasInAutonomous)
+    	{
+    		main.addAutoPrograms(autoChooser);
+    	}
+    	
     	main.initializeDisabled();
     }
     
@@ -138,6 +147,7 @@ public class RobotTemplate extends IterativeRobot
 		CommandGroup autoCommand = (CommandGroup) autoChooser.getSelected();
 		Log.info("RobotTemplate", "Starting auto program " + autoCommand.getName());
 		autoCommand.start();
+		wasInAutonomous = true;
         Log.info("RobotTemplate", "Auto Initialization Done!");
     }
    
