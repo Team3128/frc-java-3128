@@ -1,5 +1,6 @@
 package org.team3128.autonomous.commands.defencecrossers;
 
+import org.team3128.autonomous.commands.CmdRunInParallel;
 import org.team3128.main.MainUnladenSwallow;
 import org.team3128.util.units.Length;
 
@@ -24,8 +25,8 @@ public class CmdGoAcrossRoughTerrain extends CommandGroup {
 	    * -----------------------------------------------------*/
 	 public CmdGoAcrossRoughTerrain(MainUnladenSwallow robot)
 	 {
-		 addSequential(robot.new CmdSetIntake(false));
-		 addSequential(robot.gearshift.new CmdUpshift());
+		 addSequential(new CmdRunInParallel(robot.new CmdSetIntake(false), robot.gearshift.new CmdDownshift()));
+
 		 addSequential(robot.drive.new CmdMoveForward(200 * Length.cm, 5000, .6));
 	 }
 }

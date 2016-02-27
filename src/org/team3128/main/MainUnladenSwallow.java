@@ -3,11 +3,15 @@ package org.team3128.main;
 import org.team3128.Log;
 import org.team3128.MainClass;
 import org.team3128.RobotTemplate;
+import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossLowBar;
 import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossMoat;
 import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossPortcullis;
+import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossRamparts;
+import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossRockWall;
 import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossRoughTerrain;
 import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossShovelFries;
-import org.team3128.autonomous.programs.FlyingSwallowTestAuto;
+import org.team3128.autonomous.commands.defencecrossers.StrongholdStartingPosition;
+import org.team3128.autonomous.programs.UnladenSwallowTestAuto;
 import org.team3128.drive.TankDrive;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
 import org.team3128.hardware.lights.LightsColor;
@@ -19,6 +23,7 @@ import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.listener.ListenerManager;
 import org.team3128.listener.control.POV;
 import org.team3128.listener.controller.ControllerExtreme3D;
+import org.team3128.util.GenericSendableChooser;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CameraServer;
@@ -26,6 +31,7 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -74,6 +80,9 @@ public abstract class MainUnladenSwallow extends MainClass
 	
 	final static double DRIVE_WHEELS_GEAR_RATIO = 1/((84/20.0) * 3);
 	
+	//offset from zero degrees for the heading readout
+	double robotAngleReadoutOffset;
+	
 	enum IntakeState
 	{
 		STOPPED(0),
@@ -89,9 +98,23 @@ public abstract class MainUnladenSwallow extends MainClass
 	
 	IntakeState intakeState;
 	
+	public GenericSendableChooser<CommandGroup> defenseChooser;
+	public GenericSendableChooser<StrongholdStartingPosition> fieldPositionChooser;
+	public GenericSendableChooser<CommandGroup> scoringChooser;
 	
 	public MainUnladenSwallow()
 	{
+		defenseChooser = new GenericSendableChooser<>();
+		fieldPositionChooser = new GenericSendableChooser<>();
+		scoringChooser = new GenericSendableChooser<>();
+		
+		fieldPositionChooser.addDefault("Far Right (low bar)", StrongholdStartingPosition.FAR_LEFT);
+		fieldPositionChooser.addObject("Center Right", StrongholdStartingPosition.CENTER_RIGHT);
+		fieldPositionChooser.addObject("Middle", StrongholdStartingPosition.MIDDLE);
+		fieldPositionChooser.addObject("Center Left", StrongholdStartingPosition.CENTER_LEFT);
+		fieldPositionChooser.addObject("Far Left", StrongholdStartingPosition.FAR_LEFT);
+
+
 	}
 
 	protected void initializeRobot(RobotTemplate robotTemplate)
@@ -108,7 +131,7 @@ public abstract class MainUnladenSwallow extends MainClass
 
 	protected void initializeDisabled()
 	{
-		// clear the motor speed set in autonomous, if there was one (because the robot was estopped)
+		// clear the motor speed set in autonomous, if there was one (because the robot was manually stopped)
 		drive.arcadeDrive(0, 0, 0, false);
 	}
 
@@ -162,7 +185,12 @@ public abstract class MainUnladenSwallow extends MainClass
 			leftIntakePiston.setPistonInvert();
 			rightIntakePiston.setPistonInvert();
 			
-			++mediumPistonExtensions;
+			mediumPistonExtensions += 2;
+		});
+		
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN11, () ->
+		{
+			robotAngleReadoutOffset = drive.getRobotAngle();
 		});
 		
 		listenerManagerExtreme.addListener(() -> 
@@ -222,14 +250,22 @@ public abstract class MainUnladenSwallow extends MainClass
 	@Override
 	protected void addAutoPrograms(SendableChooser autoChooser)
 	{
-		autoChooser.addDefault("Test Back Arm", new FlyingSwallowTestAuto(this));
-		autoChooser.addObject("Go Across Portcullis", new CmdGoAcrossPortcullis(drive, backArm));
-		autoChooser.addObject("Go Across Shovel Fries", new CmdGoAcrossShovelFries(drive, leftIntakePiston, rightIntakePiston));
-		autoChooser.addObject("Go Across Moat", new CmdGoAcrossMoat(this));
-		autoChooser.addObject("Go Across Rough Terrain", new CmdGoAcrossRoughTerrain(this));
-		autoChooser.addObject("Go Across Portcullis", new CmdGoAcrossPortcullis(drive, backArm));
-		autoChooser.addObject("Go Across Portcullis", new CmdGoAcrossPortcullis(drive, backArm));
+		autoChooser.addDefault("Stronghold Composite Auto", new UnladenSwallowTestAuto(this));
+		//autoChooser.addObject("Test Back Arm", new StrongholdCompositeAuto(this));
+		
+		//-------------------------------------------------------------------------------
 
+		defenseChooser.addObject("Portcullis", new CmdGoAcrossPortcullis(drive, backArm));
+		defenseChooser.addObject("Shovel Fries", new CmdGoAcrossShovelFries(drive, leftIntakePiston, rightIntakePiston));
+		defenseChooser.addObject("Moat", new CmdGoAcrossMoat(this));
+		defenseChooser.addObject("Rock Wall", new CmdGoAcrossRockWall(drive));
+		defenseChooser.addObject("Low Bar", new CmdGoAcrossLowBar(this));
+		defenseChooser.addObject("Ramparts", new CmdGoAcrossRamparts(this));
+		defenseChooser.addObject("Rough Terrain", new CmdGoAcrossRoughTerrain(this));
+
+		scoringChooser.addDefault("No Scoring", null);
+		scoringChooser.addDefault("Encoder-Based (live reckoning) Scoring", null);
+		scoringChooser.addDefault("Vision-Targeted Scoring (experimental)", null);
 
 		
 		//shift to low gear
@@ -254,7 +290,7 @@ public abstract class MainUnladenSwallow extends MainClass
 		Log.debug("MainUnladenSwallow", String.format("Right Drive Enc Distance: %f, Speed: %f", rightDriveEncoder.getDistanceInDegrees(), rightDriveEncoder.getSpeedInRPM()));
 		SmartDashboard.putNumber("Left Drive Enc Distance:", leftDriveEncoder.getDistanceInDegrees());
 		
-		SmartDashboard.putNumber("POV:", joystick.getPOV());
+		SmartDashboard.putNumber("Robot Heading", drive.getRobotAngle() - robotAngleReadoutOffset);
 
 
 

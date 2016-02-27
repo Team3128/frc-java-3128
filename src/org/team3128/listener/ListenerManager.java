@@ -99,8 +99,10 @@ public class ListenerManager
 
 		numPOVs = joysticks[0].getPOVCount() - 1;
 
-
-		currentControls = pollAllJoysticks();
+		//we don't want to do this, so that button events will still be sent if buttons are held while the robot is booting
+		//currentControls = pollAllJoysticks();
+		
+		currentControls = new ControlValues();
 	}
 
 	/**
@@ -353,6 +355,24 @@ public class ListenerManager
 			}
 		}
 
+	}
+	
+	/**
+	 * Set the joystick(s) used by the listener manager.  Replaces the current set of joysticks.
+	 * @param joysticks
+	 */
+	public void setJoysticks(Joystick...joysticks)
+	{
+		if(joysticks.length < 1)
+		{
+			throw new IllegalArgumentException("No joysticks provided!");
+		}
+		_controlValuesMutex.lock();
+		
+		_joysticks.clear();
+		Collections.addAll(_joysticks, joysticks);
+		
+		_controlValuesMutex.unlock();
 	}
 
 }

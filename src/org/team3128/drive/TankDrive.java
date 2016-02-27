@@ -9,6 +9,7 @@ import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
 import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.util.Direction;
 import org.team3128.util.RobotMath;
+import org.team3128.util.units.Angle;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -158,14 +159,44 @@ public class TankDrive
 	}
 	
 	/**
+	 * Get the estimated angle that the robot has turned since the encoders were last reset, based on the relative distances of each side.
+	 * 
+	 * Range: [0, 360)
+	 * 0 degrees is straight ahead.
+	 * @return
+	 */
+	public double getRobotAngle()
+	{
+		double leftDist = encDistanceToCm(encLeft.getDistanceInDegrees());
+		double rightDist = encDistanceToCm(encRight.getDistanceInDegrees());
+		
+		double difference = leftDist - rightDist;
+		
+		//if the right side has moved more than the left, than the value will be negative.
+		//this is OK, normalizeAngle() takes care of that.
+		return RobotMath.normalizeAngle((difference / (Math.PI * wheelBase)) * Angle.ROTATIONS);
+	}
+	
+	/**
+	 * Convert cm of robot movement to encoder movement in degrees
+	 * @param cm
+	 * @param wheelCircumference the circumference of the wheels
+	 * @return
+	 */
+	double cmToEncDegrees(double cm)
+	{
+		return (cm * 360) / (wheelCircumfrence * gearRatio);
+	}
+	
+	/**
 	 * Convert cm of robot movement to encoder rotations
 	 * @param cm
 	 * @param wheelCircumference the circumference of the wheels
 	 * @return
 	 */
-	double cmToRotations(double cm, double wheelCircumference)
+	double encDistanceToCm(double encDistance)
 	{
-		return (cm / wheelCircumference) / gearRatio;
+		return (encDistance / 360) * wheelCircumfrence * gearRatio;
 	}
 	
 	
@@ -228,7 +259,7 @@ public class TankDrive
 
         protected void initialize()
         {
-    		enc = cmToRotations((2.0* Math.PI * wheelBase)*(abs(_degs)/360.0), wheelCircumfrence);
+    		enc = cmToEncDegrees((2.0* Math.PI * wheelBase)*(abs(_degs)/360.0));
     		clearEncoders();
     		
     		sideMotors.setTarget(AutoUtils.speedMultiplier * RobotMath.sgn(_degs) * .25);
@@ -443,7 +474,7 @@ public class TankDrive
 
         protected void initialize()
         {
-    		enc = RobotMath.floor_double_int(cmToRotations((Math.PI * wheelBase)*(abs(_degs)/360.0), wheelCircumfrence));
+    		enc = RobotMath.floor_double_int(cmToEncDegrees((Math.PI * wheelBase)*(abs(_degs)/360.0)));
     		clearEncoders();
     		forwardMotors.setTarget(AutoUtils.speedMultiplier * RobotMath.sgn(_degs) * .5);
     		backwardMotors.setTarget(AutoUtils.speedMultiplier * -1 * RobotMath.sgn(_degs)* .5);
@@ -533,7 +564,7 @@ public class TankDrive
         {
         	
     		clearEncoders();
-    		enc = abs(cmToRotations(_cm, wheelCircumfrence));
+    		enc = abs(cmToEncDegrees(_cm));
     		int norm = (int) RobotMath.sgn(_cm);
     		startTime = System.currentTimeMillis();
 			leftMotors.setTarget(norm * power);
@@ -623,7 +654,7 @@ public class TankDrive
    	
    	boolean leftDone = false;
    	
-   	double powRight;
+   	double pow;
    	
    	/**
    	 * @param d how far to move.  Accepts negative values.
@@ -638,9 +669,9 @@ public class TankDrive
        	
        	this.kP = kP;
        	
-   		enc = abs(cmToRotations(_cm, wheelCircumfrence));
+   		enc = abs(cmToEncDegrees(_cm));
    		int norm = (int) RobotMath.sgn(_cm);
-   		powRight = AutoUtils.speedMultiplier * .25 * norm;
+   		pow = AutoUtils.speedMultiplier * .25 * norm;
        }
 
        protected void initialize()
@@ -648,8 +679,8 @@ public class TankDrive
    		clearEncoders();
    		startTime = System.currentTimeMillis();
    		
-   		leftMotors.setTarget(powRight); //both sides start at the same power
-   		rightMotors.setTarget(powRight);
+   		leftMotors.setTarget(pow); //both sides start at the same power
+   		rightMotors.setTarget(pow);
        }
 
        // Called repeatedly when this Command is scheduled to run
@@ -657,8 +688,8 @@ public class TankDrive
        {
        	//P calculation
        	double error = encLeft.getSpeedInRPM() -  encRight.getSpeedInRPM();
-       	powRight += kP * error;
-   		rightMotors.setTarget(powRight);
+       	pow += kP * error;
+   		rightMotors.setTarget(pow);
 
    		if(_msec != 0 && System.currentTimeMillis() - startTime >_msec)
    		{
