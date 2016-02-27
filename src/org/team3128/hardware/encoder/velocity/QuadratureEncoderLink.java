@@ -25,7 +25,7 @@ public class QuadratureEncoderLink implements IVelocityEncoder, IDistanceEncoder
 	public QuadratureEncoderLink(int dataAPort, int dataBPort, double pulsesPerRevolution, boolean inverted) 
 	{
 		encoder = new Encoder(dataAPort, dataBPort, inverted, EncodingType.k4X);
-		encoder.setDistancePerPulse(1/pulsesPerRevolution);
+		encoder.setDistancePerPulse(360/pulsesPerRevolution);
 	}
 
 	@Override

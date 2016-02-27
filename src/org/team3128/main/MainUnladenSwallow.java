@@ -80,6 +80,9 @@ public abstract class MainUnladenSwallow extends MainClass
 	
 	final static double DRIVE_WHEELS_GEAR_RATIO = 1/((84/20.0) * 3);
 	
+	//offset from zero degrees for the heading readout
+	double robotAngleReadoutOffset;
+	
 	enum IntakeState
 	{
 		STOPPED(0),
@@ -182,7 +185,12 @@ public abstract class MainUnladenSwallow extends MainClass
 			leftIntakePiston.setPistonInvert();
 			rightIntakePiston.setPistonInvert();
 			
-			++mediumPistonExtensions;
+			mediumPistonExtensions += 2;
+		});
+		
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN11, () ->
+		{
+			robotAngleReadoutOffset = drive.getRobotAngle();
 		});
 		
 		listenerManagerExtreme.addListener(() -> 
@@ -282,7 +290,7 @@ public abstract class MainUnladenSwallow extends MainClass
 		SmartDashboard.putNumber("Left Drive Enc Distance:", leftDriveEncoder.getDistanceInDegrees());
 		SmartDashboard.putNumber("Right Drive Enc Distance:", rightDriveEncoder.getDistanceInDegrees());
 		
-		SmartDashboard.putNumber("POV:", joystick.getPOV());
+		SmartDashboard.putNumber("Robot Heading", drive.getRobotAngle() - robotAngleReadoutOffset);
 
 
 
