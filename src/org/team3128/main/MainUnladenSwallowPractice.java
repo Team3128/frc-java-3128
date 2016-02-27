@@ -24,6 +24,8 @@ import edu.wpi.first.wpilibj.Victor;
  */
 public  class MainUnladenSwallowPractice extends MainUnladenSwallow
 {
+	static final double BACK_ARM_GEAR_RATIO = 1 / 180.0;
+
 	public MainUnladenSwallowPractice()
 	{
 		joystick = new Joystick(0);
@@ -69,7 +71,7 @@ public  class MainUnladenSwallowPractice extends MainUnladenSwallow
 		backArmMotor.setForwardSoftLimit(0);
 		backArmMotor.enableForwardSoftLimit(true);
 
-		backArm = new BackRaiserArm(backArmMotor);
+		backArm = new BackRaiserArm(backArmMotor, BACK_ARM_GEAR_RATIO);
 		
 		lights = new PWMLights(17, 18, 19);
 	}

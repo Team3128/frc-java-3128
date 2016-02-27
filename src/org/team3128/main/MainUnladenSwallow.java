@@ -5,6 +5,7 @@ import org.team3128.MainClass;
 import org.team3128.RobotTemplate;
 import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossMoat;
 import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossPortcullis;
+import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossRoughTerrain;
 import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossShovelFries;
 import org.team3128.autonomous.programs.FlyingSwallowTestAuto;
 import org.team3128.drive.TankDrive;
@@ -125,7 +126,7 @@ public abstract class MainUnladenSwallow extends MainClass
 		//-----------------------------------------------------------
 		listenerManagerExtreme.addListener(() ->
 		{
-			double joyX = .4 * listenerManagerExtreme.getRawAxis(ControllerExtreme3D.TWIST);
+			double joyX = .5 * listenerManagerExtreme.getRawAxis(ControllerExtreme3D.TWIST);
 			double joyY = listenerManagerExtreme.getRawAxis(ControllerExtreme3D.JOYY);
 			
 			drive.arcadeDrive(joyX, joyY, -listenerManagerExtreme.getRawAxis(ControllerExtreme3D.THROTTLE), listenerManagerExtreme.getRawBool(ControllerExtreme3D.TRIGGERDOWN));
@@ -225,7 +226,7 @@ public abstract class MainUnladenSwallow extends MainClass
 		autoChooser.addObject("Go Across Portcullis", new CmdGoAcrossPortcullis(drive, backArm));
 		autoChooser.addObject("Go Across Shovel Fries", new CmdGoAcrossShovelFries(drive, leftIntakePiston, rightIntakePiston));
 		autoChooser.addObject("Go Across Moat", new CmdGoAcrossMoat(this));
-		autoChooser.addObject("Go Across Portcullis", new CmdGoAcrossPortcullis(drive, backArm));
+		autoChooser.addObject("Go Across Rough Terrain", new CmdGoAcrossRoughTerrain(this));
 		autoChooser.addObject("Go Across Portcullis", new CmdGoAcrossPortcullis(drive, backArm));
 		autoChooser.addObject("Go Across Portcullis", new CmdGoAcrossPortcullis(drive, backArm));
 
@@ -250,8 +251,8 @@ public abstract class MainUnladenSwallow extends MainClass
 		SmartDashboard.putString("Current Gear", gearshift.isInHighGear() ? "High" : "Low");
 		
 		SmartDashboard.putNumber("Back Arm Angle:", backArm.getAngle());
+		Log.debug("MainUnladenSwallow", String.format("Right Drive Enc Distance: %f, Speed: %f", rightDriveEncoder.getDistanceInDegrees(), rightDriveEncoder.getSpeedInRPM()));
 		SmartDashboard.putNumber("Left Drive Enc Distance:", leftDriveEncoder.getDistanceInDegrees());
-		SmartDashboard.putNumber("Right Drive Enc Distance:", rightDriveEncoder.getDistanceInDegrees());
 		
 		SmartDashboard.putNumber("POV:", joystick.getPOV());
 

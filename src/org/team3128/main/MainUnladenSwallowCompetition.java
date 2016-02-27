@@ -26,7 +26,7 @@ public  class MainUnladenSwallowCompetition extends MainUnladenSwallow
 	public MainUnladenSwallowCompetition()
 	{
 		joystick = new Joystick(0);
-		listenerManagerExtreme = new ListenerManager(joystick/*, new Joystick(1)*/);	
+		listenerManagerExtreme = new ListenerManager(joystick, new Joystick(1));	
 		powerDistPanel = new PowerDistributionPanel();
 		
 		leftDriveEncoder = new QuadratureEncoderLink(0,	1, 128, false);
@@ -40,6 +40,7 @@ public  class MainUnladenSwallowCompetition extends MainUnladenSwallow
 		rightMotors = new MotorGroup();
 		rightMotors.addMotor(new Talon(3));
 		rightMotors.addMotor(new Talon(4));
+		rightMotors.setSpeedScalar(.9);
 		
 		intakeSpinner = new MotorGroup();
 		intakeSpinner.addMotor(new Talon(5));
@@ -68,7 +69,7 @@ public  class MainUnladenSwallowCompetition extends MainUnladenSwallow
 		backArmMotor.setForwardSoftLimit(0);
 		backArmMotor.enableForwardSoftLimit(true);
 
-		backArm = new BackRaiserArm(backArmMotor);
+		backArm = new BackRaiserArm(backArmMotor, 1/180);
 		
 		lights = new PWMLights(10, 11, 12);
 		

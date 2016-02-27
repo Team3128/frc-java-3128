@@ -11,12 +11,13 @@ public class BackRaiserArm
 {
 	CANTalon armMotor;
 	
-	public BackRaiserArm(CANTalon armMotor) {
+	public BackRaiserArm(CANTalon armMotor, double gearRatio) {
 		this.armMotor = armMotor;
+		this.gearRatio = gearRatio;
 	}
 
 	//spins of output shaft per spin of the encoder
-	static final double GEAR_RATIO = 1 / 180.0;
+	private double gearRatio;
 	
 	//apparently, even if you invert the sensor and the output shaft of a Talon SRX,
 	//that doesn't cover the target position value and you still have to invert it yourself
@@ -36,12 +37,12 @@ public class BackRaiserArm
 	//see the Talon SRX Software Reference Manual
 	double encDistanceToAngle(double encoderDistance)
 	{
-		return (encoderDistance * Angle.ROTATIONS) * GEAR_RATIO;
+		return (encoderDistance * Angle.ROTATIONS) * gearRatio;
 	}
 	
 	double angleToEncoderDistance(double armAngle)
 	{
-		return (armAngle / GEAR_RATIO) / Angle.ROTATIONS;
+		return (armAngle / gearRatio) / Angle.ROTATIONS;
 	}
 	
 	/**

@@ -27,7 +27,7 @@ public class CmdGoAcrossMoat extends CommandGroup {
 		 addSequential(robot.new CmdSetIntake(false));
 		 addSequential(robot.gearshift.new CmdUpshift());
 		 addSequential(robot.drive.new CmdMoveForward(200 * Length.cm, 5000, true));
-		 addSequential(robot.new CmdDownshift());
+		 addSequential(robot.gearshift.new CmdDownshift());
 		 
 	 }
 }
