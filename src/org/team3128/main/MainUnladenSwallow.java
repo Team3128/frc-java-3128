@@ -21,6 +21,7 @@ import org.team3128.hardware.mechanisms.TwoSpeedGearshift;
 import org.team3128.hardware.misc.Piston;
 import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.listener.ListenerManager;
+import org.team3128.listener.control.Button;
 import org.team3128.listener.control.POV;
 import org.team3128.listener.controller.ControllerExtreme3D;
 import org.team3128.util.GenericSendableChooser;
@@ -42,7 +43,12 @@ public abstract class MainUnladenSwallow extends MainClass
 {
 	
 	public ListenerManager listenerManagerExtreme;
-	public Joystick joystick;
+	public Joystick leftJoystick, rightJoystick;
+	
+	//joystick object for the operator interface 
+	public Joystick launchpad;
+	public ListenerManager listenerManagerLaunchpad;
+
 	
 	public MotorGroup leftMotors;
 	public MotorGroup rightMotors;
@@ -113,7 +119,18 @@ public abstract class MainUnladenSwallow extends MainClass
 		fieldPositionChooser.addObject("Middle", StrongholdStartingPosition.MIDDLE);
 		fieldPositionChooser.addObject("Center Left", StrongholdStartingPosition.CENTER_LEFT);
 		fieldPositionChooser.addObject("Far Left", StrongholdStartingPosition.FAR_LEFT);
+		
+		SmartDashboard.putData("Field Position Chooser", fieldPositionChooser);
+		SmartDashboard.putData("Defense Chooser", defenseChooser);
+		SmartDashboard.putData("Scoring Type Chooser", scoringChooser);
 
+		rightJoystick = new Joystick(0);
+		leftJoystick = new Joystick(1);
+
+		listenerManagerExtreme = new ListenerManager(rightJoystick);	
+		
+		launchpad = new Joystick(2);
+		listenerManagerLaunchpad = new ListenerManager(launchpad);
 
 	}
 
@@ -124,7 +141,8 @@ public abstract class MainUnladenSwallow extends MainClass
 		camera.startAutomaticCapture("cam0");
 		
 		robotTemplate.addListenerManager(listenerManagerExtreme);
-				
+		robotTemplate.addListenerManager(listenerManagerLaunchpad);		
+		
         Log.info("MainUnladenSwallow", "Activating the Unladen Swallow");
         Log.info("MainUnladenSwallow", "...but which one, an African or a European?");
 	}
@@ -237,6 +255,22 @@ public abstract class MainUnladenSwallow extends MainClass
 
 		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN12, () -> {
 			backArmMotor.enableForwardSoftLimit(false);
+		});
+		
+		//-----------------------------------------------------------------
+		//joystick chooser listeners
+		//-----------------------------------------------------------------
+		
+		//switch should be plugged in to pin 3.0 on the right side of the LaunchPad
+		//active high
+		listenerManagerLaunchpad.addListener(new Button(8, true), () ->
+		{
+			listenerManagerExtreme.setJoysticks(leftJoystick);
+		});
+		
+		listenerManagerLaunchpad.addListener(new Button(8, false), () ->
+		{
+			listenerManagerExtreme.setJoysticks(rightJoystick);
 		});
 
 		backArm.setForTeleop();
