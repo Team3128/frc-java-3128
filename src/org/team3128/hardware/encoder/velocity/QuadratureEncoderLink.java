@@ -1,6 +1,7 @@
 package org.team3128.hardware.encoder.velocity;
 
 import org.team3128.hardware.encoder.distance.IDistanceEncoder;
+import org.team3128.util.units.Angle;
 
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
@@ -32,7 +33,7 @@ public class QuadratureEncoderLink implements IVelocityEncoder, IDistanceEncoder
 	public double getSpeedInRPM() {
 		
 		//getRate returns rotations / second
-		return encoder.getRate() * 60;
+		return (encoder.getRate() / Angle.ROTATIONS) * 60;
 	}
 	
 	public void clear()
