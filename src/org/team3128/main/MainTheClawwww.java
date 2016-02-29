@@ -22,13 +22,14 @@ import org.team3128.listener.ListenerManager;
 import org.team3128.listener.control.Always;
 import org.team3128.listener.controller.ControllerAttackJoy;
 import org.team3128.listener.controller.ControllerExtreme3D;
+import org.team3128.util.GenericSendableChooser;
 import org.team3128.util.RobotMath;
 import org.team3128.util.units.Length;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Talon;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -267,7 +268,7 @@ public class MainTheClawwww extends MainClass
 	}
 
 	@Override
-	protected void addAutoPrograms(SendableChooser autoChooser)
+	protected void addAutoPrograms(GenericSendableChooser<CommandGroup> autoChooser)
 	{
 		autoChooser.addDefault("Take Tote into Auto Zone", new TakeToteIntoZoneAuto(drive, frontHookMotor, lights));
 		autoChooser.addObject("Can Grab", new FarCanGrabAuto(drive, clawArm, frontHookMotor, false));

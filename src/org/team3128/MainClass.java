@@ -1,6 +1,8 @@
 package org.team3128;
 
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import org.team3128.util.GenericSendableChooser;
+
+import edu.wpi.first.wpilibj.command.CommandGroup;
 
 
 /**
@@ -27,7 +29,7 @@ public abstract class MainClass
 	 * This is called when the robot starts, after initializeRobot().
 	 * @param autoChooser
 	 */
-	protected abstract void addAutoPrograms(SendableChooser autoChooser);
+	protected abstract void addAutoPrograms(GenericSendableChooser<CommandGroup> autoChooser);
 
 	/**
 	 * Called when the robot switches into disabled mode. <br>

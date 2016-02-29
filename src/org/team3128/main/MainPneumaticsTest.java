@@ -5,11 +5,12 @@ import org.team3128.RobotTemplate;
 import org.team3128.hardware.misc.Piston;
 import org.team3128.listener.ListenerManager;
 import org.team3128.listener.controller.ControllerXbox;
+import org.team3128.util.GenericSendableChooser;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class MainPneumaticsTest extends MainClass
 {
@@ -59,7 +60,7 @@ public class MainPneumaticsTest extends MainClass
 	}
 
 	@Override
-	protected void addAutoPrograms(SendableChooser autoChooser)
+	protected void addAutoPrograms(GenericSendableChooser<CommandGroup> autoChooser)
 	{
 	}
 

@@ -11,7 +11,7 @@ import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossRockWall;
 import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossRoughTerrain;
 import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossShovelFries;
 import org.team3128.autonomous.commands.defencecrossers.StrongholdStartingPosition;
-import org.team3128.autonomous.programs.UnladenSwallowTestAuto;
+import org.team3128.autonomous.programs.StrongholdCompositeAuto;
 import org.team3128.drive.TankDrive;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
 import org.team3128.hardware.lights.LightsColor;
@@ -25,6 +25,8 @@ import org.team3128.listener.control.Button;
 import org.team3128.listener.control.POV;
 import org.team3128.listener.controller.ControllerExtreme3D;
 import org.team3128.util.GenericSendableChooser;
+import org.team3128.util.RobotMath;
+import org.team3128.util.units.Length;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CameraServer;
@@ -33,7 +35,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -89,7 +91,7 @@ public abstract class MainUnladenSwallow extends MainClass
 	//offset from zero degrees for the heading readout
 	double robotAngleReadoutOffset;
 	
-	enum IntakeState
+	public enum IntakeState
 	{
 		STOPPED(0),
 		INTAKE(1),
@@ -131,6 +133,8 @@ public abstract class MainUnladenSwallow extends MainClass
 		
 		launchpad = new Joystick(2);
 		listenerManagerLaunchpad = new ListenerManager(launchpad);
+		
+
 
 	}
 
@@ -141,7 +145,11 @@ public abstract class MainUnladenSwallow extends MainClass
 		camera.startAutomaticCapture("cam0");
 		
 		robotTemplate.addListenerManager(listenerManagerExtreme);
-		robotTemplate.addListenerManager(listenerManagerLaunchpad);		
+		robotTemplate.addListenerManager(listenerManagerLaunchpad);	
+		
+		//must run after subclass constructors
+		drive = new TankDrive(leftMotors, rightMotors, leftDriveEncoder, rightDriveEncoder, 7.65 * Length.in * Math.PI, DRIVE_WHEELS_GEAR_RATIO, 30 * Length.in);
+
 		
         Log.info("MainUnladenSwallow", "Activating the Unladen Swallow");
         Log.info("MainUnladenSwallow", "...but which one, an African or a European?");
@@ -157,7 +165,8 @@ public abstract class MainUnladenSwallow extends MainClass
 	{
 		backArm.setLocked();
 		backArmMotor.clearIAccum();
-
+		
+		Scheduler.getInstance().add(new StrongholdCompositeAuto(this));
 	}
 	
 	protected void initializeTeleop()
@@ -282,24 +291,23 @@ public abstract class MainUnladenSwallow extends MainClass
 	}
 
 	@Override
-	protected void addAutoPrograms(SendableChooser autoChooser)
+	protected void addAutoPrograms(GenericSendableChooser<CommandGroup> autoChooser)
 	{
-		autoChooser.addDefault("Stronghold Composite Auto", new UnladenSwallowTestAuto(this));
 		//autoChooser.addObject("Test Back Arm", new StrongholdCompositeAuto(this));
 		
 		//-------------------------------------------------------------------------------
 
 		defenseChooser.addObject("Portcullis", new CmdGoAcrossPortcullis(drive, backArm));
-		defenseChooser.addObject("Shovel Fries", new CmdGoAcrossShovelFries(drive, leftIntakePiston, rightIntakePiston));
+		defenseChooser.addObject("Shovel Fries", new CmdGoAcrossShovelFries(this));
 		defenseChooser.addObject("Moat", new CmdGoAcrossMoat(this));
-		defenseChooser.addObject("Rock Wall", new CmdGoAcrossRockWall(drive));
+		defenseChooser.addObject("Rock Wall", new CmdGoAcrossRockWall(this));
 		defenseChooser.addObject("Low Bar", new CmdGoAcrossLowBar(this));
 		defenseChooser.addObject("Ramparts", new CmdGoAcrossRamparts(this));
 		defenseChooser.addObject("Rough Terrain", new CmdGoAcrossRoughTerrain(this));
 
-		scoringChooser.addDefault("No Scoring", null);
+		scoringChooser.addObject("No Scoring", null);
 		scoringChooser.addDefault("Encoder-Based (live reckoning) Scoring", null);
-		scoringChooser.addDefault("Vision-Targeted Scoring (experimental)", null);
+		scoringChooser.addObject("Vision-Targeted Scoring (experimental)", null);
 
 		
 		//shift to low gear
@@ -321,10 +329,10 @@ public abstract class MainUnladenSwallow extends MainClass
 		SmartDashboard.putString("Current Gear", gearshift.isInHighGear() ? "High" : "Low");
 		
 		SmartDashboard.putNumber("Back Arm Angle:", backArm.getAngle());
-		Log.debug("MainUnladenSwallow", String.format("Right Drive Enc Distance: %f, Speed: %f", rightDriveEncoder.getDistanceInDegrees(), rightDriveEncoder.getSpeedInRPM()));
+		//Log.debug("MainUnladenSwallow", String.format("Right Drive Enc Distance: %f, Speed: %f", rightDriveEncoder.getDistanceInDegrees(), rightDriveEncoder.getSpeedInRPM()));
 		SmartDashboard.putNumber("Left Drive Enc Distance:", leftDriveEncoder.getDistanceInDegrees());
 		
-		SmartDashboard.putNumber("Robot Heading", drive.getRobotAngle() - robotAngleReadoutOffset);
+		SmartDashboard.putNumber("Robot Heading", RobotMath.normalizeAngle(drive.getRobotAngle() - robotAngleReadoutOffset));
 
 
 

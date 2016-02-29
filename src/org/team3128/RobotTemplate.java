@@ -9,11 +9,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import org.team3128.listener.ListenerManager;
+import org.team3128.util.GenericSendableChooser;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /*
@@ -34,7 +34,7 @@ public class RobotTemplate extends IterativeRobot
 {
 	MainClass main;
 	ArrayList<ListenerManager> listenerManagers = new ArrayList<ListenerManager>();
-	SendableChooser autoChooser;
+	GenericSendableChooser<CommandGroup> autoChooser;
 	
 	int dashboardUpdateWavelength = 50;
 	
@@ -57,9 +57,13 @@ public class RobotTemplate extends IterativeRobot
         main.initializeRobot(this);
         
         Log.info("RobotTemplate", "Setting Up Autonomous Chooser...");
-		autoChooser = new SendableChooser();
+		autoChooser = new GenericSendableChooser<>();
         main.addAutoPrograms(autoChooser);
-        SmartDashboard.putData("autoChooser", autoChooser);
+        
+        if(autoChooser.getLength() < 1)
+        {
+            SmartDashboard.putData("autoChooser", autoChooser);
+        }
         
         Log.info("RobotTemplate", "Starting Dashboard Update Thread...");
         dashboardUpdateThread = new Thread(this::updateDashboardLoop, "Dashboard Update Thread");
@@ -144,9 +148,21 @@ public class RobotTemplate extends IterativeRobot
         Log.info("RobotTemplate", "Initializing Autonomous...");
         resetListeners();
         main.initializeAuto();
-		CommandGroup autoCommand = (CommandGroup) autoChooser.getSelected();
-		Log.info("RobotTemplate", "Starting auto program " + autoCommand.getName());
-		autoCommand.start();
+        
+        if(autoChooser.getLength() > 0)
+        {
+			CommandGroup autoCommand = (CommandGroup) autoChooser.getSelected();
+			
+			if(autoCommand == null)
+			{
+				Log.fatal("RobotTemplate", "Selected autonomous was null!  Can't start autonomous!");
+			}
+			else
+			{
+				Log.info("RobotTemplate", "Starting auto program " + autoCommand.getName());
+				autoCommand.start();
+			}
+        }
 		wasInAutonomous = true;
         Log.info("RobotTemplate", "Auto Initialization Done!");
     }

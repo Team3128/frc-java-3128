@@ -1,6 +1,6 @@
 package org.team3128.autonomous.commands.defencecrossers;
 
-import org.team3128.drive.TankDrive;
+import org.team3128.main.MainUnladenSwallow;
 import org.team3128.util.units.Length;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -22,8 +22,9 @@ public class CmdGoAcrossRockWall extends CommandGroup {
 	    * Do not make any assumptions as to its behavior!
 	    * And don't blink.  Not even for a second.
 	    * -----------------------------------------------------*/
-	 public CmdGoAcrossRockWall(TankDrive drive)
+	 public CmdGoAcrossRockWall(MainUnladenSwallow robot)
 	 {
-		 addSequential(drive.new CmdMoveForward(200 * Length.cm, 5000, true));
+		 addSequential(robot.gearshift.new CmdUpshift());
+		 addSequential(robot.drive.new CmdMoveForward(340 * Length.cm, 5000, .9));
 	 }
 }

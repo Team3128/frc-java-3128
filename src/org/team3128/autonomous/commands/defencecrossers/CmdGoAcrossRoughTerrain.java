@@ -25,8 +25,8 @@ public class CmdGoAcrossRoughTerrain extends CommandGroup {
 	    * -----------------------------------------------------*/
 	 public CmdGoAcrossRoughTerrain(MainUnladenSwallow robot)
 	 {
-		 addSequential(new CmdRunInParallel(robot.new CmdSetIntake(false), robot.gearshift.new CmdDownshift()));
+		 addSequential(new CmdRunInParallel(robot.new CmdSetIntake(false), robot.gearshift.new CmdUpshift()));
 
-		 addSequential(robot.drive.new CmdMoveForward(200 * Length.cm, 5000, .6));
+		 addSequential(robot.drive.new CmdMoveForward(340 * Length.cm, 5000, true));
 	 }
 }

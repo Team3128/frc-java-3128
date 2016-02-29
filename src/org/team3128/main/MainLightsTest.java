@@ -6,10 +6,11 @@ import org.team3128.RobotTemplate;
 import org.team3128.hardware.lights.LightsColor;
 import org.team3128.hardware.lights.LightsSequence;
 import org.team3128.hardware.lights.PWMLights;
+import org.team3128.util.GenericSendableChooser;
 
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.Talon;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class MainLightsTest extends MainClass {
 
@@ -52,7 +53,7 @@ public class MainLightsTest extends MainClass {
 	}
 
 	@Override
-	protected void addAutoPrograms(SendableChooser autoChooser) {
+	protected void addAutoPrograms(GenericSendableChooser<CommandGroup> autoChooser) {
 
 	}
 

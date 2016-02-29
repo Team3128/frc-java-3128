@@ -8,11 +8,12 @@ import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.listener.IListenerCallback;
 import org.team3128.listener.ListenerManager;
 import org.team3128.listener.controller.ControllerExtreme3D;
+import org.team3128.util.GenericSendableChooser;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Victor;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -121,7 +122,7 @@ public class MainDriveHolo extends MainClass
 	}
 
 	@Override
-	protected void addAutoPrograms(SendableChooser autoChooser)
+	protected void addAutoPrograms(GenericSendableChooser<CommandGroup> autoChooser)
 	{
 	}
 

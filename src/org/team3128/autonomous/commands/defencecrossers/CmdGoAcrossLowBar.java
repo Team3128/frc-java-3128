@@ -26,6 +26,6 @@ public class CmdGoAcrossLowBar extends CommandGroup {
 	 public CmdGoAcrossLowBar(MainUnladenSwallow robot)
 	 {
 		 addSequential(new CmdRunInParallel(robot.new CmdSetIntake(false), robot.gearshift.new CmdDownshift()));
-		 addSequential(robot.drive.new CmdMoveForward(200 * Length.cm, 5000, false));
+		 addSequential(robot.drive.new CmdMoveForward(340 * Length.cm, 6000, .5));
 	 }
 }

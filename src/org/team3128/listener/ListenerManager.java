@@ -100,9 +100,9 @@ public class ListenerManager
 		numPOVs = joysticks[0].getPOVCount() - 1;
 
 		//we don't want to do this, so that button events will still be sent if buttons are held while the robot is booting
-		//currentControls = pollAllJoysticks();
+		currentControls = pollAllJoysticks();
 		
-		currentControls = new ControlValues();
+		//currentControls = new ControlValues();
 	}
 
 	/**

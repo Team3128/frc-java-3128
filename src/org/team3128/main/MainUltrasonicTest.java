@@ -7,10 +7,11 @@ import org.team3128.hardware.ultrasonic.MaxSonar;
 import org.team3128.hardware.ultrasonic.MaxSonar.Resolution;
 import org.team3128.listener.ListenerManager;
 import org.team3128.listener.controller.ControllerXbox;
+import org.team3128.util.GenericSendableChooser;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SerialPort.Port;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class MainUltrasonicTest extends MainClass {
 
@@ -32,7 +33,7 @@ public class MainUltrasonicTest extends MainClass {
 	}
 
 	@Override
-	protected void addAutoPrograms(SendableChooser autoChooser) {
+	protected void addAutoPrograms(GenericSendableChooser<CommandGroup> autoChooser) {
 
 	}
 

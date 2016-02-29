@@ -150,4 +150,13 @@ public class GenericSendableChooser<T> implements Sendable {
   public ITable getTable() {
     return table;
   }
+  
+  /**
+   * Get the number of items in the chooser
+   * @return
+   */
+  public int getLength()
+  {
+	  return values.size();
+  }
 }

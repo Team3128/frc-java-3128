@@ -542,7 +542,7 @@ public class TankDrive
         {
         	_cm = d;
         	
-        	power = fullSpeed ? 1 : .30;
+        	power = fullSpeed ? 1 : .40;
         	
         	_msec = msec;
         }
