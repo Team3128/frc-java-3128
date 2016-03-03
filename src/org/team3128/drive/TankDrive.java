@@ -174,7 +174,7 @@ public class TankDrive
 		
 		//if the right side has moved more than the left, than the value will be negative.
 		//this is OK, normalizeAngle() takes care of that.
-		return RobotMath.normalizeAngle((difference / (Math.PI * wheelBase)) * Angle.ROTATIONS);
+		return RobotMath.normalizeAngle((difference / (2 * Math.PI * wheelBase)) * Angle.ROTATIONS);
 	}
 	
 	/**
@@ -510,6 +510,9 @@ public class TankDrive
         	
         }
     }
+    
+    
+    
     /**
      * Command to move forward the given amount of centimeters
      */
@@ -542,7 +545,7 @@ public class TankDrive
         {
         	_cm = d;
         	
-        	power = fullSpeed ? 1 : .40;
+        	power = fullSpeed ? 1 : .50;
         	
         	_msec = msec;
         }

@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
  * @author Jamie
  *
  */
-public class CmdScoreEncoders extends CommandGroup
+public class CmdScoreEncoders extends CommandGroup 
 {
 	MainUnladenSwallow robot;
 
@@ -27,9 +27,10 @@ public class CmdScoreEncoders extends CommandGroup
 		 switch(startingPosition)
 		 {
 		 case FAR_LEFT:
-			 addSequential(robot.drive.new CmdMoveForward(7 * Length.ft, 5000, .45));
+			 addSequential(robot.drive.new CmdMoveForward(6 * Length.ft, 5000, .45));
 			 addSequential(robot.drive.new CmdInPlaceTurn(45, 2000, Direction.RIGHT));
-			 addSequential(robot.drive.new CmdMoveForward(10 * Length.ft, 2000, .45));
+			 addSequential(robot.drive.new CmdMoveForward(10 * Length.ft, 10000, .45));
+			 addSequential(robot.new CmdMoveRollers(3000,true));
 			 break;
 		 case CENTER_LEFT:
 			 addSequential(robot.drive.new CmdMoveForward(250 * Length.cm, 5000, .3));
@@ -71,6 +72,7 @@ public class CmdScoreEncoders extends CommandGroup
 			 robot.intakeSpinner.setTarget(MainUnladenSwallow.IntakeState.STOPPED.motorPower);
 		 }));
 	}
+
 
 
 }

@@ -306,7 +306,7 @@ public abstract class MainUnladenSwallow extends MainClass
 		defenseChooser.addObject("Rough Terrain", new CmdGoAcrossRoughTerrain(this));
 
 		scoringChooser.addObject("No Scoring", null);
-		scoringChooser.addDefault("Encoder-Based (live reckoning) Scoring", null);
+		scoringChooser.addDefault("Encoder-Based (live reckoning) Scoring", new CommandGroup());
 		scoringChooser.addObject("Vision-Targeted Scoring (experimental)", null);
 
 		
@@ -338,6 +338,64 @@ public abstract class MainUnladenSwallow extends MainClass
 
 	}
 	
+public class CmdMoveRollers extends Command {
+
+    	int _msec;
+    	long startTime;
+    	//dir is for direction, false is in, true is out
+    	boolean dir;
+    	
+    	public CmdMoveRollers(int msec, boolean dir){
+    		_msec = msec;
+    		dir = this.dir;
+    	}
+    	protected void initialize()
+        {
+    		startTime = System.currentTimeMillis();
+    		if(dir){
+    			innerRoller.setTarget(-0.3);
+    			intakeSpinner.setTarget(-0.3);
+    		}else{
+    			innerRoller.setTarget(0.3);
+    			intakeSpinner.setTarget(0.3);
+    		}
+        }
+
+        // Called repeatedly when this Command is scheduled to run
+        protected void execute()
+        {
+        	if(dir){
+    			innerRoller.setTarget(-0.3);
+    			intakeSpinner.setTarget(-0.3);
+    		}else{
+    			innerRoller.setTarget(0.3);
+    			intakeSpinner.setTarget(0.3);
+    		}
+        }
+
+        // Make this return true when this Command no longer needs to run execute()
+        protected boolean isFinished()
+        {
+        	if(startTime > _msec){
+        		return true;
+        	}
+            return false;
+        }
+
+        // Called once after isFinished returns true
+        protected void end()
+        {
+        	innerRoller.setTarget(0);
+        	intakeSpinner.setTarget(0);
+        }
+
+        // Called when another command which requires one or more of the same
+        // subsystems is scheduled to run
+        protected void interrupted()
+        {
+        	
+        }
+    }
 	/**
 	 * Command to set the position of the ball intake.
 	 * @author Jamie

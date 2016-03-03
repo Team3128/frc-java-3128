@@ -25,6 +25,7 @@ public class StrongholdCompositeAuto extends CommandGroup {
 			if(scorer != null)
 			{
 				addSequential(new CmdScoreEncoders(robot, startingPosition));
+				
 
 			}
 		}
