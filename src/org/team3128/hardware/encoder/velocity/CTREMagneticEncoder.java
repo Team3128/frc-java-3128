@@ -2,6 +2,7 @@ package org.team3128.hardware.encoder.velocity;
 
 import org.team3128.hardware.encoder.angular.IAngularEncoder;
 import org.team3128.hardware.encoder.distance.IDistanceEncoder;
+import org.team3128.util.units.Angle;
 
 import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.Encoder;
@@ -46,7 +47,7 @@ public class CTREMagneticEncoder implements IVelocityEncoder, IDistanceEncoder,
 	public CTREMagneticEncoder(int dataAPort, int dataBPort, int pwmPort, double pulsesPerRevolution, boolean inverted) 
 	{
 		encoder = new Encoder(dataAPort, dataBPort);
-		encoder.setDistancePerPulse(1/pulsesPerRevolution);
+		encoder.setDistancePerPulse(360/pulsesPerRevolution);
 		
 		pwmCounter = new Counter(pwmPort);
 		pwmCounter.setSemiPeriodMode(true); //only count rising edges
@@ -89,7 +90,7 @@ public class CTREMagneticEncoder implements IVelocityEncoder, IDistanceEncoder,
 	public double getAngle()
 	{
 		//from 1 to 4096 us
-		return (pwmCounter.getPeriod() - 1e-6) / 4095e-6;
+		return ((pwmCounter.getPeriod() - 1e-6) / 4095e-6) * Angle.ROTATIONS;
 	}
 
 	@Override

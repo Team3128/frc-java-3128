@@ -1,5 +1,7 @@
 package org.team3128;
 
+import edu.wpi.first.wpilibj.DriverStation;
+
 public class Log
 {
 	/**
@@ -10,6 +12,9 @@ public class Log
 	public static void fatal(String category, String message)
 	{
 		log("Fatal", category, message);
+		
+		//make it show up on the DS as well
+		DriverStation.reportError("Fatal Error: " + message, true);
 	}
 	
 	/**
@@ -20,6 +25,9 @@ public class Log
 	public static void recoverable(String category, String message)
 	{
 		log("Recoverable", category, message);
+		
+		DriverStation.reportError("Error: " + message, true);
+
 	}
 	
 	/**

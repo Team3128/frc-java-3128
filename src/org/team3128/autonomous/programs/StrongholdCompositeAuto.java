@@ -1,7 +1,10 @@
 package org.team3128.autonomous.programs;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
+import org.team3128.Log;
 import org.team3128.autonomous.commands.defencecrossers.StrongholdStartingPosition;
-import org.team3128.autonomous.commands.scorers.CmdScoreEncoders;
 import org.team3128.main.MainUnladenSwallow;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -13,7 +16,7 @@ public class StrongholdCompositeAuto extends CommandGroup {
 	public StrongholdCompositeAuto(MainUnladenSwallow robot)
 	{		
 		CommandGroup defenseCrosser = robot.defenseChooser.getSelected();
-		CommandGroup scorer = robot.scoringChooser.getSelected();
+		Class<? extends CommandGroup> scorerClass = robot.scoringChooser.getSelected();
 
 		StrongholdStartingPosition startingPosition = robot.fieldPositionChooser.getSelected();
 		
@@ -22,11 +25,23 @@ public class StrongholdCompositeAuto extends CommandGroup {
 			addSequential(defenseCrosser);
 			
 			
-			if(scorer != null)
+			if(scorerClass != null)
 			{
-				addSequential(new CmdScoreEncoders(robot, startingPosition));
-				
 
+				Constructor<? extends CommandGroup> ctor;
+				try
+				{
+					
+					ctor = scorerClass.getConstructor(MainUnladenSwallow.class, StrongholdStartingPosition.class);
+					addSequential(ctor.newInstance(robot, startingPosition));
+
+				}
+				catch(NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException| IllegalArgumentException| InvocationTargetException e1)
+				{
+					Log.recoverable("StrongholdCompositeAuto", "Could not construct second stage auto");
+					e1.printStackTrace();
+				}
+				
 			}
 		}
 		

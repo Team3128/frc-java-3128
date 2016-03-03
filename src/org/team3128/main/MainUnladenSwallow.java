@@ -11,6 +11,8 @@ import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossRockWall;
 import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossRoughTerrain;
 import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossShovelFries;
 import org.team3128.autonomous.commands.defencecrossers.StrongholdStartingPosition;
+import org.team3128.autonomous.commands.scorers.CmdScoreEncoders;
+import org.team3128.autonomous.commands.scorers.CmdScoreVision;
 import org.team3128.autonomous.programs.StrongholdCompositeAuto;
 import org.team3128.drive.TankDrive;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
@@ -88,6 +90,9 @@ public abstract class MainUnladenSwallow extends MainClass
 	
 	final static double DRIVE_WHEELS_GEAR_RATIO = 1/((84/20.0) * 3);
 	
+	//used by the vision code
+	public final static double CAMERA_HORIZONTAL_RESOLUTION = 1280;
+	
 	//offset from zero degrees for the heading readout
 	double robotAngleReadoutOffset;
 	
@@ -108,7 +113,9 @@ public abstract class MainUnladenSwallow extends MainClass
 	
 	public GenericSendableChooser<CommandGroup> defenseChooser;
 	public GenericSendableChooser<StrongholdStartingPosition> fieldPositionChooser;
-	public GenericSendableChooser<CommandGroup> scoringChooser;
+	
+	//we have to pass an argument to the constructors of these commands, so we have to instantiate them when the user presses the button.
+	public GenericSendableChooser<Class<? extends CommandGroup>> scoringChooser;
 	
 	public MainUnladenSwallow()
 	{
@@ -116,11 +123,11 @@ public abstract class MainUnladenSwallow extends MainClass
 		fieldPositionChooser = new GenericSendableChooser<>();
 		scoringChooser = new GenericSendableChooser<>();
 		
-		fieldPositionChooser.addDefault("Far Right (low bar)", StrongholdStartingPosition.FAR_LEFT);
+		fieldPositionChooser.addDefault("Far Right", StrongholdStartingPosition.FAR_LEFT);
 		fieldPositionChooser.addObject("Center Right", StrongholdStartingPosition.CENTER_RIGHT);
 		fieldPositionChooser.addObject("Middle", StrongholdStartingPosition.MIDDLE);
 		fieldPositionChooser.addObject("Center Left", StrongholdStartingPosition.CENTER_LEFT);
-		fieldPositionChooser.addObject("Far Left", StrongholdStartingPosition.FAR_LEFT);
+		fieldPositionChooser.addObject("Far Left (low bar)", StrongholdStartingPosition.FAR_LEFT);
 		
 		SmartDashboard.putData("Field Position Chooser", fieldPositionChooser);
 		SmartDashboard.putData("Defense Chooser", defenseChooser);
@@ -306,8 +313,8 @@ public abstract class MainUnladenSwallow extends MainClass
 		defenseChooser.addObject("Rough Terrain", new CmdGoAcrossRoughTerrain(this));
 
 		scoringChooser.addObject("No Scoring", null);
-		scoringChooser.addDefault("Encoder-Based (live reckoning) Scoring", new CommandGroup());
-		scoringChooser.addObject("Vision-Targeted Scoring (experimental)", null);
+		scoringChooser.addDefault("Encoder-Based (live reckoning) Scoring", CmdScoreEncoders.class);
+		scoringChooser.addObject("Vision-Targeted Scoring (experimental)", CmdScoreVision.class);
 
 		
 		//shift to low gear

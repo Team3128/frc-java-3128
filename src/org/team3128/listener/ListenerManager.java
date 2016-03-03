@@ -344,11 +344,12 @@ public class ListenerManager
 			try
 			{
 				listener.listenerCallback();
-			} catch (RuntimeException error)
+			} 
+			catch (RuntimeException error)
 			{
 				Log.recoverable(
 						"ListenerManager",
-						"Caught a " + error.toString()
+						"Caught a " + error.getClass().getSimpleName()
 								+ " from a control listener: "
 								+ error.getMessage());
 				error.printStackTrace();
