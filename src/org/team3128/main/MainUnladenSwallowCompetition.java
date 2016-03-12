@@ -10,7 +10,6 @@ import org.team3128.hardware.motor.MotorGroup;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Talon;
 
@@ -21,7 +20,6 @@ public  class MainUnladenSwallowCompetition extends MainUnladenSwallow
 {
 	public MainUnladenSwallowCompetition()
 	{
-		powerDistPanel = new PowerDistributionPanel();
 		
 		leftDriveEncoder = new QuadratureEncoderLink(0,	1, 128, false);
 		rightDriveEncoder = new QuadratureEncoderLink(2, 3, 128, true);
@@ -30,30 +28,29 @@ public  class MainUnladenSwallowCompetition extends MainUnladenSwallow
 		leftMotors.addMotor(new Talon(1));
 		leftMotors.addMotor(new Talon(2));
 		leftMotors.invert();		
+		leftMotors.setSpeedScalar(1.07);
 		
 		rightMotors = new MotorGroup();
 		rightMotors.addMotor(new Talon(3));
 		rightMotors.addMotor(new Talon(4));
-		rightMotors.setSpeedScalar(.9);
+		rightMotors.setSpeedScalar(1);
 		
 		intakeSpinner = new MotorGroup();
-		intakeSpinner.addMotor(new Talon(5));
+		intakeSpinner.addMotor(new Talon(0));
+		intakeSpinner.invert();
 		
 		innerRoller = new MotorGroup();
-		innerRoller.addMotor(new Talon(0));
-		innerRoller.invert();
+		innerRoller.addMotor(new Talon(5));
 	
 		//
-		leftGearshiftPiston = new Piston(new Solenoid(2), new Solenoid(5),true,false);
-		rightGearshiftPiston = new Piston(new Solenoid(0), new Solenoid(7),true,false);
+		leftGearshiftPiston = new Piston(new Solenoid(3), new Solenoid(5),false,false);
+		rightGearshiftPiston = new Piston(new Solenoid(2), new Solenoid(6),false,false);
 		
 		gearshift = new TwoSpeedGearshift(true, leftGearshiftPiston, rightGearshiftPiston);
 
-		leftIntakePiston = new Piston(new Solenoid(4), new Solenoid(3),true,false);
-		rightIntakePiston = new Piston(new Solenoid(1), new Solenoid(6),true,false);
-		externalCompressor = new Compressor();
-		externalCompressor.stop();
-		
+		leftIntakePiston = new Piston(new Solenoid(1), new Solenoid(4),true,false);
+		rightIntakePiston = new Piston(new Solenoid(0), new Solenoid(7),true,false);
+		compressor = new Compressor();		
 		
 		backArmMotor = new CANTalon(0);
 		
@@ -62,7 +59,7 @@ public  class MainUnladenSwallowCompetition extends MainUnladenSwallow
 		backArmMotor.setForwardSoftLimit(0);
 		backArmMotor.enableForwardSoftLimit(true);
 
-		backArm = new BackRaiserArm(backArmMotor, 1/180);
+		backArm = new BackRaiserArm(backArmMotor, 0.022428);
 		
 		lights = new PWMLights(17, 18, 19);
 		

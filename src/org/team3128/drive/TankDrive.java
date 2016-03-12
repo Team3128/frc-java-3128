@@ -648,6 +648,10 @@ public class TankDrive
    	
    	double kP;
    	
+   	double kD = .0001;
+   	
+   	double lastError = 0;
+   	
    	/**
    	 * rotations that the move will take
    	 */
@@ -664,7 +668,7 @@ public class TankDrive
    	 * @param kP The konstant of proportion.  Scales how the feedback affects the wheel speeds.
    	 * @param msec How long the move should take. If set to 0, do not time the move
    	 */
-       public CmdMoveStraightForward(double d, double kP, int msec)
+       public CmdMoveStraightForward(double d, double kP, int msec, double pow)
        {
        	_cm = d;
        	
@@ -674,7 +678,7 @@ public class TankDrive
        	
    		enc = abs(cmToEncDegrees(_cm));
    		int norm = (int) RobotMath.sgn(_cm);
-   		pow = AutoUtils.speedMultiplier * .25 * norm;
+   		this.pow = norm * pow;
        }
 
        protected void initialize()
@@ -692,6 +696,10 @@ public class TankDrive
        	//P calculation
        	double error = encLeft.getSpeedInRPM() -  encRight.getSpeedInRPM();
        	pow += kP * error;
+       	pow += kD * lastError;
+       	
+       	lastError = error;
+       	
    		rightMotors.setTarget(pow);
 
    		if(_msec != 0 && System.currentTimeMillis() - startTime >_msec)

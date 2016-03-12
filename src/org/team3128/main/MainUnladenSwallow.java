@@ -74,7 +74,7 @@ public abstract class MainUnladenSwallow extends MainClass
 	
 	Piston leftGearshiftPiston, rightGearshiftPiston;
 	Piston leftIntakePiston, rightIntakePiston;
-	Compressor externalCompressor;
+	Compressor compressor;
 	
 	//Air tracker code
 	final static int NUMBER_OF_AIR_TANKS = 2;
@@ -82,6 +82,9 @@ public abstract class MainUnladenSwallow extends MainClass
 	final static double AIR_FOR_MICRO_PISTON = AIR_PER_AIR_TANK / 140; //140 extensions/retractions per tank at 40 psi
 	final static double AIR_FOR_MEDIUM_PISTON = AIR_PER_AIR_TANK / 40; //40 extensions/retractions per tank at 40 psi
 	final static double TOTAL_STARTING_AIR = NUMBER_OF_AIR_TANKS * AIR_PER_AIR_TANK;
+	
+	
+	final static public double STRAIGHT_DRIVE_KP = .0005;
 	
 	double microPistonExtensions = 0;
 	double mediumPistonExtensions = 0;
@@ -95,6 +98,11 @@ public abstract class MainUnladenSwallow extends MainClass
 	
 	//offset from zero degrees for the heading readout
 	double robotAngleReadoutOffset;
+	
+	final static int fingerWarningFlashWavelength = 2; // in updateDashboard() ticks
+	boolean fingerWarningShowing = false;
+	
+	int fingerFlashTimeLeft = fingerWarningFlashWavelength;
 	
 	public enum IntakeState
 	{
@@ -114,6 +122,8 @@ public abstract class MainUnladenSwallow extends MainClass
 	public GenericSendableChooser<CommandGroup> defenseChooser;
 	public GenericSendableChooser<StrongholdStartingPosition> fieldPositionChooser;
 	
+	GenericSendableChooser<LightsColor> lightsChooser;
+	
 	//we have to pass an argument to the constructors of these commands, so we have to instantiate them when the user presses the button.
 	public GenericSendableChooser<Class<? extends CommandGroup>> scoringChooser;
 	
@@ -132,6 +142,12 @@ public abstract class MainUnladenSwallow extends MainClass
 		SmartDashboard.putData("Field Position Chooser", fieldPositionChooser);
 		SmartDashboard.putData("Defense Chooser", defenseChooser);
 		SmartDashboard.putData("Scoring Type Chooser", scoringChooser);
+		
+		lightsChooser = new GenericSendableChooser<>();
+		lightsChooser.addDefault("Red Lights", LightsColor.red);
+		lightsChooser.addDefault("Blue Lights", LightsColor.blue);
+
+		SmartDashboard.putData("Lights Chooser", lightsChooser);
 
 		rightJoystick = new Joystick(0);
 		leftJoystick = new Joystick(1);
@@ -147,6 +163,9 @@ public abstract class MainUnladenSwallow extends MainClass
 
 	protected void initializeRobot(RobotTemplate robotTemplate)
 	{	
+		powerDistPanel = new PowerDistributionPanel(0);
+
+		
 		CameraServer camera = CameraServer.getInstance();
 		camera.setQuality(10);
 		camera.startAutomaticCapture("cam0");
@@ -157,6 +176,7 @@ public abstract class MainUnladenSwallow extends MainClass
 		//must run after subclass constructors
 		drive = new TankDrive(leftMotors, rightMotors, leftDriveEncoder, rightDriveEncoder, 7.65 * Length.in * Math.PI, DRIVE_WHEELS_GEAR_RATIO, 30 * Length.in);
 
+		gearshift.shiftToHigh();
 		
         Log.info("MainUnladenSwallow", "Activating the Unladen Swallow");
         Log.info("MainUnladenSwallow", "...but which one, an African or a European?");
@@ -174,6 +194,8 @@ public abstract class MainUnladenSwallow extends MainClass
 		backArmMotor.clearIAccum();
 		
 		Scheduler.getInstance().add(new StrongholdCompositeAuto(this));
+		
+
 	}
 	
 	protected void initializeTeleop()
@@ -202,12 +224,12 @@ public abstract class MainUnladenSwallow extends MainClass
 		
 		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN8, () -> 
 		{
-			externalCompressor.start();
+			compressor.start();
 		});
 		
 		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN9, () -> 
 		{
-			externalCompressor.stop();
+			compressor.stop();
 			
 			//reset air counter
 			mediumPistonExtensions = 0;
@@ -244,7 +266,7 @@ public abstract class MainUnladenSwallow extends MainClass
 		listenerManagerExtreme.addListener(() -> 
 		{
 			intakeSpinner.setTarget(IntakeState.INTAKE.motorPower);
-			innerRoller.setTarget(0.5);
+			innerRoller.setTarget(.7);
 
 		}, new POV(0, 4), new POV(0, 5), new POV(0, 6));
 		
@@ -288,13 +310,24 @@ public abstract class MainUnladenSwallow extends MainClass
 		{
 			listenerManagerExtreme.setJoysticks(rightJoystick);
 		});
+		
+//		listenerManagerExtreme.addListener(Always.instance, () -> {
+//			int red = RobotMath.clampInt(RobotMath.floor_double_int(255 * (powerDistPanel.getTotalCurrent() / 30.0)), 0, 255);
+//			int green = 255 - red;
+//			
+//			LightsColor color = LightsColor.new8Bit(red, green, 0);
+//			lights.setColor(color);
+//			
+//			//Log.debug("ArmAngle", armRotateEncoder.getAngle() + " degrees");
+//		});
 
 		backArm.setForTeleop();
 		backArmMotor.clearIAccum();
 		backArmMotor.set(0);
 		intakeSpinner.setTarget(0);
 		intakeState = IntakeState.STOPPED;
-		lights.setColor(LightsColor.blue);
+		
+
 	}
 
 	@Override
@@ -304,28 +337,28 @@ public abstract class MainUnladenSwallow extends MainClass
 		
 		//-------------------------------------------------------------------------------
 
-		defenseChooser.addObject("Portcullis", new CmdGoAcrossPortcullis(drive, backArm));
+		defenseChooser.addObject("Portcullis", new CmdGoAcrossPortcullis(this));
 		defenseChooser.addObject("Shovel Fries", new CmdGoAcrossShovelFries(this));
 		defenseChooser.addObject("Moat", new CmdGoAcrossMoat(this));
 		defenseChooser.addObject("Rock Wall", new CmdGoAcrossRockWall(this));
-		defenseChooser.addObject("Low Bar", new CmdGoAcrossLowBar(this));
-		defenseChooser.addObject("Ramparts", new CmdGoAcrossRamparts(this));
+		defenseChooser.addDefault("Low Bar", new CmdGoAcrossLowBar(this));
 		defenseChooser.addObject("Rough Terrain", new CmdGoAcrossRoughTerrain(this));
+		defenseChooser.addObject("Ramparts", new CmdGoAcrossRamparts(this));
 
-		scoringChooser.addObject("No Scoring", null);
-		scoringChooser.addDefault("Encoder-Based (live reckoning) Scoring", CmdScoreEncoders.class);
+		defenseChooser.addObject("No Crossing", null);
+
+
+		scoringChooser.addDefault("No Scoring", null);
+		scoringChooser.addObject("Encoder-Based (live reckoning) Scoring", CmdScoreEncoders.class);
 		scoringChooser.addObject("Vision-Targeted Scoring (experimental)", CmdScoreVision.class);
 
-		
-		//shift to low gear
-		gearshift.shiftToLow();
 
 	}
 
 	@Override
 	protected void updateDashboard()
 	{
-		SmartDashboard.putNumber("Total Current: ", powerDistPanel.getTotalCurrent());
+		//SmartDashboard.putNumber("Total Current: ", powerDistPanel.getTotalCurrent());
 		
 		double airLeft /* cm3 */ = TOTAL_STARTING_AIR - (microPistonExtensions * AIR_FOR_MICRO_PISTON) - (mediumPistonExtensions * AIR_FOR_MEDIUM_PISTON);
 		
@@ -336,12 +369,30 @@ public abstract class MainUnladenSwallow extends MainClass
 		SmartDashboard.putString("Current Gear", gearshift.isInHighGear() ? "High" : "Low");
 		
 		SmartDashboard.putNumber("Back Arm Angle:", backArm.getAngle());
-		//Log.debug("MainUnladenSwallow", String.format("Right Drive Enc Distance: %f, Speed: %f", rightDriveEncoder.getDistanceInDegrees(), rightDriveEncoder.getSpeedInRPM()));
+		//Log.debug("MainUnladenSwallow", String.format("Back arm encoder position: %f, angle: %f", backArmMotor.getPosition(), backArm.getAngle()));
 		SmartDashboard.putNumber("Left Drive Enc Distance:", leftDriveEncoder.getDistanceInDegrees());
 		
 		SmartDashboard.putNumber("Robot Heading", RobotMath.normalizeAngle(drive.getRobotAngle() - robotAngleReadoutOffset));
-
-
+		
+		if(backArm.getAngle() < -30)
+		{
+			--fingerFlashTimeLeft;
+			if(fingerFlashTimeLeft < 1)
+			{
+				fingerFlashTimeLeft = fingerWarningFlashWavelength;
+				fingerWarningShowing = !fingerWarningShowing;
+			}
+		}
+		else
+		{
+			fingerWarningShowing = false;
+		}
+		
+		SmartDashboard.putString("Finger", fingerWarningShowing ? "Extended" : "");
+		
+		lights.setColor(lightsChooser.getSelected());
+		
+		
 
 	}
 	

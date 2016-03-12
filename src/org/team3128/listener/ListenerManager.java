@@ -68,10 +68,10 @@ public class ListenerManager
 	private ControlValues currentControls;
 	
 	//1 indexed
-	private final int numButtons;
+	private int numButtons;
 
 	//zero indexed
-	private final int numAxes, numPOVs;
+	private int numAxes, numPOVs;
 
 	/**
 	 * Construct a ListenerManager from joysticks and their type
@@ -94,10 +94,8 @@ public class ListenerManager
 		_joysticks = new ArrayList<>();
 		Collections.addAll(_joysticks, joysticks);
 		
-		numButtons = joysticks[0].getButtonCount();
-		numAxes = joysticks[0].getAxisCount() - 1;
+		recountControls();
 
-		numPOVs = joysticks[0].getPOVCount() - 1;
 
 		//we don't want to do this, so that button events will still be sent if buttons are held while the robot is booting
 		currentControls = pollAllJoysticks();
@@ -240,11 +238,23 @@ public class ListenerManager
 			for (int counter = 0; counter <= numPOVs; counter++)
 			{
 				POV pov = POV.fromWPILIbAngle(counter, currentJoystick.getPOV(counter));
-								
-				if(!(((newControls.povValues.size() - 1 > counter) && newControls.povValues.get(counter) != null) && pov.getDirectionValue() == 0))
+				if(newControls.povValues.size() - 1 >= counter)
 				{
-					newControls.povValues.add(pov);
+					POV oldValue = newControls.povValues.get(counter);
+					if(oldValue == null || oldValue.getDirectionValue() == 0)
+					{
+						newControls.povValues.add(counter, pov);
+					}
+					
+					//else, use the preexsting value
 				}
+				else
+				{
+					//add a new value
+					newControls.povValues.add(counter, pov);
+
+				}
+			
 			}
 		}
 		_controlValuesMutex.unlock();
@@ -324,6 +334,10 @@ public class ListenerManager
 		
 		for(POV oldPOVValue : currentControls.povValues)
 		{
+			if(oldPOVValue.getIndexOnJoystick() >= newValues.povValues.size())
+			{
+				break;
+			}
 			POV newPOVValue = newValues.povValues.get(oldPOVValue.getIndexOnJoystick());
 			if(!newPOVValue.equals(oldPOVValue))
 			{
@@ -373,6 +387,24 @@ public class ListenerManager
 		_joysticks.clear();
 		Collections.addAll(_joysticks, joysticks);
 		
+		_controlValuesMutex.unlock();
+	}
+	
+	/**
+	 * Under certain conditions, such as when the roborio first boots up, Joystick.getNumButtons() (and possibly the other two such functions)
+	 * can return bad data.  Call this function at a later time after the robot has a connection to re-get the correct values.
+	 * 
+	 * (called automatically by RobotTemplate)
+	 */
+	public void recountControls()
+	{
+		_controlValuesMutex.lock();
+		
+		Joystick joyToTest = _joysticks.get(0); //all joysticks are assumed to have the same number of buttons
+		numButtons = joyToTest.getButtonCount();
+		numAxes = joyToTest.getAxisCount() - 1;
+
+		numPOVs = joyToTest.getPOVCount() - 1;
 		_controlValuesMutex.unlock();
 	}
 

@@ -10,7 +10,6 @@ import org.team3128.hardware.motor.MotorGroup;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Victor;
@@ -24,7 +23,6 @@ public  class MainUnladenSwallowPractice extends MainUnladenSwallow
 
 	public MainUnladenSwallowPractice()
 	{
-		powerDistPanel = new PowerDistributionPanel();
 		
 		leftDriveEncoder = new QuadratureEncoderLink(0,	1, 128, false);
 		rightDriveEncoder = new QuadratureEncoderLink(2, 3, 128, true);
@@ -53,8 +51,7 @@ public  class MainUnladenSwallowPractice extends MainUnladenSwallow
 
 		leftIntakePiston = new Piston(new Solenoid(4), new Solenoid(3),true,false);
 		rightIntakePiston = new Piston(new Solenoid(1), new Solenoid(6),true,false);
-		externalCompressor = new Compressor();
-		externalCompressor.stop();
+		compressor = new Compressor();
 		
 		
 		backArmMotor = new CANTalon(0);

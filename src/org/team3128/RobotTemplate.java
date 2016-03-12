@@ -172,6 +172,12 @@ public class RobotTemplate extends IterativeRobot
     {
         Log.info("RobotTemplate", "Initializing Teleop...");
     	resetListeners();
+    	
+    	for(ListenerManager manager : listenerManagers)
+    	{
+    		manager.recountControls();
+    	}
+    	
     	main.initializeTeleop();
         Log.info("RobotTemplate", "Teleop Initialization Done!");
     }

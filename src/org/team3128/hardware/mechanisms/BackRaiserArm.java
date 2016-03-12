@@ -93,7 +93,7 @@ public class BackRaiserArm
 	   int msTillStop;
 	   double targetAngle;
 	   
-	   final static double ANGLE_TOLERANCE = 4.0 * Angle.DEGREES;
+	   final static double ANGLE_TOLERANCE = 6.0 * Angle.DEGREES;
 	   //Constructor that does stuff
 	   public CmdMoveToAngle(int msTillStop, double targetAngle)
 	   {
@@ -115,7 +115,7 @@ public class BackRaiserArm
 	@Override
 	protected boolean isFinished() {
 
-		Log.debug("BackRaiserArm", "Position error: " + armMotor.getError());
+		Log.debug("BackRaiserArm", "Position error: " + encDistanceToAngle(armMotor.getError()));
 		if((timeSinceInitialized() * 1000) > msTillStop)
 		{
 			Log.unusual("CmdMoveToAngle", "Time Killed!");

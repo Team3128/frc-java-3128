@@ -19,7 +19,7 @@ public class AutoUtils
 	 */
 	public static void killRobot(String cause)
 	{
-		Log.fatal("AutoUtils", "Robot killed by autonomous error: " + cause);
+		Log.fatal("AutoUtils", "Robot stopped by autonomous error: " + cause);
 		
 		//stop more commands from being run
 		Scheduler.getInstance().disable();

@@ -25,6 +25,6 @@ public class CmdGoAcrossRockWall extends CommandGroup {
 	 public CmdGoAcrossRockWall(MainUnladenSwallow robot)
 	 {
 		 addSequential(robot.gearshift.new CmdUpshift());
-		 addSequential(robot.drive.new CmdMoveForward(340 * Length.cm, 5000, .9));
+		 addSequential(robot.drive.new CmdMoveForward(500 * Length.cm, 5000, .9));
 	 }
 }

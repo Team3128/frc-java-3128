@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.team3128.Log;
 import org.team3128.autonomous.commands.defencecrossers.StrongholdStartingPosition;
 import org.team3128.main.MainUnladenSwallow;
+import org.team3128.util.Direction;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 /**
@@ -23,9 +24,13 @@ public class StrongholdCompositeAuto extends CommandGroup {
 		if(defenseCrosser != null)
 		{
 			addSequential(defenseCrosser);
-			
-			
-			if(scorerClass != null)
+						
+			if(scorerClass == null)
+			{
+				//make the robot fit for driving
+				addSequential(robot.drive.new CmdInPlaceTurn(180, 2500, Direction.LEFT));
+			}
+			else
 			{
 
 				Constructor<? extends CommandGroup> ctor;
