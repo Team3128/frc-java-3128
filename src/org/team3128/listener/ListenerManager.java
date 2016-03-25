@@ -184,6 +184,12 @@ public class ListenerManager
 	{
 		_controlValuesMutex.lock();
 		Double retval = 0.0;
+		
+		if(axis.getCode() > numAxes)
+		{
+			Log.recoverable("ListenerManager", "Axis out of bounds.  Are you using the right controller object?");
+			return 0.0;
+		}
 
 		retval = currentControls.joystickValues.get(axis);
 
