@@ -60,7 +60,7 @@ public class RobotTemplate extends IterativeRobot
 		autoChooser = new GenericSendableChooser<>();
         main.addAutoPrograms(autoChooser);
         
-        if(autoChooser.getLength() < 1)
+        if(autoChooser.getLength() > 0)
         {
             SmartDashboard.putData("autoChooser", autoChooser);
         }

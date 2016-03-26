@@ -17,12 +17,14 @@ public class StrongholdCompositeAuto extends CommandGroup {
 	public StrongholdCompositeAuto(MainUnladenSwallow robot)
 	{		
 		CommandGroup defenseCrosser = robot.defenseChooser.getSelected();
-		Class<? extends CommandGroup> scorerClass = robot.scoringChooser.getSelected();
+		//note: we can't instantiate the scorer class until now because it needs to know the field position
+		Class<? extends CommandGroup> scorerClass = robot.scoringChooser.getSelected(); 
 
 		StrongholdStartingPosition startingPosition = robot.fieldPositionChooser.getSelected();
 		
 		if(defenseCrosser != null)
 		{
+			Log.info("StrongholdCompositeAuto", "Running defense crosser: " + defenseCrosser.getClass().getCanonicalName());
 			addSequential(defenseCrosser);
 						
 			if(scorerClass == null)
@@ -32,6 +34,9 @@ public class StrongholdCompositeAuto extends CommandGroup {
 			}
 			else
 			{
+
+				
+				Log.info("StrongholdCompositeAuto", "Running scorer: " + scorerClass.getCanonicalName());
 
 				Constructor<? extends CommandGroup> ctor;
 				try

@@ -331,7 +331,7 @@ public class ListenerManager
 		for (Axis axis : newValues.joystickValues.keySet())
 		{
 			// has this particular value changed?
-			if (Math.abs(currentControls.joystickValues.get(axis) - newValues.joystickValues.get(axis)) > .0001)
+			if (Math.abs(currentControls.joystickValues.get(axis) - newValues.joystickValues.get(axis)) > .0001) //TODO there was an NPE here while practicing.  Investigate!
 			{
 				addListenersForControl(listenersToInvoke, axis);
 

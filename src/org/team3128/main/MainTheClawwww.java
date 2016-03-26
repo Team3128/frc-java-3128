@@ -8,7 +8,6 @@ import org.team3128.autonomous.programs.DriveIntoAutoZoneAuto;
 import org.team3128.autonomous.programs.DualFarCanGrabAuto;
 import org.team3128.autonomous.programs.FarCanGrabAuto;
 import org.team3128.autonomous.programs.TakeToteIntoZoneAuto;
-import org.team3128.autonomous.programs.TestAuto;
 import org.team3128.drive.TankDrive;
 import org.team3128.hardware.encoder.angular.AnalogPotentiometerEncoder;
 import org.team3128.hardware.encoder.angular.IAngularEncoder;
@@ -276,7 +275,6 @@ public class MainTheClawwww extends MainClass
 		autoChooser.addObject("Dual Can Grab", new DualFarCanGrabAuto(drive, clawArm));
 		autoChooser.addObject("Drive Into Auto Zone", new DriveIntoAutoZoneAuto(drive, lights));
 		autoChooser.addObject("Do Nothing", new DoNothingAuto(lights));
-		autoChooser.addObject("Dev Test Auto", new TestAuto());
 	}
 
 	@Override

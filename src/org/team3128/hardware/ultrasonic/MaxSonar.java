@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.SerialPort.StopBits;
  * @author Jamie
  *
  */
-public class MaxSonar extends IUltrasonic 
+public class MaxSonar implements IUltrasonic 
 {
 
 	SerialPort ultrasonicPort;
@@ -68,7 +68,18 @@ public class MaxSonar extends IUltrasonic
 		
 		sensorResolution = res; 
 		
-		ultrasonicPort = new SerialPort(9600, portToUse, 8, Parity.kNone, StopBits.kOne);
+		try
+		{
+			ultrasonicPort = new SerialPort(9600, portToUse, 8, Parity.kNone, StopBits.kOne);
+		}
+		catch(RuntimeException ex)
+		{
+			if(ex.getMessage().indexOf("Resource Busy") > -1)
+			{
+				throw new RuntimeException("Could not construct the serial port as it is in use.  Have you disabled Console Out on the RoboRIO?", ex);
+			}
+			else throw ex;
+		}
 		ultrasonicPort.setTimeout(2);
 		ultrasonicPort.setReadBufferSize(sensorResolution.bytesPerResponse);
 		
@@ -84,17 +95,17 @@ public class MaxSonar extends IUltrasonic
 		//Response looks like "R1024"
 		if(response == null || response.length() < 2)
 		{
-			Log.recoverable("MaxSonar", "Got bad response from sensor!");
+			Log.recoverable("MaxSonar", "Got bad response from sensor:\"" + (response == null ? "<null>" : response) +  "\"!");
 			return new Pair<Boolean, Integer>(Boolean.FALSE, 0);
 		}
-		Log.debug("MaxSonar", response);
+		//Log.debug("MaxSonar", response);
 		String numberPart = response.substring(1, response.length() - 1); //remove R character and carriage return
 		
 		
 		try
 		{
 			int distance = Integer.parseInt(numberPart, 10);
-			Log.debug("MaxSonar", "Measured distance as " + (distance * sensorResolution.conversionFactor) + " cm");
+			//Log.debug("MaxSonar", "Measured distance as " + (distance * sensorResolution.conversionFactor) + " cm");
 
 			return new Pair<Boolean, Integer>(Boolean.TRUE, distance);
 		}
@@ -111,7 +122,7 @@ public class MaxSonar extends IUltrasonic
 	{
 		while(true)
 		{
-			Log.debug("MaxSonar", "Waiting for response");			
+			//Log.debug("MaxSonar", "Waiting for response");			
 
 			String response;
 			
@@ -224,6 +235,17 @@ public class MaxSonar extends IUltrasonic
 			
 			
 		}
+	}
+	
+	/**
+	 * 
+	 * @return true if the sensor can "see" any objects.
+	 */
+	@Override
+	public boolean canSeeAnything()
+	{
+		double distance = getDistance();
+		return (distance <= sensorResolution.maxDistance) && (distance >= 47 * Length.cm);
 	}
 
 }

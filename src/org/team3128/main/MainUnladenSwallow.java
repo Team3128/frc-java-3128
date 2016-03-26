@@ -12,8 +12,9 @@ import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossRoughTerrain;
 import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossShovelFries;
 import org.team3128.autonomous.commands.defencecrossers.StrongholdStartingPosition;
 import org.team3128.autonomous.commands.scorers.CmdScoreEncoders;
-import org.team3128.autonomous.commands.scorers.CmdScoreVision;
+import org.team3128.autonomous.commands.scorers.CmdScoreUltrasonic;
 import org.team3128.autonomous.programs.StrongholdCompositeAuto;
+import org.team3128.autonomous.programs.TestAuto;
 import org.team3128.drive.TankDrive;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
 import org.team3128.hardware.lights.LightsColor;
@@ -22,6 +23,7 @@ import org.team3128.hardware.mechanisms.BackRaiserArm;
 import org.team3128.hardware.mechanisms.TwoSpeedGearshift;
 import org.team3128.hardware.misc.Piston;
 import org.team3128.hardware.motor.MotorGroup;
+import org.team3128.hardware.ultrasonic.MaxSonar;
 import org.team3128.listener.ListenerManager;
 import org.team3128.listener.control.Button;
 import org.team3128.listener.control.POV;
@@ -35,6 +37,7 @@ import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -75,6 +78,8 @@ public abstract class MainUnladenSwallow extends MainClass
 	Piston leftGearshiftPiston, rightGearshiftPiston;
 	Piston leftIntakePiston, rightIntakePiston;
 	Compressor compressor;
+	
+	public MaxSonar frontUltrasonic;
 	
 	//Air tracker code
 	final static int NUMBER_OF_AIR_TANKS = 2;
@@ -156,8 +161,15 @@ public abstract class MainUnladenSwallow extends MainClass
 		
 		launchpad = new Joystick(2);
 		listenerManagerLaunchpad = new ListenerManager(launchpad);
-		
-
+		try
+		{
+			frontUltrasonic = new MaxSonar(9, MaxSonar.Resolution.MM, SerialPort.Port.kOnboard);
+			frontUltrasonic.setAutoPing(true);
+		}
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
+		}
 
 	}
 
@@ -333,7 +345,7 @@ public abstract class MainUnladenSwallow extends MainClass
 	@Override
 	protected void addAutoPrograms(GenericSendableChooser<CommandGroup> autoChooser)
 	{
-		//autoChooser.addObject("Test Back Arm", new StrongholdCompositeAuto(this));
+		autoChooser.addObject("Test Auto (devs only) (that means all of us)", new TestAuto(this));
 		
 		//-------------------------------------------------------------------------------
 
@@ -350,7 +362,7 @@ public abstract class MainUnladenSwallow extends MainClass
 
 		scoringChooser.addDefault("No Scoring", null);
 		scoringChooser.addObject("Encoder-Based (live reckoning) Scoring", CmdScoreEncoders.class);
-		scoringChooser.addObject("Vision-Targeted Scoring (experimental)", CmdScoreVision.class);
+		scoringChooser.addObject("Ultrasonic & Encoder Scoring (experimental)", CmdScoreUltrasonic.class);
 
 
 	}
@@ -373,7 +385,7 @@ public abstract class MainUnladenSwallow extends MainClass
 		SmartDashboard.putNumber("Left Drive Enc Distance:", leftDriveEncoder.getDistanceInDegrees());
 		
 		SmartDashboard.putNumber("Robot Heading", RobotMath.normalizeAngle(drive.getRobotAngle() - robotAngleReadoutOffset));
-		
+		SmartDashboard.putNumber("Ultrasonic Distance:", frontUltrasonic.getDistance());
 		if(backArm.getAngle() < -30)
 		{
 			--fingerFlashTimeLeft;
