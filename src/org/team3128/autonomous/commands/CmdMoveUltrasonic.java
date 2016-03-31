@@ -1,10 +1,10 @@
 package org.team3128.autonomous.commands;
 
+import org.team3128.Log;
 import org.team3128.autonomous.AutoUtils;
 import org.team3128.drive.TankDrive;
 import org.team3128.hardware.ultrasonic.IUltrasonic;
 import org.team3128.util.RobotMath;
-import org.team3128.util.units.Length;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -41,12 +41,16 @@ public class CmdMoveUltrasonic extends Command {
 	
 	TankDrive drivetrain;
 	
+	double kP, kI;
+	
+	double errorSum;
+	double lastError;
 	/**
 	 * @param cm how far on the ultrasonic to move.
 	 * @param threshold acceptible threshold from desired distance in cm
 	 * @param msec How long the move should take. If set to 0, do not time the move
 	 */
-    public CmdMoveUltrasonic(IUltrasonic ultrasonic, double cm, double threshold, int msec)
+    public CmdMoveUltrasonic(TankDrive drivetrain, IUltrasonic ultrasonic, double cm, double threshold, int msec, double kP, double kI)
     {
     	_cm = cm;
     	
@@ -56,7 +60,10 @@ public class CmdMoveUltrasonic extends Command {
     	}
     	
     	_msec = msec;
+    	this.kP = kP;
+    	this.kI = kI;
     	
+    	this.drivetrain = drivetrain;
     	this.ultrasonic = ultrasonic;
     }
 
@@ -64,6 +71,8 @@ public class CmdMoveUltrasonic extends Command {
     {
 		drivetrain.clearEncoders();
 		startTime = System.currentTimeMillis();
+		
+		errorSum = 0;
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -74,16 +83,22 @@ public class CmdMoveUltrasonic extends Command {
 			drivetrain.stopMovement();
 			AutoUtils.killRobot("Move Overtime");
 		}
+				
+		double error = ultrasonic.getDistance() - _cm;
+		errorSum += error;
 		
-		int norm = (int) RobotMath.sgn(ultrasonic.getDistance() - _cm);
+		double output = RobotMath.clampDouble(error * kP + errorSum * kP, -.6, .6);
 		
-		drivetrain.tankDrive(AutoUtils.speedMultiplier * .25 * norm, AutoUtils.speedMultiplier * .25 * norm);
+		lastError = error;
+		Log.debug("CmdMoveUltrasonic", "Error: " + error);
+		
+		drivetrain.tankDrive(output, output);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished()
     {
-        return ((ultrasonic.getDistance() * Length.mm) - _cm) < _threshold;
+        return false;//(lastError) < _threshold;
     }
 
     // Called once after isFinished returns true

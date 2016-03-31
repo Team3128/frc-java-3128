@@ -87,14 +87,14 @@ public class MaxSonar extends IUltrasonic
 			Log.recoverable("MaxSonar", "Got bad response from sensor!");
 			return new Pair<Boolean, Integer>(Boolean.FALSE, 0);
 		}
-		Log.debug("MaxSonar", response);
+		//Log.debug("MaxSonar", response);
 		String numberPart = response.substring(1, response.length() - 1); //remove R character and carriage return
 		
 		
 		try
 		{
 			int distance = Integer.parseInt(numberPart, 10);
-			Log.debug("MaxSonar", "Measured distance as " + (distance * sensorResolution.conversionFactor) + " cm");
+			//Log.debug("MaxSonar", "Measured distance as " + (distance * sensorResolution.conversionFactor) + " cm");
 
 			return new Pair<Boolean, Integer>(Boolean.TRUE, distance);
 		}
@@ -111,7 +111,7 @@ public class MaxSonar extends IUltrasonic
 	{
 		while(true)
 		{
-			Log.debug("MaxSonar", "Waiting for response");			
+			//Log.debug("MaxSonar", "Waiting for response");			
 
 			String response;
 			

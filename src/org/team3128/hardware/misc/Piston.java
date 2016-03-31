@@ -53,7 +53,7 @@ public class Piston
     {
         solA.set(false ^ this.isInverted);
         solB.set(true ^ this.isInverted);
-        Log.debug("Piston", " set to off state");
+        //Log.debug("Piston", " set to off state");
     }
    
     /**

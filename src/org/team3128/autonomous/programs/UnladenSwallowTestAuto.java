@@ -1,8 +1,7 @@
 package org.team3128.autonomous.programs;
 
+import org.team3128.autonomous.commands.CmdMoveUltrasonic;
 import org.team3128.main.MainUnladenSwallow;
-import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossMoat;
-import org.team3128.util.units.Length;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 /**
@@ -12,9 +11,6 @@ public class UnladenSwallowTestAuto extends CommandGroup {
     
 	public UnladenSwallowTestAuto(MainUnladenSwallow robot)
 	{
-		//addSequential(robot.backArm.new CmdMoveToAngle(10000, 180 * Angle.DEGREES));
-		
-		addSequential(robot.drive.new CmdMoveForward(100 * Length.cm, 5000, false));
-		addSequential(new CmdGoAcrossMoat(robot));
+		addSequential(new CmdMoveUltrasonic(robot.drive, robot.ultrasonic, 50, 2, 30000, .001, .000001));
     }
 }

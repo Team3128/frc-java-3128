@@ -14,6 +14,7 @@ import org.team3128.autonomous.commands.defencecrossers.StrongholdStartingPositi
 import org.team3128.autonomous.commands.scorers.CmdScoreEncoders;
 import org.team3128.autonomous.commands.scorers.CmdScoreVision;
 import org.team3128.autonomous.programs.StrongholdCompositeAuto;
+import org.team3128.autonomous.programs.UnladenSwallowTestAuto;
 import org.team3128.drive.TankDrive;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
 import org.team3128.hardware.lights.LightsColor;
@@ -22,6 +23,8 @@ import org.team3128.hardware.mechanisms.BackRaiserArm;
 import org.team3128.hardware.mechanisms.TwoSpeedGearshift;
 import org.team3128.hardware.misc.Piston;
 import org.team3128.hardware.motor.MotorGroup;
+import org.team3128.hardware.ultrasonic.MaxSonar;
+import org.team3128.hardware.ultrasonic.MaxSonar.Resolution;
 import org.team3128.listener.ListenerManager;
 import org.team3128.listener.control.Button;
 import org.team3128.listener.control.POV;
@@ -35,6 +38,7 @@ import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -68,6 +72,7 @@ public abstract class MainUnladenSwallow extends MainClass
 	
 	public TankDrive drive;
 	
+	public MaxSonar ultrasonic;
 	public PWMLights lights;
 	
 	public TwoSpeedGearshift gearshift;
@@ -157,7 +162,7 @@ public abstract class MainUnladenSwallow extends MainClass
 		launchpad = new Joystick(2);
 		listenerManagerLaunchpad = new ListenerManager(launchpad);
 		
-
+		ultrasonic = new MaxSonar(9, Resolution.MM, SerialPort.Port.kOnboard);
 
 	}
 
@@ -333,7 +338,7 @@ public abstract class MainUnladenSwallow extends MainClass
 	@Override
 	protected void addAutoPrograms(GenericSendableChooser<CommandGroup> autoChooser)
 	{
-		//autoChooser.addObject("Test Back Arm", new StrongholdCompositeAuto(this));
+		autoChooser.addObject("Test Ultrasonic Movement", new UnladenSwallowTestAuto(this));
 		
 		//-------------------------------------------------------------------------------
 
@@ -373,6 +378,8 @@ public abstract class MainUnladenSwallow extends MainClass
 		SmartDashboard.putNumber("Left Drive Enc Distance:", leftDriveEncoder.getDistanceInDegrees());
 		
 		SmartDashboard.putNumber("Robot Heading", RobotMath.normalizeAngle(drive.getRobotAngle() - robotAngleReadoutOffset));
+		
+		SmartDashboard.putNumber("Ultrasnonic Distance (cm)", ultrasonic.getDistance());
 		
 		if(backArm.getAngle() < -30)
 		{
