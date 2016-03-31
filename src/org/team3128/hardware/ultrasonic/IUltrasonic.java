@@ -5,7 +5,7 @@ package org.team3128.hardware.ultrasonic;
  * @author Jamie
  *
  */
-public abstract class IUltrasonic
+public interface IUltrasonic
 {
 	/**
 	 * Gets the distance between the sensor and the thing in front of it in cm.
@@ -19,9 +19,9 @@ public abstract class IUltrasonic
 	 * 
 	 * @return true if the sensor can "see" any objects.
 	 */
-	public boolean canSeeAnything()
+	public default boolean canSeeAnything()
 	{
-		return getDistance() >= getMaxDistance();
+		return getDistance() <= getMaxDistance();
 	}
 
 	/**

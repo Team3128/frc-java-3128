@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.SerialPort.StopBits;
  * @author Jamie
  *
  */
-public class MaxSonar extends IUltrasonic 
+public class MaxSonar implements IUltrasonic 
 {
 
 	SerialPort ultrasonicPort;
@@ -68,7 +68,18 @@ public class MaxSonar extends IUltrasonic
 		
 		sensorResolution = res; 
 		
-		ultrasonicPort = new SerialPort(9600, portToUse, 8, Parity.kNone, StopBits.kOne);
+		try
+		{
+			ultrasonicPort = new SerialPort(9600, portToUse, 8, Parity.kNone, StopBits.kOne);
+		}
+		catch(RuntimeException ex)
+		{
+			if(ex.getMessage().indexOf("Resource Busy") > -1)
+			{
+				throw new RuntimeException("Could not construct the serial port as it is in use.  Have you disabled Console Out on the RoboRIO?", ex);
+			}
+			else throw ex;
+		}
 		ultrasonicPort.setTimeout(2);
 		ultrasonicPort.setReadBufferSize(sensorResolution.bytesPerResponse);
 		
@@ -84,7 +95,7 @@ public class MaxSonar extends IUltrasonic
 		//Response looks like "R1024"
 		if(response == null || response.length() < 2)
 		{
-			Log.recoverable("MaxSonar", "Got bad response from sensor!");
+			Log.recoverable("MaxSonar", "Got bad response from sensor:\"" + (response == null ? "<null>" : response) +  "\"!");
 			return new Pair<Boolean, Integer>(Boolean.FALSE, 0);
 		}
 		//Log.debug("MaxSonar", response);
@@ -224,6 +235,17 @@ public class MaxSonar extends IUltrasonic
 			
 			
 		}
+	}
+	
+	/**
+	 * 
+	 * @return true if the sensor can "see" any objects.
+	 */
+	@Override
+	public boolean canSeeAnything()
+	{
+		double distance = getDistance();
+		return (distance <= sensorResolution.maxDistance) && (distance >= 47 * Length.cm);
 	}
 
 }

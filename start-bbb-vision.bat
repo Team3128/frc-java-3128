@@ -5,6 +5,7 @@ echo.
 set TARGET_HOSTNAME=frc-beaglebone
 set USER=alarm
 set PASSWORD=alarm
+set SCRIPT=start-vision.sh
 set GRIPDIR=/home/alarm
 set GRIPFILE=active.grip
 set CONNECTION_ARGS="%USER%@%TARGET_HOSTNAME%"
@@ -23,11 +24,11 @@ if %errorlevel% equ 0 (
 	
 	tools\pscp.exe -pw %PASSWORD% "vision\%GRIPFILE%" "%CONNECTION_ARGS%:%GRIPDIR%"
 	
-	echo Starting GRIP on coprocessor
+	echo Starting GRIP script on coprocessor
 	echo -------------------------------------------------------
 	echo.
 	
-	tools\plink.exe -ssh -pw %PASSWORD% %CONNECTION_ARGS% "killall java; java -jar %GRIPDIR%/GRIP-archlinuxarm-deployable.jar %GRIPDIR%/%GRIPFILE%"
+	tools\plink.exe -ssh -pw %PASSWORD% %CONNECTION_ARGS% "%GRIPDIR%/%SCRIPT% %GRIPFILE%"
 	
 	echo. 
  ) ELSE (

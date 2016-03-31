@@ -7,11 +7,11 @@ import edu.wpi.first.wpilibj.Ultrasonic;
 /**
  * Wrapper around the WPILib Ultrasonic class.
  * 
- * Used for encoders with a ping input line and a echo return line.
+ * Used for ultrasonics with a ping input line and a echo return line.
  * @author Jamie
  *
  */
-public class DigitalUltrasonic extends IUltrasonic
+public class DigitalUltrasonic implements IUltrasonic
 {
 	private Ultrasonic ultrasonic;
 	
@@ -62,7 +62,7 @@ public class DigitalUltrasonic extends IUltrasonic
 	@Override
 	public boolean canSeeAnything()
 	{
-		return ultrasonic.isRangeValid() && super.canSeeAnything();
+		return ultrasonic.isRangeValid() && getDistance() < maxDistance;
 	}
 
 	@Override

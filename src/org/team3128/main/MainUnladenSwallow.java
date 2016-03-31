@@ -12,7 +12,7 @@ import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossRoughTerrain;
 import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossShovelFries;
 import org.team3128.autonomous.commands.defencecrossers.StrongholdStartingPosition;
 import org.team3128.autonomous.commands.scorers.CmdScoreEncoders;
-import org.team3128.autonomous.commands.scorers.CmdScoreVision;
+import org.team3128.autonomous.commands.scorers.CmdScoreUltrasonic;
 import org.team3128.autonomous.programs.StrongholdCompositeAuto;
 import org.team3128.autonomous.programs.UnladenSwallowTestAuto;
 import org.team3128.drive.TankDrive;
@@ -161,8 +161,15 @@ public abstract class MainUnladenSwallow extends MainClass
 		
 		launchpad = new Joystick(2);
 		listenerManagerLaunchpad = new ListenerManager(launchpad);
-		
-		ultrasonic = new MaxSonar(9, Resolution.MM, SerialPort.Port.kOnboard);
+		try
+		{
+			ultrasonic = new MaxSonar(9, MaxSonar.Resolution.MM, SerialPort.Port.kOnboard);
+			ultrasonic.setAutoPing(true);
+		}
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
+		}
 
 	}
 
@@ -355,7 +362,7 @@ public abstract class MainUnladenSwallow extends MainClass
 
 		scoringChooser.addDefault("No Scoring", null);
 		scoringChooser.addObject("Encoder-Based (live reckoning) Scoring", CmdScoreEncoders.class);
-		scoringChooser.addObject("Vision-Targeted Scoring (experimental)", CmdScoreVision.class);
+		scoringChooser.addObject("Ultrasonic & Encoder Scoring (experimental)", CmdScoreUltrasonic.class);
 
 
 	}
@@ -378,7 +385,7 @@ public abstract class MainUnladenSwallow extends MainClass
 		SmartDashboard.putNumber("Left Drive Enc Distance:", leftDriveEncoder.getDistanceInDegrees());
 		
 		SmartDashboard.putNumber("Robot Heading", RobotMath.normalizeAngle(drive.getRobotAngle() - robotAngleReadoutOffset));
-		
+		SmartDashboard.putNumber("Ultrasonic Distance:", ultrasonic.getDistance());
 		SmartDashboard.putNumber("Ultrasnonic Distance (cm)", ultrasonic.getDistance());
 		
 		if(backArm.getAngle() < -30)

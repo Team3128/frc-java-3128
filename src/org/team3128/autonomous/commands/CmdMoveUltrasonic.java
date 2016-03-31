@@ -4,7 +4,7 @@ import org.team3128.Log;
 import org.team3128.autonomous.AutoUtils;
 import org.team3128.drive.TankDrive;
 import org.team3128.hardware.ultrasonic.IUltrasonic;
-import org.team3128.util.RobotMath;
+import org.team3128.util.PIDConstants;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -41,16 +41,17 @@ public class CmdMoveUltrasonic extends Command {
 	
 	TankDrive drivetrain;
 	
-	double kP, kI;
+	PIDConstants pidConstants;
 	
-	double errorSum;
-	double lastError;
+	double prevError = 0;
+	double errorSum = 0;
+	
 	/**
 	 * @param cm how far on the ultrasonic to move.
 	 * @param threshold acceptible threshold from desired distance in cm
 	 * @param msec How long the move should take. If set to 0, do not time the move
 	 */
-    public CmdMoveUltrasonic(TankDrive drivetrain, IUltrasonic ultrasonic, double cm, double threshold, int msec, double kP, double kI)
+    public CmdMoveUltrasonic(IUltrasonic ultrasonic, TankDrive drivetrain, double cm, double threshold, PIDConstants pidConstants, int msec)
     {
     	_cm = cm;
     	
@@ -65,12 +66,17 @@ public class CmdMoveUltrasonic extends Command {
     	
     	this.drivetrain = drivetrain;
     	this.ultrasonic = ultrasonic;
+    	this.pidConstants = pidConstants;
+    	this.drivetrain = drivetrain;
+    	
     }
 
     protected void initialize()
     {
 		drivetrain.clearEncoders();
 		startTime = System.currentTimeMillis();
+    	ultrasonic.setAutoPing(true);
+
 		
 		errorSum = 0;
     }
@@ -83,16 +89,19 @@ public class CmdMoveUltrasonic extends Command {
 			drivetrain.stopMovement();
 			AutoUtils.killRobot("Move Overtime");
 		}
-				
-		double error = ultrasonic.getDistance() - _cm;
-		errorSum += error;
 		
-		double output = RobotMath.clampDouble(error * kP + errorSum * kP, -.6, .6);
-		
-		lastError = error;
-		Log.debug("CmdMoveUltrasonic", "Error: " + error);
-		
-		drivetrain.tankDrive(output, output);
+		if(ultrasonic.canSeeAnything())
+		{
+			double error = ultrasonic.getDistance() - _cm;
+			
+	        double output = error * pidConstants.kP + errorSum * pidConstants.kI + pidConstants.kD * (error - prevError);
+			
+	        prevError = error;
+	        errorSum += error;
+	        
+	        Log.debug("CmdMoveUltrasonic", "Error: " + error + " Output: " + output);
+			drivetrain.tankDrive(output, output);
+		}
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -105,6 +114,7 @@ public class CmdMoveUltrasonic extends Command {
     protected void end()
     {
 		drivetrain.stopMovement();
+		ultrasonic.setAutoPing(true);
     }
 
     // Called when another command which requires one or more of the same

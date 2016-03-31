@@ -184,6 +184,12 @@ public class ListenerManager
 	{
 		_controlValuesMutex.lock();
 		Double retval = 0.0;
+		
+		if(axis.getCode() > numAxes)
+		{
+			Log.recoverable("ListenerManager", "Axis out of bounds.  Are you using the right controller object?");
+			return 0.0;
+		}
 
 		retval = currentControls.joystickValues.get(axis);
 
@@ -325,7 +331,7 @@ public class ListenerManager
 		for (Axis axis : newValues.joystickValues.keySet())
 		{
 			// has this particular value changed?
-			if (Math.abs(currentControls.joystickValues.get(axis) - newValues.joystickValues.get(axis)) > .0001)
+			if (Math.abs(currentControls.joystickValues.get(axis) - newValues.joystickValues.get(axis)) > .0001) //TODO there was an NPE here while practicing.  Investigate!
 			{
 				addListenersForControl(listenersToInvoke, axis);
 
