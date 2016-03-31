@@ -90,6 +90,8 @@ public abstract class MainUnladenSwallow extends MainClass
 	
 	final static public double STRAIGHT_DRIVE_KP = .0005;
 	
+	
+	
 	double microPistonExtensions = 0;
 	double mediumPistonExtensions = 0;
 	
@@ -97,14 +99,15 @@ public abstract class MainUnladenSwallow extends MainClass
 	
 	final static double DRIVE_WHEELS_GEAR_RATIO = 1/((84/20.0) * 3);
 	
-	//used by the vision code
-	public final static double CAMERA_HORIZONTAL_RESOLUTION = 1280;
-	
 	//offset from zero degrees for the heading readout
 	double robotAngleReadoutOffset;
 	
 	final static int fingerWarningFlashWavelength = 2; // in updateDashboard() ticks
 	boolean fingerWarningShowing = false;
+	
+	boolean intakeUp = false;
+	Thread intakeSmootherThread = null;
+	boolean intakeThreadRunning;
 	
 	int fingerFlashTimeLeft = fingerWarningFlashWavelength;
 	
@@ -249,8 +252,58 @@ public abstract class MainUnladenSwallow extends MainClass
 		
 		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN10, () ->
 		{
-			leftIntakePiston.setPistonInvert();
-			rightIntakePiston.setPistonInvert();
+			if(intakeUp)
+			{
+				leftIntakePiston.setPistonOff();
+				rightIntakePiston.setPistonOff();
+				
+				// if we just set the pistons to off, it slams the intake down really hard.  
+				//instead, we try to let it coast for most of the way
+				intakeSmootherThread = new Thread (() -> 
+				{
+					try
+					{
+						Thread.sleep(100);
+					} 
+					catch (InterruptedException e) 
+					{
+						return;
+					}
+					leftIntakePiston.unlockPiston();
+					rightIntakePiston.unlockPiston();
+					
+					try
+					{
+						Thread.sleep(400);
+					} 
+					catch (InterruptedException e) 
+					{
+						return;
+					}
+					
+					leftIntakePiston.setPistonOff();
+					rightIntakePiston.setPistonOff();
+						
+					intakeThreadRunning = false;
+				});
+				
+				intakeThreadRunning = true;
+				intakeSmootherThread.start();
+			}
+			
+			else
+			{
+				if(intakeThreadRunning)
+				{
+					intakeSmootherThread.interrupt();
+					
+					//shouldn't need to join the thread, it will eventually close itself
+					
+				}
+				
+				leftIntakePiston.setPistonOn();
+				rightIntakePiston.setPistonOn();
+			}
 			
 			mediumPistonExtensions += 2;
 		});
