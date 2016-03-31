@@ -20,11 +20,24 @@ public class MainLightsTest extends MainClass {
 	
 	public PWM testPWM;
 	
-	LightsSequence lightsTestSequence;
+	public static final LightsSequence lightsRainbowSequence;
 	
+	static
+	{
+		lightsRainbowSequence = new LightsSequence();
+
+		lightsRainbowSequence.addStep(new LightsSequence.Step(LightsColor.red, 500, false));
+		lightsRainbowSequence.addStep(new LightsSequence.Step(LightsColor.orange, 500, true));
+		lightsRainbowSequence.addStep(new LightsSequence.Step(LightsColor.green, 500, true));
+		lightsRainbowSequence.addStep(new LightsSequence.Step(LightsColor.new8Bit(1, 0xff, 0xff), 500, true));
+		lightsRainbowSequence.addStep(new LightsSequence.Step(LightsColor.blue, 500, true));
+		lightsRainbowSequence.addStep(new LightsSequence.Step(LightsColor.new8Bit(0xFF, 0x7F, 0x7F), 500, true));
+		
+		lightsRainbowSequence.setRepeat(true);
+
+	}
 	public MainLightsTest() {
 		lights = new PWMLights(10, 11, 12);
-		lightsTestSequence = new LightsSequence();
 		//testMotor = new Talon(0);
 		
 		//testPWM = new PWM(0);
@@ -35,12 +48,7 @@ public class MainLightsTest extends MainClass {
 	@Override
 	protected void initializeRobot(RobotTemplate robotTemplate) {
 
-		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new8Bit(0xff, 1, 1), 500, true));
-		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new8Bit(0xff, 0xff, 1), 500, true));
-		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new8Bit(1, 0xff, 1), 500, true));
-		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new8Bit(1, 0xff, 0xff), 500, true));
-		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new8Bit(1, 1, 0xff), 500, true));
-		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new8Bit(0xff, 1, 0xff), 500, true));
+
 		/*
 		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new4Bit(0xf, 0, 0), 750, true));
 		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new8Bit(0xb0, 0x1, 0), 750, true));
@@ -49,7 +57,6 @@ public class MainLightsTest extends MainClass {
 		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new4Bit(0, 0, 0xf), 750, true));
 		lightsTestSequence.addStep(new LightsSequence.Step(LightsColor.new8Bit(0x38, 0, 0xb8), 750, true));
 		 */
-		lightsTestSequence.setRepeat(true);
 	}
 
 	@Override
@@ -78,7 +85,7 @@ public class MainLightsTest extends MainClass {
 		//testPWM.setRaw(1011);
 		//lights.setFader(LightsColor.new4Bit(9, 0xf, 0), 32, 25);
 		Log.debug("MainLightsTest", "Starting lights sequence...");
-		lights.executeSequence(lightsTestSequence);
+		lights.executeSequence(lightsRainbowSequence);
 		//lights.setFader(LightsColor.new4Bit(0xf, 0, 0));
 //		testMotor.set(1);
 //		try {

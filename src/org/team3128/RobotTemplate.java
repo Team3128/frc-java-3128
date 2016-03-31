@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import org.team3128.MainClass.RobotMode;
 import org.team3128.listener.ListenerManager;
 import org.team3128.util.GenericSendableChooser;
 
@@ -60,6 +61,8 @@ public class RobotTemplate extends IterativeRobot
 		autoChooser = new GenericSendableChooser<>();
         main.addAutoPrograms(autoChooser);
         
+        main.currentMode = RobotMode.DISABLED;
+        
         if(autoChooser.getLength() > 0)
         {
             SmartDashboard.putData("autoChooser", autoChooser);
@@ -84,6 +87,7 @@ public class RobotTemplate extends IterativeRobot
     	}
     	
     	main.initializeDisabled();
+    	main.currentMode = RobotMode.DISABLED;
     }
     
     /**
@@ -147,6 +151,7 @@ public class RobotTemplate extends IterativeRobot
     {
         Log.info("RobotTemplate", "Initializing Autonomous...");
         resetListeners();
+        main.currentMode = RobotMode.AUTONOMOUS;
         main.initializeAuto();
         
         if(autoChooser.getLength() > 0)
@@ -164,6 +169,7 @@ public class RobotTemplate extends IterativeRobot
 			}
         }
 		wasInAutonomous = true;
+		
         Log.info("RobotTemplate", "Auto Initialization Done!");
     }
    
@@ -178,6 +184,7 @@ public class RobotTemplate extends IterativeRobot
     		manager.recountControls();
     	}
     	
+    	main.currentMode = RobotMode.TELEOP;
     	main.initializeTeleop();
         Log.info("RobotTemplate", "Teleop Initialization Done!");
     }

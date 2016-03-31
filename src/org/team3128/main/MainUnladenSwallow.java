@@ -24,7 +24,6 @@ import org.team3128.hardware.mechanisms.TwoSpeedGearshift;
 import org.team3128.hardware.misc.Piston;
 import org.team3128.hardware.motor.MotorGroup;
 import org.team3128.hardware.ultrasonic.MaxSonar;
-import org.team3128.hardware.ultrasonic.MaxSonar.Resolution;
 import org.team3128.listener.ListenerManager;
 import org.team3128.listener.control.Button;
 import org.team3128.listener.control.POV;
@@ -207,7 +206,7 @@ public abstract class MainUnladenSwallow extends MainClass
 		
 		Scheduler.getInstance().add(new StrongholdCompositeAuto(this));
 		
-
+		lights.executeSequence(MainLightsTest.lightsRainbowSequence);
 	}
 	
 	protected void initializeTeleop()
@@ -374,19 +373,18 @@ public abstract class MainUnladenSwallow extends MainClass
 		
 		double airLeft /* cm3 */ = TOTAL_STARTING_AIR - (microPistonExtensions * AIR_FOR_MICRO_PISTON) - (mediumPistonExtensions * AIR_FOR_MEDIUM_PISTON);
 		
-		SmartDashboard.putNumber("Air Left (cm³):", airLeft);
-		SmartDashboard.putNumber("Shifts Left:", Math.floor(airLeft / AIR_FOR_MICRO_PISTON));
-		SmartDashboard.putNumber("Intake Movements Left:", Math.floor(airLeft / AIR_FOR_MEDIUM_PISTON));
+		//SmartDashboard.putNumber("Air Left (cm³):", airLeft);
+		//SmartDashboard.putNumber("Shifts Left:", Math.floor(airLeft / AIR_FOR_MICRO_PISTON));
+		//SmartDashboard.putNumber("Intake Movements Left:", Math.floor(airLeft / AIR_FOR_MEDIUM_PISTON));
 		
 		SmartDashboard.putString("Current Gear", gearshift.isInHighGear() ? "High" : "Low");
 		
 		SmartDashboard.putNumber("Back Arm Angle:", backArm.getAngle());
 		//Log.debug("MainUnladenSwallow", String.format("Back arm encoder position: %f, angle: %f", backArmMotor.getPosition(), backArm.getAngle()));
-		SmartDashboard.putNumber("Left Drive Enc Distance:", leftDriveEncoder.getDistanceInDegrees());
+		//SmartDashboard.putNumber("Left Drive Enc Distance:", leftDriveEncoder.getDistanceInDegrees());
 		
 		SmartDashboard.putNumber("Robot Heading", RobotMath.normalizeAngle(drive.getRobotAngle() - robotAngleReadoutOffset));
 		SmartDashboard.putNumber("Ultrasonic Distance:", ultrasonic.getDistance());
-		SmartDashboard.putNumber("Ultrasnonic Distance (cm)", ultrasonic.getDistance());
 		
 		if(backArm.getAngle() < -30)
 		{
@@ -404,7 +402,11 @@ public abstract class MainUnladenSwallow extends MainClass
 		
 		SmartDashboard.putString("Finger", fingerWarningShowing ? "Extended" : "");
 		
-		lights.setColor(lightsChooser.getSelected());
+		
+		if(getRobotMode() != RobotMode.AUTONOMOUS)
+		{
+			lights.setColor(lightsChooser.getSelected());	
+		}
 		
 		
 

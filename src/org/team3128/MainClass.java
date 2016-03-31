@@ -18,6 +18,26 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
  */
 public abstract class MainClass
 {	
+	
+	public static enum RobotMode
+	{
+		TELEOP,
+		AUTONOMOUS,
+		DISABLED
+	} 
+	
+	/**
+	 * Current mode of the robot: autonomous, teleop, or disabled.
+	 * 
+	 * Set by RobotTemplate as the robot changes state.
+	 */
+	RobotMode currentMode;
+	
+	public final RobotMode getRobotMode()
+	{
+		return currentMode;
+	}
+	
 	/**
 	 * Add the ListenerManagers to RobotTemplate and do anything else that needs to be done as soon as the robot starts.
 	 * @param robotTemplate
