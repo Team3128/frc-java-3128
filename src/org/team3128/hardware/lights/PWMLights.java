@@ -124,7 +124,7 @@ public class PWMLights
 	 */
 	private void faderLoop(LightsColor originalColor, LightsColor newColor, long time, int resolution)
 	{
-		Log.debug("PWMLights", "Fader Loop Starting");
+		//Log.debug("PWMLights", "Fader Loop Starting");
 		
 		double currentR = originalColor.getR();
 		double currentG = originalColor.getG();
@@ -155,7 +155,7 @@ public class PWMLights
 			greenLights.setRaw((int)currentG);
 			blueLights.setRaw((int)currentB);
 			
-			Log.debug("PWMLights", String.format("R: %.02f, G: %.02f, B: %.02f", currentR, currentG, currentB));
+			//Log.debug("PWMLights", String.format("R: %.02f, G: %.02f, B: %.02f", currentR, currentG, currentB));
 			
 			try
 			{
@@ -163,7 +163,7 @@ public class PWMLights
 			}
 			catch (InterruptedException e)
 			{
-				Log.debug("PWMLights", "Fader Thread Shutting Down");
+				//Log.debug("PWMLights", "Fader Thread Shutting Down");
 			}
 		}
 	}

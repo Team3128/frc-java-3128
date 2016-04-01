@@ -33,7 +33,7 @@ public  class MainUnladenSwallowCompetition extends MainUnladenSwallow
 		rightMotors = new MotorGroup();
 		rightMotors.addMotor(new Talon(3));
 		rightMotors.addMotor(new Talon(4));
-		rightMotors.setSpeedScalar(1);
+		rightMotors.setSpeedScalar(1.05);
 		
 		intakeSpinner = new MotorGroup();
 		intakeSpinner.addMotor(new Talon(0));

@@ -38,7 +38,8 @@ public class CmdMoveUltrasonic extends Command {
 	
 	long startTime;
 	
-	static final int NUM_AVERAGES = 4;
+	static final int NUM_AVERAGES = 5;
+	static final double OUTPUT_POWER_LIMIT = .5; //maximum allowed output power
 	
 	IUltrasonic ultrasonic;
 	
@@ -66,6 +67,8 @@ public class CmdMoveUltrasonic extends Command {
     	}
     	
     	_msec = msec;
+    	
+    	_threshold = threshold;
     	
     	this.drivetrain = drivetrain;
     	this.ultrasonic = ultrasonic;
@@ -114,7 +117,24 @@ public class CmdMoveUltrasonic extends Command {
 		
         double output = error * pidConstants.kP + averageSum * pidConstants.kI + pidConstants.kD * (error - prevError);
 		
-        output = RobotMath.clampDouble(output, -.5, .5);
+        if(Math.abs(output) > .4)
+        {
+        	int prevIndex = backOfAverageArray - 1;
+        	
+        	if(prevIndex < 0)
+        	{
+        		prevIndex = NUM_AVERAGES - 1;
+        	}
+        	
+        	//if this output was too high, remove it from the history.
+        	rollingAverage[prevIndex] = 0;
+        	
+        	output = RobotMath.sgn(output) * OUTPUT_POWER_LIMIT;
+        }
+        
+        output = RobotMath.clampDouble(output, -OUTPUT_POWER_LIMIT, OUTPUT_POWER_LIMIT);
+        
+        
         prevError = error;
         
         Log.debug("CmdMoveUltrasonic", "Error: " + error + " Output: " + output);
@@ -134,7 +154,26 @@ public class CmdMoveUltrasonic extends Command {
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished()
     {
-        return false;//(lastError) < _threshold;
+    	
+    	int errorsInTolerance = 0;
+        for(int index = 0; index < NUM_AVERAGES; ++index)
+        {
+        	if(rollingAverage[index] != 0)
+        	{
+	        	if(Math.abs(rollingAverage[index]) < _threshold)
+	        	{
+	        		++errorsInTolerance;
+	        	}
+	        	
+	        	if(errorsInTolerance >= 2)
+	            {
+	            	return true;
+	            }
+
+        	}
+        }
+        
+        return false;
     }
 
     // Called once after isFinished returns true

@@ -14,7 +14,6 @@ import org.team3128.autonomous.commands.defencecrossers.StrongholdStartingPositi
 import org.team3128.autonomous.commands.scorers.CmdScoreEncoders;
 import org.team3128.autonomous.commands.scorers.CmdScoreUltrasonic;
 import org.team3128.autonomous.programs.StrongholdCompositeAuto;
-import org.team3128.autonomous.programs.UnladenSwallowTestAuto;
 import org.team3128.drive.TankDrive;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
 import org.team3128.hardware.lights.LightsColor;
@@ -105,7 +104,7 @@ public abstract class MainUnladenSwallow extends MainClass
 	final static int fingerWarningFlashWavelength = 2; // in updateDashboard() ticks
 	boolean fingerWarningShowing = false;
 	
-	boolean intakeUp = false;
+	boolean intakeUp = true;
 	Thread intakeSmootherThread = null;
 	boolean intakeThreadRunning;
 	
@@ -188,9 +187,9 @@ public abstract class MainUnladenSwallow extends MainClass
 		robotTemplate.addListenerManager(listenerManagerLaunchpad);	
 		
 		//must run after subclass constructors
-		drive = new TankDrive(leftMotors, rightMotors, leftDriveEncoder, rightDriveEncoder, 7.65 * Length.in * Math.PI, DRIVE_WHEELS_GEAR_RATIO, 30 * Length.in);
+		drive = new TankDrive(leftMotors, rightMotors, leftDriveEncoder, rightDriveEncoder, 7.65 * Length.in * Math.PI, DRIVE_WHEELS_GEAR_RATIO, 28.33 * Length.in);
 
-		gearshift.shiftToHigh();
+		gearshift.shiftToLow();
 		
         Log.info("MainUnladenSwallow", "Activating the Unladen Swallow");
         Log.info("MainUnladenSwallow", "...but which one, an African or a European?");
@@ -254,61 +253,77 @@ public abstract class MainUnladenSwallow extends MainClass
 		{
 			if(intakeUp)
 			{
+
 				leftIntakePiston.setPistonOff();
 				rightIntakePiston.setPistonOff();
-				
-				// if we just set the pistons to off, it slams the intake down really hard.  
-				//instead, we try to let it coast for most of the way
-				intakeSmootherThread = new Thread (() -> 
-				{
-					try
-					{
-						Thread.sleep(100);
-					} 
-					catch (InterruptedException e) 
-					{
-						return;
-					}
-					leftIntakePiston.unlockPiston();
-					rightIntakePiston.unlockPiston();
-					
-					try
-					{
-						Thread.sleep(400);
-					} 
-					catch (InterruptedException e) 
-					{
-						return;
-					}
-					
-					leftIntakePiston.setPistonOff();
-					rightIntakePiston.setPistonOff();
-						
-					intakeThreadRunning = false;
-				});
-				
-				intakeThreadRunning = true;
-				intakeSmootherThread.start();
 			}
+				
+//				if(intakeThreadRunning)
+//				{
+//					intakeSmootherThread.interrupt();
+//				}
+//				
+//				Log.debug("IntakeSmootherThread", "Starting smooth intake lowering");
+//				
+//				
+//				
+//				// if we just set the pistons to off, it slams the intake down really hard.  
+//				//instead, we try to let it coast for most of the way
+//				intakeSmootherThread = new Thread (() -> 
+//				{
+//					leftIntakePiston.setPistonOff();
+//					rightIntakePiston.setPistonOff();
+//					
+//					try
+//					{
+//						Thread.sleep(5);
+//					} 
+//					catch (InterruptedException e) 
+//					{
+//						return;
+//					}
+//					
+//					leftIntakePiston.unlockPiston();
+//					rightIntakePiston.unlockPiston();
+//					
+//					try
+//					{
+//						Thread.sleep(1000);
+//					} 
+//					catch (InterruptedException e) 
+//					{
+//						return;
+//					}
+//					
+//					leftIntakePiston.setPistonOff();
+//					rightIntakePiston.setPistonOff();
+//						
+//					intakeThreadRunning = false;
+//				});
+//				
+//				intakeThreadRunning = true;
+//				intakeSmootherThread.start();
+			
 			
 			else
 			{
-				if(intakeThreadRunning)
-				{
-					intakeSmootherThread.interrupt();
-					
-					//shouldn't need to join the thread, it will eventually close itself
-					
-				}
+//				if(intakeThreadRunning)
+//				{
+//					intakeSmootherThread.interrupt();
+//					
+//					//shouldn't need to join the thread, it will eventually close itself
+//					
+//				}
 				
 				leftIntakePiston.setPistonOn();
 				rightIntakePiston.setPistonOn();
 			}
 			
+			intakeUp = !intakeUp;
 			mediumPistonExtensions += 2;
 		});
 		
-		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN11, () ->
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN7, () ->
 		{
 			robotAngleReadoutOffset = drive.getRobotAngle();
 		});
@@ -390,6 +405,7 @@ public abstract class MainUnladenSwallow extends MainClass
 		backArmMotor.set(0);
 		intakeSpinner.setTarget(0);
 		intakeState = IntakeState.STOPPED;
+		gearshift.shiftToHigh();
 		
 
 	}
@@ -397,7 +413,7 @@ public abstract class MainUnladenSwallow extends MainClass
 	@Override
 	protected void addAutoPrograms(GenericSendableChooser<CommandGroup> autoChooser)
 	{
-		autoChooser.addObject("Test Ultrasonic Movement", new UnladenSwallowTestAuto(this));
+		//autoChooser.addObject("Test Ultrasonic Movement", new UnladenSwallowTestAuto(this));
 		
 		//-------------------------------------------------------------------------------
 
@@ -455,7 +471,7 @@ public abstract class MainUnladenSwallow extends MainClass
 		
 		SmartDashboard.putString("Finger", fingerWarningShowing ? "Extended" : "");
 		
-		
+		SmartDashboard.putString("Robot Mode", getRobotMode().toString().toLowerCase());
 		if(getRobotMode() != RobotMode.AUTONOMOUS)
 		{
 			lights.setColor(lightsChooser.getSelected());	
@@ -556,6 +572,8 @@ public class CmdMoveRollers extends Command {
 				leftIntakePiston.setPistonOff();
 				rightIntakePiston.setPistonOff();
 			}
+			
+			intakeUp = setToUp;
 		}
 
 		@Override

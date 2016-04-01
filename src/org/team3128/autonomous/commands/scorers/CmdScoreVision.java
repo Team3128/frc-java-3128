@@ -29,7 +29,7 @@ public class CmdScoreVision extends CommandGroup
 		 case FAR_LEFT:
 			 addSequential(robot.drive.new CmdMoveForward(6 * Length.ft, 5000, .45));
 			 addSequential(robot.drive.new CmdInPlaceTurn(45, 2000, Direction.RIGHT));
-			 addSequential(new CmdAlignToLowGoal(robot, MainUnladenSwallow.CAMERA_HORIZONTAL_RESOLUTION / 2)); //line up the goal in the center
+			 addSequential(new CmdAlignToLowGoal(robot, 1280 / 2)); //line up the goal in the center
 			 addSequential(robot.drive.new CmdMoveForward(10 * Length.ft, 7000, .45));
 			 addSequential(robot.new CmdMoveRollers(3000,true));
 			 break;

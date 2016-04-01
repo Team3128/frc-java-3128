@@ -12,6 +12,12 @@ public class UnladenSwallowTestAuto extends CommandGroup {
     
 	public UnladenSwallowTestAuto(MainUnladenSwallow robot)
 	{
-		addSequential(new CmdMoveUltrasonic(robot.ultrasonic, robot.drive, 50, 2, new PIDConstants(.0001, .000001, 0), 30000));
+		addSequential(new CmdMoveUltrasonic(robot.ultrasonic, robot.drive, 75, 10, new PIDConstants(.0016, .0006, .0018), 30000));
+		//addSequential(robot.drive.new CmdMoveStraightForward(1 * Length.m, MainUnladenSwallow.STRAIGHT_DRIVE_KP, 5000, .4));
+		//addSequential(robot.gearshift.new CmdDownshift());
+		//addSequential(robot.drive.new CmdInPlaceTurn(180, .6, 7000, Direction.RIGHT));
+		//addSequential(robot.gearshift.new CmdUpshift());
+		//addSequential(robot.drive.new CmdMoveForward(1 * Length.m, 5000, .4));
+
     }
 }

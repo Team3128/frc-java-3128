@@ -437,12 +437,16 @@ public class TankDrive
     	
     	long startTime;
     	
+    	double power = .5;
+    	
     	/**
     	 * rotations that the move will take
     	 */
     	double enc;
     	
     	IDistanceEncoder sideEncoder;
+    	IDistanceEncoder otherSideEncoder;
+
     	
     	MotorGroup forwardMotors;
     	
@@ -454,19 +458,33 @@ public class TankDrive
     	 */
         public CmdInPlaceTurn(float degs, int msec, Direction dir)
         {
+        	this(degs, .5, msec, dir);
+        }
+        
+        /**
+    	 * @param degs how far to turn in degrees.  Accepts negative values.
+    	 * @param msec How long the move should take. If set to 0, do not time the move
+    	 */
+        public CmdInPlaceTurn(float degs, double motorPower, int msec, Direction dir)
+        {
         	_degs = degs;
         	
         	_msec = msec;
         	
+        	this.power = motorPower;
+        	
         	if(dir == Direction.RIGHT)
         	{
         		sideEncoder = encLeft;
+        		otherSideEncoder = encRight;
         		forwardMotors = leftMotors;
         		backwardMotors = rightMotors;
         	}
         	else
         	{
         		sideEncoder = encRight;
+        		otherSideEncoder = encLeft;
+
         		forwardMotors = rightMotors;
         		backwardMotors = leftMotors;
         	}
@@ -474,10 +492,12 @@ public class TankDrive
 
         protected void initialize()
         {
-    		enc = RobotMath.floor_double_int(cmToEncDegrees((Math.PI * wheelBase)*(abs(_degs)/360.0)));
+    		enc = RobotMath.floor_double_int(cmToEncDegrees((Math.PI * wheelBase)*(abs(_degs)/360.0))) * 1.05; 
+    		//NOTE: InPlaceTurn seems to consistently come short.  A scaling factor has been added to fix this
+    		// TODO: find out why!
     		clearEncoders();
-    		forwardMotors.setTarget(AutoUtils.speedMultiplier * RobotMath.sgn(_degs) * .5);
-    		backwardMotors.setTarget(AutoUtils.speedMultiplier * -1 * RobotMath.sgn(_degs)* .5);
+    		forwardMotors.setTarget(AutoUtils.speedMultiplier * RobotMath.sgn(_degs) * power);
+    		backwardMotors.setTarget(AutoUtils.speedMultiplier * -1 * RobotMath.sgn(_degs)* power);
     		startTime = System.currentTimeMillis();
         }
 
@@ -500,6 +520,15 @@ public class TankDrive
         // Called once after isFinished returns true
         protected void end()
         {
+        	if(encRight.getDistanceInDegrees() > 0)
+        	{
+        		Log.debug("CmdInPlaceTurn", "The right side went " + ((encRight.getDistanceInDegrees() * 100.0) / encRight.getDistanceInDegrees()) + "% of the left side");
+        	}
+        	else if(encLeft.getDistanceInDegrees() > 0)
+        	{
+        		Log.debug("CmdInPlaceTurn", "The left side went " + ((encLeft.getDistanceInDegrees() * 100.0) / encLeft.getDistanceInDegrees()) + "% of the right side");
+        	}
+        	
     		stopMovement();
         }
 

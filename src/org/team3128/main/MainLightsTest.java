@@ -27,10 +27,10 @@ public class MainLightsTest extends MainClass {
 		lightsRainbowSequence = new LightsSequence();
 
 		lightsRainbowSequence.addStep(new LightsSequence.Step(LightsColor.red, 500, false));
-		lightsRainbowSequence.addStep(new LightsSequence.Step(LightsColor.orange, 500, true));
-		lightsRainbowSequence.addStep(new LightsSequence.Step(LightsColor.green, 500, true));
-		lightsRainbowSequence.addStep(new LightsSequence.Step(LightsColor.new8Bit(1, 0xff, 0xff), 500, true));
-		lightsRainbowSequence.addStep(new LightsSequence.Step(LightsColor.blue, 500, true));
+		lightsRainbowSequence.addStep(new LightsSequence.Step(LightsColor.orange, 500, false));
+		lightsRainbowSequence.addStep(new LightsSequence.Step(LightsColor.green, 500, false));
+		lightsRainbowSequence.addStep(new LightsSequence.Step(LightsColor.new8Bit(1, 0xff, 0xff), 500, false));
+		lightsRainbowSequence.addStep(new LightsSequence.Step(LightsColor.blue, 500, false));
 		lightsRainbowSequence.addStep(new LightsSequence.Step(LightsColor.new8Bit(0xFF, 0x7F, 0x7F), 500, true));
 		
 		lightsRainbowSequence.setRepeat(true);
