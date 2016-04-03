@@ -39,7 +39,7 @@ public class CmdMoveUltrasonic extends Command {
 	long startTime;
 	
 	static final int NUM_AVERAGES = 5;
-	static final double OUTPUT_POWER_LIMIT = .5; //maximum allowed output power
+	static final double OUTPUT_POWER_LIMIT = .4; //maximum allowed output power
 	
 	IUltrasonic ultrasonic;
 	

@@ -6,7 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.team3128.Log;
 import org.team3128.autonomous.commands.defencecrossers.StrongholdStartingPosition;
 import org.team3128.main.MainUnladenSwallow;
-import org.team3128.util.Direction;
+import org.team3128.util.units.Length;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 /**
@@ -30,7 +30,10 @@ public class StrongholdCompositeAuto extends CommandGroup {
 			if(scorerClass == null)
 			{
 				//make the robot fit for driving
-				addSequential(robot.drive.new CmdInPlaceTurn(180, 2500, Direction.LEFT));
+
+				//Jamie please fix when you read this, portcullis was changed
+				addSequential(robot.drive.new CmdMoveForward(50 * Length.cm, 4000, .5));
+				//addSequential(robot.drive.new CmdInPlaceTurn(180, 4000, Direction.LEFT));
 			}
 			else
 			{

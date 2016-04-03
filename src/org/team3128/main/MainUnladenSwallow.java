@@ -12,7 +12,6 @@ import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossRoughTerrain;
 import org.team3128.autonomous.commands.defencecrossers.CmdGoAcrossShovelFries;
 import org.team3128.autonomous.commands.defencecrossers.StrongholdStartingPosition;
 import org.team3128.autonomous.commands.scorers.CmdScoreEncoders;
-import org.team3128.autonomous.commands.scorers.CmdScoreUltrasonic;
 import org.team3128.autonomous.programs.StrongholdCompositeAuto;
 import org.team3128.drive.TankDrive;
 import org.team3128.hardware.encoder.velocity.QuadratureEncoderLink;
@@ -20,11 +19,11 @@ import org.team3128.hardware.lights.LightsColor;
 import org.team3128.hardware.lights.PWMLights;
 import org.team3128.hardware.mechanisms.BackRaiserArm;
 import org.team3128.hardware.mechanisms.TwoSpeedGearshift;
+import org.team3128.hardware.misc.MROpticalDistanceSensor;
 import org.team3128.hardware.misc.Piston;
 import org.team3128.hardware.motor.MotorGroup;
-import org.team3128.hardware.ultrasonic.MaxSonar;
 import org.team3128.listener.ListenerManager;
-import org.team3128.listener.control.Button;
+import org.team3128.listener.control.Always;
 import org.team3128.listener.control.POV;
 import org.team3128.listener.controller.ControllerExtreme3D;
 import org.team3128.util.GenericSendableChooser;
@@ -36,7 +35,6 @@ import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -49,10 +47,10 @@ public abstract class MainUnladenSwallow extends MainClass
 {
 	
 	public ListenerManager listenerManagerExtreme;
-	public Joystick leftJoystick, rightJoystick;
+	public Joystick /*leftJoystick, */rightJoystick;
 	
 	//joystick object for the operator interface 
-	public Joystick launchpad;
+	//public Joystick launchpad;
 	public ListenerManager listenerManagerLaunchpad;
 
 	
@@ -70,10 +68,13 @@ public abstract class MainUnladenSwallow extends MainClass
 	
 	public TankDrive drive;
 	
-	public MaxSonar ultrasonic;
+	//public MaxSonar ultrasonic;
 	public PWMLights lights;
 	
 	public TwoSpeedGearshift gearshift;
+	
+	public MROpticalDistanceSensor distanceSensor;
+	
 	
 	Piston leftGearshiftPiston, rightGearshiftPiston;
 	Piston leftIntakePiston, rightIntakePiston;
@@ -88,7 +89,7 @@ public abstract class MainUnladenSwallow extends MainClass
 	
 	
 	final static public double STRAIGHT_DRIVE_KP = .0005;
-	
+	static public double INTAKE_BALL_DISTANCE_THRESHOLD = .4; //voltage
 	
 	
 	double microPistonExtensions = 0;
@@ -106,8 +107,11 @@ public abstract class MainUnladenSwallow extends MainClass
 	
 	boolean intakeUp = true;
 	Thread intakeSmootherThread = null;
-	boolean intakeThreadRunning;
+	boolean intakeThreadRunning = false;
 	
+	boolean innerRollerStopEnabled = true;
+	boolean innerRollerCurrentlyIntaking = false;
+	boolean innerRollerBallAtMaxPos = false;
 	int fingerFlashTimeLeft = fingerWarningFlashWavelength;
 	
 	public enum IntakeState
@@ -156,21 +160,23 @@ public abstract class MainUnladenSwallow extends MainClass
 		SmartDashboard.putData("Lights Chooser", lightsChooser);
 
 		rightJoystick = new Joystick(0);
-		leftJoystick = new Joystick(1);
+		//leftJoystick = new Joystick(1);
 
 		listenerManagerExtreme = new ListenerManager(rightJoystick);	
 		
-		launchpad = new Joystick(2);
-		listenerManagerLaunchpad = new ListenerManager(launchpad);
-		try
-		{
-			ultrasonic = new MaxSonar(9, MaxSonar.Resolution.MM, SerialPort.Port.kOnboard);
-			ultrasonic.setAutoPing(true);
-		}
-		catch(Exception ex)
-		{
-			ex.printStackTrace();
-		}
+		//launchpad = new Joystick(2);
+		//listenerManagerLaunchpad = new ListenerManager(launchpad);
+//		try
+//		{
+//			ultrasonic = new MaxSonar(9, MaxSonar.Resolution.MM, SerialPort.Port.kOnboard);
+//			ultrasonic.setAutoPing(true);
+//		}
+//		catch(Exception ex)
+//		{
+//			ex.printStackTrace();
+//		}
+		
+		distanceSensor = new MROpticalDistanceSensor(0);
 
 	}
 
@@ -184,7 +190,7 @@ public abstract class MainUnladenSwallow extends MainClass
 		camera.startAutomaticCapture("cam0");
 		
 		robotTemplate.addListenerManager(listenerManagerExtreme);
-		robotTemplate.addListenerManager(listenerManagerLaunchpad);	
+		//robotTemplate.addListenerManager(listenerManagerLaunchpad);	
 		
 		//must run after subclass constructors
 		drive = new TankDrive(leftMotors, rightMotors, leftDriveEncoder, rightDriveEncoder, 7.65 * Length.in * Math.PI, DRIVE_WHEELS_GEAR_RATIO, 28.33 * Length.in);
@@ -221,7 +227,7 @@ public abstract class MainUnladenSwallow extends MainClass
 			double joyX = .5 * listenerManagerExtreme.getRawAxis(ControllerExtreme3D.TWIST);
 			double joyY = listenerManagerExtreme.getRawAxis(ControllerExtreme3D.JOYY);
 			
-			drive.arcadeDrive(joyX, joyY, -listenerManagerExtreme.getRawAxis(ControllerExtreme3D.THROTTLE), listenerManagerExtreme.getRawBool(ControllerExtreme3D.TRIGGERDOWN));
+			drive.arcadeDrive(joyX, joyY, -listenerManagerExtreme.getRawAxis(ControllerExtreme3D.THROTTLE), true);
 		}, ControllerExtreme3D.TRIGGERUP, ControllerExtreme3D.TWIST, ControllerExtreme3D.JOYY, ControllerExtreme3D.THROTTLE, ControllerExtreme3D.TRIGGERDOWN);
 		
 		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN7, () ->
@@ -331,7 +337,13 @@ public abstract class MainUnladenSwallow extends MainClass
 		listenerManagerExtreme.addListener(() -> 
 		{
 			intakeSpinner.setTarget(IntakeState.OUTTAKE.motorPower);
-			innerRoller.setTarget(-1);
+			
+			innerRoller.setTarget(-.7);
+		
+			
+			innerRollerCurrentlyIntaking = false;
+			innerRollerBallAtMaxPos = false;
+			
 
 		}, new POV(0, 8), new POV(0, 1), new POV(0, 2));
 		
@@ -339,13 +351,26 @@ public abstract class MainUnladenSwallow extends MainClass
 		{
 			intakeSpinner.setTarget(IntakeState.STOPPED.motorPower);
 			innerRoller.setTarget(0);
-
+			
+			
+			innerRollerCurrentlyIntaking = false;
 		}, new POV(0, 0));
 		
 		listenerManagerExtreme.addListener(() -> 
 		{
 			intakeSpinner.setTarget(IntakeState.INTAKE.motorPower);
-			innerRoller.setTarget(.7);
+			
+			if(innerRollerStopEnabled && innerRollerBallAtMaxPos)
+			{
+				innerRoller.setTarget(0);
+			}
+			else
+			{
+				innerRoller.setTarget(.7);
+			}
+			innerRollerCurrentlyIntaking = true;
+
+
 
 		}, new POV(0, 4), new POV(0, 5), new POV(0, 6));
 		
@@ -374,21 +399,39 @@ public abstract class MainUnladenSwallow extends MainClass
 			backArmMotor.enableForwardSoftLimit(false);
 		});
 		
+		
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN3, () -> innerRollerStopEnabled = true);
+		listenerManagerExtreme.addListener(ControllerExtreme3D.DOWN4, () -> innerRollerStopEnabled = false);
+
+		
+		listenerManagerExtreme.addListener(Always.instance, () ->
+		{
+			if(innerRollerStopEnabled && innerRollerCurrentlyIntaking)
+			{
+				if(distanceSensor.getRaw() > INTAKE_BALL_DISTANCE_THRESHOLD)
+				{
+					innerRoller.setTarget(0);
+					
+					innerRollerCurrentlyIntaking = false;
+					innerRollerBallAtMaxPos = true;
+				}
+			}
+		});
 		//-----------------------------------------------------------------
 		//joystick chooser listeners
 		//-----------------------------------------------------------------
 		
 		//switch should be plugged in to pin 3.0 on the right side of the LaunchPad
 		//active high
-		listenerManagerLaunchpad.addListener(new Button(8, true), () ->
-		{
-			listenerManagerExtreme.setJoysticks(leftJoystick);
-		});
-		
-		listenerManagerLaunchpad.addListener(new Button(8, false), () ->
-		{
-			listenerManagerExtreme.setJoysticks(rightJoystick);
-		});
+//		listenerManagerLaunchpad.addListener(new Button(8, true), () ->
+//		{
+//			listenerManagerExtreme.setJoysticks(leftJoystick);
+//		});
+//		
+//		listenerManagerLaunchpad.addListener(new Button(8, false), () ->
+//		{
+//			listenerManagerExtreme.setJoysticks(rightJoystick);
+//		});
 		
 //		listenerManagerExtreme.addListener(Always.instance, () -> {
 //			int red = RobotMath.clampInt(RobotMath.floor_double_int(255 * (powerDistPanel.getTotalCurrent() / 30.0)), 0, 255);
@@ -403,9 +446,10 @@ public abstract class MainUnladenSwallow extends MainClass
 		backArm.setForTeleop();
 		backArmMotor.clearIAccum();
 		backArmMotor.set(0);
-		intakeSpinner.setTarget(0);
+		intakeSpinner.setTarget(IntakeState.STOPPED.motorPower);
 		intakeState = IntakeState.STOPPED;
-		gearshift.shiftToHigh();
+		
+		//gearshift.shiftToHigh();
 		
 
 	}
@@ -430,7 +474,7 @@ public abstract class MainUnladenSwallow extends MainClass
 
 		scoringChooser.addDefault("No Scoring", null);
 		scoringChooser.addObject("Encoder-Based (live reckoning) Scoring", CmdScoreEncoders.class);
-		scoringChooser.addObject("Ultrasonic & Encoder Scoring (experimental)", CmdScoreUltrasonic.class);
+		//scoringChooser.addObject("Ultrasonic & Encoder Scoring (experimental)", CmdScoreUltrasonic.class);
 
 
 	}
@@ -453,7 +497,7 @@ public abstract class MainUnladenSwallow extends MainClass
 		//SmartDashboard.putNumber("Left Drive Enc Distance:", leftDriveEncoder.getDistanceInDegrees());
 		
 		SmartDashboard.putNumber("Robot Heading", RobotMath.normalizeAngle(drive.getRobotAngle() - robotAngleReadoutOffset));
-		SmartDashboard.putNumber("Ultrasonic Distance:", ultrasonic.getDistance());
+//		SmartDashboard.putNumber("Ultrasonic Distance:", ultrasonic.getDistance());
 		
 		if(backArm.getAngle() < -30)
 		{
@@ -477,7 +521,7 @@ public abstract class MainUnladenSwallow extends MainClass
 			lights.setColor(lightsChooser.getSelected());	
 		}
 		
-		
+		Log.info("MUS", "ODS voltage: " + distanceSensor.getRaw());
 
 	}
 	

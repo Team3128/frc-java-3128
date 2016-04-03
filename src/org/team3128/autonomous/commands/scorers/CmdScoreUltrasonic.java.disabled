@@ -2,7 +2,6 @@ package org.team3128.autonomous.commands.scorers;
 
 import org.team3128.autonomous.commands.CmdLambda;
 import org.team3128.autonomous.commands.CmdMoveUltrasonic;
-import org.team3128.autonomous.commands.CmdRunInParallel;
 import org.team3128.autonomous.commands.defencecrossers.StrongholdStartingPosition;
 import org.team3128.main.MainUnladenSwallow;
 import org.team3128.util.Direction;
@@ -23,14 +22,12 @@ public class CmdScoreUltrasonic extends CommandGroup
 	public CmdScoreUltrasonic(MainUnladenSwallow robot, StrongholdStartingPosition startingPosition)
 	{
 		this.robot = robot;
-		
-		addSequential(new CmdRunInParallel(robot.new CmdSetIntake(false), robot.gearshift.new CmdDownshift()));
-		 
+				 
 		PIDConstants ultrasonicPIDConstants = new PIDConstants(.0016, .0006, .0018);
 		 switch(startingPosition)
 		 {
 		 case FAR_LEFT:
-			 addSequential(new CmdMoveUltrasonic(robot.ultrasonic, robot.drive, 4 * Length.ft, 10 * Length.cm, ultrasonicPIDConstants, 7000));
+			 addSequential(new CmdMoveUltrasonic(robot.ultrasonic, robot.drive, 5 * Length.ft, 10 * Length.cm, ultrasonicPIDConstants, 7000));
 			 addSequential(robot.drive.new CmdInPlaceTurn(60, 3000, Direction.RIGHT));
 			 addSequential(robot.drive.new CmdMoveForward(11  * Length.ft, 0, .6), 3000);
 			 addSequential(robot.new CmdMoveRollers(3000,true));
