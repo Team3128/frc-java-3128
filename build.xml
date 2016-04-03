@@ -25,10 +25,10 @@
   <property file="build.properties"/>
   <property file="${user.home}/wpilib/java/${version}/ant/build.properties"/>
   
-  <import file="${wpilib.ant.dir}/build.xml"/>
+  <import file="ant/build.xml"/>
 	
   <!-- +++++++++++++++++++++++++++++++++++++   FRC-Test   +++++++++++++++++++++++++++++++++++++ -->
-  <import file="frctest.xml"/>
+  <import file="ant/frctest.xml"/>
   
 
 </project> 
